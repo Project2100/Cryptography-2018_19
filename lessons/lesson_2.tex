@@ -1,6 +1,7 @@
 \mychapter{2}{Lesson 2} %180928
 
 \section{Message Authentication}
+
 \todo{Msg auth image (bob, eve, tag)}
 
 \subsection{Message Authentication Code (MAC or Tag)}
@@ -8,27 +9,32 @@
 \textbf{Syntax:}
 
 \begin{itemize}
-    \item $\K =$ Key space, $\M=$ Message space, $\Phi$ = Tag space
-    \item $K$ is uniform over $\K$
-    \item Tag: $\K \times \M \to \Phi$
-    \item Verify: $\K \times \M \times \Phi \to \{0,1\}$
+    \item $\K = $ Key Spac 
+    \item $\M = $ Message Space
+    \item $\Phi = $ Tag (or signature) Space
+    \item $\textsf{Tag}: \K \times \M \to \Phi$
+    \item $\textsf{Ver}: \K \times \C \times \Phi \to \binary$
 \end{itemize}
 
-\textbf{Correctness:}
-\begin{gather*}
-    \forall m \in \M, \forall k \in \K \\
-    \text{Verify}(k,m,\text{Tag}(k,m))=1    
-\end{gather*}
+\textsf{Tag} and \textsf{Ver} form a cryptographic scheme (an authentication one, in detail), and it must abide by the rule:
+\[
+    \forall m \in \M, \forall k \in \K \implies \textsf{Ver}(k, m, \textsf{Tag}(k, m)) = 1
+\]
 
-Assume Tag is \underline{deterministic}, then $Vrf(k,m,\phi)=1 \Leftrightarrow Tag(k,m)=\phi$
+In the usual case (deterministic), the verifier consists only of an equality check, reusing the \textsf{Tag} routine: $\textsf{Tag}(k, m) = \phi$
 
-\noindent\textbf{Security:} Unforgeability $\rightarrow$ The attacker is not able to forge $\phi$
+% TODO: to review, idea/phrasing can be incorrect
+The security aspect to consider in these schemes is the signatures' \emph{unforgeability}: an attacker cannot effectively define a couple $(m, \phi)$ such that:
+\[
+    \exists k \in \K \implies \textsf{Ver}(k, m, \phi) = 1
+\]
 
-\noindent\textbf{Definition} ($\epsilon$-statistical one-time security): we say that Mac has $\epsilon$-statistical one-time security if
-$\forall m,m' \in \M s.t. m\neq m', \forall \phi,phi' \in \Phi$
-$$Pr[Mac(K,m')=\phi'|Mac(K,m)=\phi]\leq \epsilon$$
-
-Think of a computationally unbounded adversary choosing $m \in \M$ and obtaining $\phi = Tag(k, m)$. His goal is to forge on a \emph{fresh} message $m' \neq m$, that is, finding its tag $\phi'$ such that $Tag(k,m') = \phi'$, with no knowledge of $k$.
+\begin{definition} \emph{($\epsilon$-statistical one-time security)}: A given authentication scheme has $\epsilon$-statistical one-time security iff, given a valid couple $(m_1, \phi_2)$, any adversary cannot \emph{forge} a fresh valid couple $(m_2, \phi_2)$ without knowing the signature key $k$. Formally:
+    \[
+        \forall m_1, m_2 \in \M, \phi_1, \phi_2 \in \Phi, m_1 \neq m_2 \implies \Pr[\textsf{Tag}(K, m_2) = \phi_2|\textsf{Tag}(K, m_1) = \phi_1] \leq \varepsilon
+    \]
+    
+\end{definition}
 
 \subsubsection{Pairwise-independent hashing}
 

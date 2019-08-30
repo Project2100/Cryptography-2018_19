@@ -36,7 +36,7 @@ The perfect secrecy definition can be rephrased in different ways, bringing more
     \item $M \mathrel{\perp\!\!\!\!\perp} C$ %TODO choose a better symbol
     %TODOI Better formalize: the variables m, m' and k are 'chosen' by their own distibutions, c is just a result instead
     % Maybe decompose it into smaller bits: use event sets instead
-    \item $\forall m_1, m_2 \in \M, c \in \C, k \pickUAR \K \implies \Pr[\textsf{Enc}(k, m_1) \evaluatesto c] = \Pr[\textsf{Enc}(k, m_2) \evaluatesto c]$
+    \item $\forall m_1, m_2 \in \M, c \in \C \implies \Pr[\textsf{Enc}(K, m_1) \evaluatesto c] = \Pr[\textsf{Enc}(K, m_2) \evaluatesto c]$
 \end{enumerate}
     
 \begin{proposition}
