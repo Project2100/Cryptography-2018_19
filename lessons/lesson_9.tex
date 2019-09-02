@@ -162,11 +162,11 @@ To overcome this problem, we can consider two options:
 \begin{definition}
     A function family $\H$ is deemed \emph{$\varepsilon$-universal} iff:
     \[
-        \forall x \neq x' \in \{0, 1\}^{n\cdot t} \implies \Pr_{s \pickUAR \{0, 1\}^\lambda}[h_s(x) = h_s(x') ] \leq \epsilon  
+        \forall x \neq x' \in \{0, 1\}^{n\cdot t} \implies \Pr_{s \pickUAR \{0, 1\}^\lambda}[h_s(x) = h_s(x') ] \leq \varepsilon  
     \]
 \end{definition}
 
-If $\epsilon = 2^{-n}$, meaning the collision probability is minimized, then the family is also called \emph{perfectly universal}; in the case where $\epsilon \in \negl{\lambda}$ isntead, it is defined as \emph{almost universal} (\textsc{au}). Take care abotu telling the difference between universality and pairwise independence, which states:
+If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then the family is also called \emph{perfectly universal}; in the case where $\varepsilon \in \negl{\lambda}$ isntead, it is defined as \emph{almost universal} (\textsc{au}). Take care abotu telling the difference between universality and pairwise independence, which states:
 \[
     (h_s(x), h_s(x')) \equiv U_{2n}
 \]
@@ -209,7 +209,7 @@ If $\epsilon = 2^{-n}$, meaning the collision probability is minimized, then the
 
     \begin{cryptogame}
         {prfauhyb}
-        {$\H\Y\B_{\R, \A}(\lambda)$}
+        {$\hybridg{}[\R](\lambda)$}
         {}
 
         \cseqchallenger{\shortstack[l]{
@@ -241,7 +241,7 @@ If $\epsilon = 2^{-n}$, meaning the collision probability is minimized, then the
 
     \begin{lemma}
         \[
-            Real_{\F, \A}(\lambda) \compindist \H\Y\B_{\R, \A}(\lambda)
+            Real_{\F, \A}(\lambda) \compindist \hybridg{}[\R](\lambda)
         \]
     \end{lemma}
 
@@ -251,7 +251,7 @@ If $\epsilon = 2^{-n}$, meaning the collision probability is minimized, then the
 
     \begin{lemma}
         \[
-            \H\Y\B_{\R, \A}(\lambda) \compindist Rand_{\R', \A}(\lambda)
+            \hybridg{}[\R](\lambda) \compindist Rand_{\R', \A}(\lambda)
         \]
     \end{lemma}
 
@@ -289,7 +289,7 @@ If $\epsilon = 2^{-n}$, meaning the collision probability is minimized, then the
         By ruling out this event, the lemma is proven.
     \end{proof}
 
-     So now we have $Real \compindist \H\Y\B \compindist Rand$
+     So now we have $Real \compindist \hybridg{} \compindist Rand$
 \end{proof}
 
 \begin{corollary}

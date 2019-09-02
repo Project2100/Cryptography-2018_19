@@ -50,7 +50,6 @@
 
 
 %this is used to create space between \forall, \exist [ and others ] with the next character
-\let\eps\varepsilon
 \newcommand\+{\mkern2mu}
 
 \newcommand{\ie}{\textit{i.e.}, }
@@ -66,14 +65,11 @@
 \renewcommand{\vec}[1]{\overline{#1}}
 \newcommand{\norm}[1]{\left\lVert{#1}\right\rVert}
 
-\renewcommand{\epsilon}{\varepsilon}
-
 \newcommand{\comma}{\ensuremath{, \allowbreak}}
 \newcommand{\from}{\leftarrow}
 \newcommand{\toandfrom}{\rightleftarrows}
 
 \newcommand{\A}{\mathcal{A}}
-\newcommand{\B}{\mathcal{B}}
 \newcommand{\C}{\mathcal{C}}
 \newcommand{\D}{\mathcal{D}}
 \newcommand{\F}{\mathcal{F}}
@@ -81,21 +77,14 @@
 \renewcommand{\H}{\mathcal{H}}
 \newcommand{\K}{\mathcal{K}}
 \newcommand{\M}{\mathcal{M}}
-\renewcommand{\P}{\mathcal{P}}
 \newcommand{\R}{\mathcal{R}}
 \newcommand{\U}{\mathcal{U}}
 \newcommand{\V}{\mathcal{V}}
 \newcommand{\X}{\mathcal{X}}
-\newcommand{\Y}{\mathcal{Y}}
 \newcommand{\Z}{\mathcal{Z}}
 
 \newcommand{\RO}{\mathrm{RO}}
 
-\newcommand{\Naturals}{\mathbb{N}^{+}}
-\newcommand{\NaturalsZ}{\mathbb{N}}
-\newcommand{\Integers}{\mathbb{Z}}
-\newcommand{\Reals}{\mathbb{R}}
-\newcommand{\Bool}{\{0,1\}}
 \newcommand{\QR}[1][p]{\mathbb{QR}_{#1}}
 
 \newcommand{\IntegersPrimeGroup}[1][p]{\Integers^{\star}_{#1}}
@@ -106,13 +95,8 @@
 \newcommand{\KGen}{\mathrm{KGen}}
 \newcommand{\KeyGen}{\mathrm{KeyGen}}
 \newcommand{\Mac}{\mathrm{Mac}}
-\newcommand{\Sign}{\mathrm{Sign}}
-\newcommand{\Vrfy}{\mathrm{Vrfy}}
-\newcommand{\Enc}{\mathrm{Enc}}
-\newcommand{\Dec}{\mathrm{Dec}}
 \newcommand{\Trans}{\mathrm{Trans}}
 
-\renewcommand{\Game}{\G}
 
 \newcommand{\IDSGame}{\Game^{\mathrm{id}}_{\Pi, \Adv}}
 
@@ -204,25 +188,12 @@
 
 \newcommand{\params}{params}
 
-\newcommand{\pr}{\mathop{\mathrm{Pr}}}
-%\renewcommand{\Pr}[2][]{\ensuremath{\pr\limits_{#1} \left[ {#2} \right]}}
-
-\newcommand{\rand}[1]{\from {\scriptstyle \$} {#1}}
 \newcommand{\abs}[1]{\left|{#1}\right|}
-%\newcommand{\poly}{\mathrm{poly}}
 
 \newcommand{\DotProduct}[2]{\left< {#1}, {#2} \right>}
 \newcommand{\Generator}[1]{\left< {#1} \right>}
 
 \newcommand{\repr}[1]{\left< {#1} \right>}
-
-\newcommand{\CompInd}{\approx_c}
-\newcommand{\StatInd}{\approx_s}
-
-\newcommand{\Adv}{\A}
-\newcommand{\Distinguisher}{\D}
-
-%\newcommand{\negl}[1]{\mathrm{negl}\left({#1}\right)}
 
 \newcommand{\xor}{\oplus}
 

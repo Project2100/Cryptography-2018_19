@@ -1,10 +1,10 @@
 \mychapter{2}{Lesson 2} %180928
 
-\section{Message Authentication}
+\section{Authentic communication}
 
 \todo{Msg auth image (bob, eve, tag)}
 
-\subsection{Message Authentication Code (MAC or Tag)}
+\subsection{Message Authentication Code scheme}
 
 \textbf{Syntax:}
 
@@ -29,7 +29,7 @@ The security aspect to consider in these schemes is the signatures' \emph{unforg
     \exists k \in \K \implies \textsf{Ver}(k, m, \phi) = 1
 \]
 
-\begin{definition} \emph{($\epsilon$-statistical one-time security)}: A given authentication scheme has $\epsilon$-statistical one-time security iff, given a valid couple $(m_1, \phi_2)$, any adversary cannot \emph{forge} a fresh valid couple $(m_2, \phi_2)$ without knowing the signature key $k$. Formally:
+\begin{definition} \emph{($\varepsilon$-statistical one-time security)}: A given authentication scheme has $\varepsilon$-statistical one-time security iff, given a valid couple $(m_1, \phi_2)$, any adversary cannot \emph{forge} a fresh valid couple $(m_2, \phi_2)$ without knowing the signature key $k$. Formally:
     \[
         \forall m_1, m_2 \in \M, \phi_1, \phi_2 \in \Phi, m_1 \neq m_2 \implies \Pr[\textsf{Tag}(K, m_2) = \phi_2|\textsf{Tag}(K, m_1) = \phi_1] \leq \varepsilon
     \]
@@ -47,15 +47,15 @@ The security aspect to consider in these schemes is the signatures' \emph{unforg
 \end{definition}
 
 \textbf{Construction: } Let $p$ be a prime number.\\
-Define $h_{(a,b)}(x)=ax+b \mod p$ now $S=\Z_p^2, M=\Phi=Z_p=\{0,1,...,p-1\}$
-Thus the following group will be defined $(\Z_p,+)$
+Define $h_{(a,b)}(x)=ax+b \mod p$ now $S=\integer_p^2, \M=\Phi=\integer_p=\{0,1,...,p-1\}$
+Thus the following group will be defined $(\integer_p,+)$
 
 \begin{theorem}
     Above $H$ is Pairwise Independent
 \end{theorem}
 \begin{proof}
     \begin{gather*}
-        \text{Fix} m,m' \in \Z_p s.t. m\neq m', \phi,\phi' \in \Z_p\\
+        \text{Fix} m,m' \in \integer_p s.t. m\neq m', \phi,\phi' \in \integer_p\\
         Pr_{(a,b)}[h_{a,b}(m)=\phi \wedge h_{a,b}(m')=\phi']=\\
         =Pr_{(a,b)}[am+b=\phi \wedge am'+b=\phi']=\\
         =Pr_{(a,b)}[
@@ -90,13 +90,13 @@ Thus the following group will be defined $(\Z_p,+)$
             \phi'
         \end{pmatrix}
         ]=\\
-        =\frac{1}{|\Z_p|^2}=\frac{1}{p^2}
+        =\frac{1}{|\integer_p|^2}=\frac{1}{p^2}
     \end{gather*}
-    Where $Pr_{(a,b)}$ denotes the probability over (a,b) random in $\Z_p$
+    Where $\Pr_{(a,b)}$ denotes the probability over (a,b) random in $\integer_p$
 \end{proof}
 
 \begin{theorem}
-    Let $Mac(K,m)=h_k(m)$ for $\H=\{h_k:\M \to \Phi \}_k$ be Pairwise Independent. The Mac is $\frac{1}{|\Phi|}$-statistical one-time secure. 
+    Let $Mac(K,m)=h_k(m)$ for $\mathcal{H}=\{h_k:\M \to \Phi \}_k$ be Pairwise Independent. The Mac is $\frac{1}{|\Phi|}$-statistical one-time secure. 
 \end{theorem}
 
 \begin{proof}
@@ -111,6 +111,6 @@ Thus the following group will be defined $(\Z_p,+)$
     \end{gather*}
 \end{proof}
 \begin{theorem}
-    Any t-time($\epsilon=2^{-\lambda}$)-statistical secure MAC has a key of size $(t+1) \lambda$ for any $\lambda > 0$.\\
+    Any t-time($\varepsilon=2^{-\lambda}$)-statistical secure MAC has a key of size $(t+1) \lambda$ for any $\lambda > 0$.\\
     \underline{No proof}
 \end{theorem}
