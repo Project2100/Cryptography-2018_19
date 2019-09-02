@@ -12,53 +12,63 @@
     \item $\K = $ Key Spac 
     \item $\M = $ Message Space
     \item $\Phi = $ Tag (or signature) Space
-    \item $\textsf{Tag}: \K \times \M \to \Phi$
-    \item $\textsf{Ver}: \K \times \C \times \Phi \to \binary$
+    \item $\Tag: \K \times \M \to \Phi$
+    \item $\Ver: \K \times \M \times \Phi \to \binary$
 \end{itemize}
 
-\textsf{Tag} and \textsf{Ver} form a cryptographic scheme (an authentication one, in detail), and it must abide by the rule:
+\Tag{} and \Ver{} form a cryptographic scheme (an authentication one, in detail), and it must abide by the rule:
 \[
-    \forall m \in \M, \forall k \in \K \implies \textsf{Ver}(k, m, \textsf{Tag}(k, m)) = 1
+    \forall m \in \M, \forall k \in \K \implies \Ver(k, m, \Tag(k, m)) = 1
 \]
 
-In the usual case (deterministic), the verifier consists only of an equality check, reusing the \textsf{Tag} routine: $\textsf{Tag}(k, m) = \phi$
+In the usual case (deterministic), the verifier consists only of an equality check, reusing the \Tag{} routine: $\Tag(k, m) = \phi$
 
 % TODO: to review, idea/phrasing can be incorrect
-The security aspect to consider in these schemes is the signatures' \emph{unforgeability}: an attacker cannot effectively define a couple $(m, \phi)$ such that:
+The security aspect to consider in these schemes is the signatures' \emph{unforgeability}: an attacker cannot efficiently declare a couple $(m, \phi)$ such that:
 \[
-    \exists k \in \K \implies \textsf{Ver}(k, m, \phi) = 1
+    \exists k \in \K \implies \Ver(k, m, \phi) = 1
 \]
 
-\begin{definition} \emph{($\varepsilon$-statistical one-time security)}: A given authentication scheme has $\varepsilon$-statistical one-time security iff, given a valid couple $(m_1, \phi_2)$, any adversary cannot \emph{forge} a fresh valid couple $(m_2, \phi_2)$ without knowing the signature key $k$. Formally:
-    \[
-        \forall m_1, m_2 \in \M, \phi_1, \phi_2 \in \Phi, m_1 \neq m_2 \implies \Pr[\textsf{Tag}(K, m_2) = \phi_2|\textsf{Tag}(K, m_1) = \phi_1] \leq \varepsilon
-    \]
+\begin{definition} \emph{($\varepsilon$-statistical one-time security)}: A given authentication scheme has $\varepsilon$-statistical one-time security iff, given a valid couple $(m_1, \phi_1)$, any adversary cannot \emph{forge} a fresh valid couple $(m_2, \phi_2)$ without knowing the signature key $k$. Formally:
+    \begin{gather*}
+        \forall m_1, m_2 \in \M : m_1 \neq m_2, \forall \phi_1, \phi_2 \in \Phi \\
+        \Downarrow \\
+        \Pr[\Tag(K, m_2) = \phi_2 \knowing \Tag(K, m_1) = \phi_1] \leq \varepsilon
+    \end{gather*}
     
 \end{definition}
 
 \subsubsection{Pairwise-independent hashing}
 
 \begin{definition}
-    A family of (Hash) functions $H=\{h_s:\M \to \Phi\}_{s\in S}$ is said to be \emph{pairwise independent} iff, for any two distinct messages $m$ and $m'$, we have that $(h_s(m),h_s(m'))$ is uniform over $\Phi^2$ for random choice of seed $s \in S$. Meaning that:
-    \begin{gather*}
-        \forall m,m' s.t. m\neq m',\forall \phi,\phi' \in \Phi \\
-        Pr[h_s(m)=\phi \wedge h_s(m')=\phi']=\frac{1}{|\Phi|^2}
-    \end{gather*}
+    Let $\mathcal{S}$ be a seeding space; define a family of \emph{hash functions} to be the following object:
+    \[
+        H \in \mathcal{S} \to (\M \to \Phi) : s \mapsto h_s
+    \]
+    Let $S$ be a random variable in the seed space; the hash functions are deemed \emph{pairwise-independent} iff, for any two distinct messages $m$ and $m'$, the pair $(h_S(m), h_S(m'))$ distributes evenly in $\Phi^2$. In other words:
+    \[
+        \forall m, m' \in \M : m \neq m', \forall \phi, \phi' \in \Phi \implies \Pr[h_S(m) = \phi \wedge h_S(m') = \phi'] = \oneover{|\Phi|^2}
+    \]
 \end{definition}
 
-\textbf{Construction: } Let $p$ be a prime number.\\
-Define $h_{(a,b)}(x)=ax+b \mod p$ now $S=\integer_p^2, \M=\Phi=\integer_p=\{0,1,...,p-1\}$
-Thus the following group will be defined $(\integer_p,+)$
+A possible function family with this property can be constructed using prime numbers. Let $p$ be a prime number, and define the family:
+\[
+    h_{(a, b)}(x) = ax + b \mod p
+\]
+
+where $\S = \integer_p^2$, and $\M = \Phi = \integer_p$. Therefore, a group arises: $(\integer_p, +)$.
 
 \begin{theorem}
-    Above $H$ is Pairwise Independent
+    The functions in the family $H$ are pairwise-independent.
 \end{theorem}
+
 \begin{proof}
-    \begin{gather*}
-        \text{Fix} m,m' \in \integer_p s.t. m\neq m', \phi,\phi' \in \integer_p\\
-        Pr_{(a,b)}[h_{a,b}(m)=\phi \wedge h_{a,b}(m')=\phi']=\\
-        =Pr_{(a,b)}[am+b=\phi \wedge am'+b=\phi']=\\
-        =Pr_{(a,b)}[
+    Let $S = (a, b)$ be a random seed for $H$; for any distinct messages $m, m'$, and for any tags $\phi, \phi'$:
+
+    \begin{align*}
+        & \Pr[h_S(m) = \phi \wedge h_S(m') = \phi'] \\
+        =& \Pr[am + b = \phi \wedge am' + b = \phi'] \\
+        =& \Pr\left[
         \begin{pmatrix}
             m & 1 \\
             m' & 1
@@ -73,8 +83,8 @@ Thus the following group will be defined $(\integer_p,+)$
             \phi \\
             \phi'
         \end{pmatrix}
-        ]=\\
-        =Pr_{(a,b)}[
+        \right] \\
+        =& \Pr\left[
         \begin{pmatrix}
             a \\
             b
@@ -89,28 +99,33 @@ Thus the following group will be defined $(\integer_p,+)$
             \phi \\
             \phi'
         \end{pmatrix}
-        ]=\\
-        =\frac{1}{|\integer_p|^2}=\frac{1}{p^2}
-    \end{gather*}
-    Where $\Pr_{(a,b)}$ denotes the probability over (a,b) random in $\integer_p$
+        \right] \\
+        =& \oneover{|\integer_p|^2}
+    \end{align*}
+    which is exactly the definition of pairwise-independency.
 \end{proof}
 
 \begin{theorem}
-    Let $Mac(K,m)=h_k(m)$ for $\mathcal{H}=\{h_k:\M \to \Phi \}_k$ be Pairwise Independent. The Mac is $\frac{1}{|\Phi|}$-statistical one-time secure. 
+    Define an authentication scheme to be such that its tagging routine defines a function family: $\Tag(k, m)=h_k(m)$. Let this function family be pairwise-independent. Then the authentication scheme is $\oneover{|\Phi|}$-statistical one-time secure. 
+\end{theorem}
+
+\begin{proof}!
+    \begin{align*}
+        \forall m \in \M, \phi \in \Phi &\implies \Pr[\Tag(K, m) = \phi] = \Pr[h_K(m) = \phi] = \oneover{|\Phi|} \\
+        \forall m \neq m' \in \M, \phi, \phi' \in \Phi &\implies \Pr[\Tag(K, m) = \phi \wedge \Tag(K, m') = \phi'] = \oneover{|\Phi|^2} \\
+    \end{align*}
+    Therefore:
+    \begin{align*}
+        & \Pr[\Tag(K, m) = \phi \knowing \Tag(K, m') = \phi'] \\
+        =& \frac{\Pr[\Tag(K, m) = \phi \wedge \Tag(K, m') = \phi']}{\Pr[\Tag(K, m) = \phi]} \\
+        =& \frac{|\Phi|}{|\Phi|^2} = \oneover{|\Phi|}
+    \end{align*}
+\end{proof}
+
+\begin{theorem}
+    Any ($2^{-\lambda}$)-statistical $t$-time secure authentication scheme has a key of size $(t + 1) \lambda$ for any $\lambda > 0$.
 \end{theorem}
 
 \begin{proof}
-    \begin{gather*}
-        \forall m \in \M, \phi \in \Phi\\
-        Pr[Mac(K,m)=\phi]=Pr_k[h_k(m)=\phi]=\frac{1}{|\Phi|}\\
-        \text{For any } m\neq m', \phi,\phi' \in \Phi\\
-        Pr[Mac(K,m)=\phi \wedge Mac(K,m')=\phi']=\frac{1}{|\Phi|^2}\\
-        \implies Pr[Mac(K,m')=\phi'| Mac(K,m)=\phi]=\\
-        =\frac{\Pr[Mac(K,m)=\phi \wedge Mac(K,m')=\phi']}{Pr[Mac(K,m)=\phi]}=\\
-        =\frac{1}{|\Phi|^2}/\frac{1}{|\Phi|}=\frac{1}{|\Phi|}
-    \end{gather*}
+    \underline{None given.}
 \end{proof}
-\begin{theorem}
-    Any t-time($\varepsilon=2^{-\lambda}$)-statistical secure MAC has a key of size $(t+1) \lambda$ for any $\lambda > 0$.\\
-    \underline{No proof}
-\end{theorem}

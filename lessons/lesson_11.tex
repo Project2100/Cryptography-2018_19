@@ -163,36 +163,19 @@ However, this example with additional restrictions will be useful very soon, so 
 \end{lemma}
 
 % AP190122: Prefer a single, b-oriented game, but for the sake of compliance to the original lessons the sequences are drawn with the old environment
-% Also, cannot put them side by side now... 
+% AP190902: Now they are sideways in the new environment, what did I mean back then?!
 \begin{figure}[ht]
     \centering
-    \sdinit{}
-    \begin{tikzpicture}[scale=0.6]
-        % Define symbols and names for the parties
-        \sdbegin{}
-        \newinst{A}{$ \A $}
-        \newinst[2.1]{B}{$ C $} % Increase "5" to widen
-        \mess{A}{$x, y$}{B}
-        \node[anchor=west] at (mess to) {  };
-        \postlevel
-        \mess{B}{$\psi^2_{F, F'}(x, y)$}{A}
-        \node[anchor=west] at (mess from) {$F, F' \pickUAR \R(\lambda, n, n)$};
-        \sdend{}
-    \end{tikzpicture}
-    \sdinit{}
-    \begin{tikzpicture}[scale=.5]
-        % Define symbols and names for the parties
-        \sdbegin{}
-        \newinst{A}{$ \A $}
-        \newinst[2.1]{B}{$ C $} % Increase "5" to widen
-        \mess{A}{$x, y$}{B}
-        \node[anchor=west] at (mess to) {  };
-        \postlevel
-        \mess{B}{$R(x, y)$}{A}
-        \node[anchor=west] at (mess from) {$R \pickUAR \R(\lambda, 2n, 2n)$};
-        \sdend{}
-    \end{tikzpicture}
-    \caption{}
+    \begin{cryptogame}{}{}{}[0.5]
+        \send{}{$x, y$}{}
+        \receive{\small{$F, F' \pickUAR \R(\lambda, n, n)$}}{$\psi^2_{F, F'}(x, y)$}{}
+    \end{cryptogame}
+    \begin{cryptogame}{}{}{}[0.5]
+        \send{}{$x, y$}{}
+        \receive{\small{$R \pickUAR \R(\lambda, 2n, 2n)$}}{$R(x, y)$}{}
+    \end{cryptogame}
+
+    \caption{The two Feistel games}
     \label{fig:feisteltwins}
 \end{figure}
 

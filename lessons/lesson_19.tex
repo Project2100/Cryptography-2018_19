@@ -9,7 +9,7 @@ Let's define a \textbf{Bilinear Group} as $(\G, \G_t, q, g, \hat{e})\leftarrow B
     \item $\hat{e}$ is a (bilinear) MAP: $\G \times \G \rightarrow \G_t$ efficiently computable. Defined as follows:
     
     \centering{$\rightarrow$ Take a generator $g$ for $\G$ and an element $h$ in $\G$.\\
-    $\forall g,h \in \G, a, b \in \Z_q \hat{e}(g^a,h^b)=\hat{e}(g,h)^{ab}=\hat{e}(g^{ab},h)$ \\and $\hat{e}(g,g)\neq 1$ (Non degenerative)}
+    $\forall g,h \in \G, a, b \in \integer_q \hat{e}(g^a,h^b)=\hat{e}(g,h)^{ab}=\hat{e}(g^{ab},h)$ \\and $\hat{e}(g,g)\neq 1$ (Non degenerative)}
 \end{itemize}
 "I can move the exponents"
 
@@ -24,7 +24,7 @@ Venturi said something here related to Weil pairing over an elliptic curve. I fo
 Now $KGen(1^{\lambda})$ will:
 \begin{itemize}
     \item Generate some params $ =(\G,\G_t,g,q,\hat{e})\leftarrow BilGen(1^{\lambda})$ 
-    \item Pick $a \pickUAR \Z_q$ then $g_1=g^a$
+    \item Pick $a \pickUAR \integer_q$ then $g_1=g^a$
     \item Pick $g_2=g^b$ and $g_2,u_0,u_1,...,u_k \pickUAR \G$.
     \item Then output: 
     \begin{itemize}
@@ -37,7 +37,7 @@ Sign($S_k$, m):
 \begin{itemize}
     \item Divide the message $m$ of length $k$ in bits and not it as follows: $m=(m[1],...,m[k])$
     \item Now define $\alpha(m)=u_0\prod_{i=1}^k u_i^{m[i]}$
-    \item Pick $r\leftarrow \Z_q$ and output the signature $\sigma =(\underbrace{g_2^a}_{S_k} \cdot \alpha(m)^r,g^r)=(\sigma_1,\sigma_2)$
+    \item Pick $r\leftarrow \integer_q$ and output the signature $\sigma =(\underbrace{g_2^a}_{S_k} \cdot \alpha(m)^r,g^r)=(\sigma_1,\sigma_2)$
 \end{itemize}
 
 Vrf($P_k$, m, ($\sigma_1,\sigma_2$))

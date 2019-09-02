@@ -331,8 +331,8 @@ Observe that the random value $r$ is part of the ciphertext, making it long $n+l
             &= Col(U_n) \\
             &= \sum_{i \neq j} \sum_{e \in \{0, 1\}^n} \Pr[r_1 = r_2 = e] \\
             &= \sum_{i \neq j} \sum_{e \in \{0, 1\}^n} \Pr[r = e]^{2} \\
-            &= {q \choose 2} 2^{n} \frac{1}{2^{2n}} \\
-            &= {q \choose 2} 2^{-n} \\
+            &= \binom{q}{2} 2^{n} \frac{1}{2^{2n}} \\
+            &= \binom{q}{2} 2^{-n} \\
             &\leq q^{2}2^{-n} \in \negl{\lambda} 
         \end{align*} 
 

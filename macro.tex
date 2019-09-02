@@ -1,12 +1,5 @@
 \usepackage{titletoc}
 
-\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
-\hypersetup{
-    colorlinks,
-    linkcolor={red!70!black},
-    citecolor={blue!50!black},
-    urlcolor={blue!80!black}
-}
 
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -24,22 +17,13 @@
 \usepackage{xcolor}
 \usepackage{subcaption}
 \usepackage{calc}
-\usepackage{tikz}
 \usepackage{preview}
 \usepackage{color}
 \usepackage{framed}
 \usepackage{stackengine}
 \usepackage{scalerel}
 \usepackage{enumerate}
-\usetikzlibrary{tikzmark,decorations.pathreplacing,positioning,shapes,fit,arrows}
-%\makeatletter
-\usepackage[normalem]{ulem} % For strikethrough text
-\newcommand{\review}[1]{
-    \definecolor{shadecolor}{rgb}{1,1,0} % this is yellow
-    \begin{shaded}
-    REVIEW: #1
-    \end{shaded}
-}
+
 
 \newcommand{\mychapter}[2]{
     \setcounter{chapter}{#1}
@@ -49,181 +33,29 @@
 }
 
 
-%this is used to create space between \forall, \exist [ and others ] with the next character
-\newcommand\+{\mkern2mu}
-
-\newcommand{\ie}{\textit{i.e.}, }
-\newcommand{\eg}{\textit{e.g.}, }
-
-\newcommand{\divides}{\big|}
-
 \newcommand{\biglor}{\bigvee}
 \newcommand{\bigxor}{\bigoplus}
 
-\newcommand{\Definition}{\ensuremath{\mathop{=}\limits^{\scriptscriptstyle \triangle}}}
-
-\renewcommand{\vec}[1]{\overline{#1}}
-\newcommand{\norm}[1]{\left\lVert{#1}\right\rVert}
-
-\newcommand{\comma}{\ensuremath{, \allowbreak}}
-\newcommand{\from}{\leftarrow}
-\newcommand{\toandfrom}{\rightleftarrows}
-
 \newcommand{\A}{\mathcal{A}}
 \newcommand{\C}{\mathcal{C}}
-\newcommand{\D}{\mathcal{D}}
 \newcommand{\F}{\mathcal{F}}
 \newcommand{\G}{\mathcal{G}}
 \renewcommand{\H}{\mathcal{H}}
 \newcommand{\K}{\mathcal{K}}
 \newcommand{\M}{\mathcal{M}}
 \newcommand{\R}{\mathcal{R}}
-\newcommand{\U}{\mathcal{U}}
-\newcommand{\V}{\mathcal{V}}
 \newcommand{\X}{\mathcal{X}}
-\newcommand{\Z}{\mathcal{Z}}
 
 \newcommand{\RO}{\mathrm{RO}}
 
 \newcommand{\QR}[1][p]{\mathbb{QR}_{#1}}
 
-\newcommand{\IntegersPrimeGroup}[1][p]{\Integers^{\star}_{#1}}
-
-\newcommand{\Coll}{\mathrm{Coll}}
-\newcommand{\Ext}{\mathrm{Ext}}
 \newcommand{\Gen}{\mathrm{Gen}}
-\newcommand{\KGen}{\mathrm{KGen}}
-\newcommand{\KeyGen}{\mathrm{KeyGen}}
-\newcommand{\Mac}{\mathrm{Mac}}
-\newcommand{\Trans}{\mathrm{Trans}}
-
-
-\newcommand{\IDSGame}{\Game^{\mathrm{id}}_{\Pi, \Adv}}
-
-\newcommand{\GenericEncScheme}{\Pi}
-\newcommand{\GenericKeyGen}{\Gen}
-\newcommand{\GenericEnc}{\Enc}
-\newcommand{\GenericDec}{\Dec}
-\newcommand{\GenericEncSchemeTuple}{\GenericEncScheme = \left( \GenericKeyGen\comma \GenericEnc\comma \GenericDec \right)}
-
-\newcommand{\GenericMACScheme}[1][]{\Pi_{#1}}
-\newcommand{\GenericMac}{\Mac}
-\newcommand{\GenericVrfy}{\Vrfy}
-\newcommand{\GenericAuthSpace}{\Phi}
-\newcommand{\GenericMACSchemeTuple}[1][]{\GenericMACScheme[#1] = \left( \GenericKeyGen\comma \GenericMac\comma \GenericVrfy \right)}
-
-\newcommand{\SKEScheme}[1][]{\Pi_{#1}}
-\newcommand{\SKEKeyGen}{\Gen}
-\newcommand{\SKEEnc}{\Enc}
-\newcommand{\SKEDec}{\Dec}
-\newcommand{\SKESchemeTuple}[1][]{\SKEScheme[#1] = \left( \SKEKeyGen \comma \SKEEnc \comma \SKEDec \right)}
-
-\newcommand{\SKEGameOneTime}{\Game^{\scriptstyle \text{one time}}_{\SKEScheme, \Adv}}
-
-\newcommand{\CCAScheme}{\Pi'}
-\newcommand{\CCAKeyGen}{\Gen'}
-\newcommand{\CCAEnc}{\Enc'}
-\newcommand{\CCADec}{\Dec'}
-\newcommand{\CCASchemeTuple}{\CCAScheme = \left( \CCAKeyGen \comma \CCAEnc \comma \CCADec \right)}
-
-\newcommand{\PRFGameReal}{\Game^{\scriptstyle \text{real}}_{\F, \Adv}}
-\newcommand{\PRFGameRand}{\Game^{\scriptstyle \text{rand}}_{\F, \Adv}}
-
-\newcommand{\PKEScheme}{\Pi}
-\newcommand{\PKEKeyGen}{\Gen}
-\newcommand{\PKEEnc}{\Enc}
-\newcommand{\PKEDec}{\Dec}
-\newcommand{\PKESchemeTuple}{\PKEScheme = \left( \PKEKeyGen \comma \PKEEnc \comma \PKEDec \right)}
-
-\newcommand{\PKEGameCPA}{\Game_{\Adv, \Pi}^{\text{CPA \\ one-time}}}
-\newcommand{\PKEGameCCA}[1]{\Game_{\Adv, \Pi}^{\text{CCA{#1}}}}
-
-\newcommand{\SignScheme}{\Pi}
-\newcommand{\SignSchemeKGen}{\KGen}
-\newcommand{\SignSchemeSign}{\Sign}
-\newcommand{\SignSchemeVrfy}{\Vrfy}
-\newcommand{\SignSchemeTuple}{\SignScheme = \left( \SignSchemeKGen \comma \SignSchemeSign \comma \SignSchemeVrfy \right)}
-
-\newcommand{\RSA}{\mathrm{RSA}}
-\newcommand{\RSAGen}{\Gen_{\RSA}}
-\newcommand{\RSAfun}{f_{\RSA}}
-\newcommand{\RSAinv}{f_{\RSA}^{-1}}
-\newcommand{\RSAtuple}{(\RSAGen, \RSAfun, \RSAinv)}
-
-\newcommand{\CPAGame}{\Game^{\scriptstyle \text{cpa}}_{\SKEScheme,\Adv}}
-\newcommand{\CCAGame}{\Game^{\scriptstyle \text{cca}}_{\SKEScheme,\Adv}}
-
-\newcommand{\CFPTuple}{\Pi = (\Gen, f_0, f_1)}
-\newcommand{\CFPGame}{\Game^{\scriptstyle \text{CF}}_{\Pi, \Adv}}
-
-\newcommand{\CRHGame}{\Game^{\scriptstyle \text{CR}}_{\H,\Adv}}
-\newcommand{\CRDMGame}{\Game^{\scriptstyle \text{CR}}_{{\scriptstyle \text{DM}}, \Adv}}
-
-\newcommand{\UFCMAGame}{\Game^{\scriptstyle \text{ufcma}}_{\GenericMACScheme,\Adv}}
-
-\newcommand{\UHFGameReal}{\Game^{\scriptstyle \text{real}}_{\F(\H),\Adv}}
-\newcommand{\UHFGameHybrid}{H_{\$,\H,\Adv}}
-\newcommand{\UHFGameRand}{\Game^{\scriptstyle \text{rand}}_{\$,\Adv}}
-
-\newcommand{\OTPEnc}{\Enc}
-\newcommand{\OTPDec}{\Dec}
-
-\newcommand{\Feistel}[1][F]{\psi_{#1}}
-
 \newcommand{\Group}{\mathbb{G}}
-\newcommand{\Field}{\mathbb{F}}
-\newcommand{\GroupTuple}{(\Group \comma g \comma q)}
-\newcommand{\GroupGen}{\GroupTuple \from \mathrm{GroupGen}(1^{\lambda})}
-
-\newcommand{\Bilin}{\mathrm{Bilin}}
-\newcommand{\BilinearGroup}{\Group}
-\newcommand{\BilinearGroupBis}{\BilinearGroup_{T}}
-\newcommand{\BilinearMap}{\hat{e}}
-\newcommand{\BilinearGroupTuple}{\left( \BilinearGroup, \BilinearGroupBis, q, g, \BilinearMap \right)}
-
-\newcommand{\WatersKGen}{\mathrm{BiGen}}
-
-\newcommand{\pk}{pk}
-\newcommand{\sk}{sk}
-
-\newcommand{\params}{params}
-
-\newcommand{\abs}[1]{\left|{#1}\right|}
-
-\newcommand{\DotProduct}[2]{\left< {#1}, {#2} \right>}
-\newcommand{\Generator}[1]{\left< {#1} \right>}
-
-\newcommand{\repr}[1]{\left< {#1} \right>}
 
 \newcommand{\xor}{\oplus}
 
-%https://tex.stackexchange.com/questions/137073/writing-mod-in-congruence-problems-without-leading-space
-\newcommand{\Mod}[1]{\ (\mathrm{mod}\ #1)}
-
 %========================================================================================================
-
-
-
-%\renewcommand\thmt@mklistcmd{%
-%  \@xa\protected@edef\csname l@\thmt@envname\endcsname{% CHECK: why p@edef?
-%    \@nx\@dottedtocline{1}{1.5em}{\@nx\thmt@listnumwidth}{\thmt@thmname}{mu}%
-%  }%
-%  \ifthmt@isstarred
-%    \@xa\def\csname ll@\thmt@envname\endcsname{%
-%      \protect\numberline{\thmt@thmname\protect\let\protect\autodot\protect:}%
-%      \ifx\@empty\thmt@shortoptarg\else\protect\thmtformatoptarg{\thmt@shortoptarg}\fi
-%    }%
-%  \else
-%    \@xa\def\csname ll@\thmt@envname\endcsname{%
-%      % \thmt@thmname\ \csname the\thmt@envname\endcsname: \hfil%
-%      \ifx\@empty\thmt@shortoptarg\else\thmt@shortoptarg\fi
-%    }%
-%  \fi
-%  \@xa\gdef\csname thmt@contentsline@\thmt@envname\endcsname{%
-%    \thmt@contentslineShow% default:show
-%  }%
-%}
-%\makeatother
 
 
 \theoremstyle{plain}
@@ -285,21 +117,11 @@
 \newtheorem{cons}{Construction}
 
 
-%-------------------DEBUG COMMANDS----------------------------
-\newcounter{t0d0_counter}
-\newcommand{\notodo}[1]{
-}
-\newcommand{\todo}[1]{
-    \stepcounter{t0d0_counter}
-    \definecolor{shadecolor}{rgb}{1,1,0} % this is yellow
-    \begin{shaded}
-    T0D0 \arabic{t0d0_counter}: #1
-    \end{shaded}
-}
 
 %----------------------IMAGES-----------------------------------
 \usepackage[underline=false]{pgf-umlsd}
 \usepackage{tikz}
+\usetikzlibrary{tikzmark,decorations.pathreplacing,positioning,shapes,fit,arrows}
 
 % From http://tex.stackexchange.com/questions/164707/how-to-use-greek-letters-in-pgf-umlsd-or-generally-terms-starting-with
 \renewcommand{\mess}[4][0]{

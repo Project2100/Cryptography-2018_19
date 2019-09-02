@@ -283,7 +283,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
         \begin{align*}
             \Pr[\textsc{Bad}] &= \Pr_s [\exists x_i \neq x_j, h_s(x_i) = h_s(x_j)] &\\
             &\leq \sum_{i \neq j} \Pr_s [h_s(x_i) = h_s(x_j)] & h_s \text{ is \textsc{au} by definition} \\
-            &\leq {q \choose 2} \negl{\lambda} \in \negl{\lambda} &
+            &\leq \binom{q}{2} \negl{\lambda} \in \negl{\lambda} &
         \end{align*}
 
         By ruling out this event, the lemma is proven.

@@ -1,71 +1,43 @@
 \mychapter{15}{Lesson 15} %181116
 \section{Public key encryption recap} 
 
-$\mbox{Game}_{\Pi, \mathcal{A}}^{pke-cca}$:
+$\cryptog{pke-cca}{}$:
 
-\begin{figure}[h!]
-    \centering
-    \sdinit{}
-    \begin{tikzpicture}
-        \sdbegin{}
+\begin{cryptogame}
+    {pkecca}
+    {\cca{} on a \pke{} scheme}
+    {pke-cca}
+    
+    \receive{\small{$(pk, sk) \pickUAR \mathcal{KG}en(1^\lambda)$}}{$pk$}{}
 
-        \newinst{A}{$ \mathcal{A} $}     % Adversary
-        % NOTE: the bracketed value expresses the distance between the two entities
-        \newinst[3]{C}{$ C^{\textsc{pke-cca}} $}  % Challenger
+    \cseqdelay
+    \cseqbeginloop
 
-        % BEGIN
+    \send{}{$c'$}{}
+    \receive{}{$m'$}{}
 
-        % Challenger publishes pk
-        \mess{C}{$pk$}{A}
-        \node[anchor=west] at (mess from) {
-            \small{$(pk, sk) \pickUAR \mathcal{KG}en(1^\lambda)$}
-        };
-      
-        \postlevel
+    \cseqendloop
+    \cseqdelay
 
-        % Adversary queries for a decryption
-        \mess{A}{$c'$}{C}
-        \node[anchor=west] at (mess to) {};
-        % Challenger responds with decrypted value
-        \mess{C}{$m'$}{A}
-        \node[anchor=west] at (mess to) {};
-        % Adversary can query polynomially-many times
-        \draw [->] (0.9,-3.3) to[out=200,in=150] (0.9,-2.4);
-        
-        \postlevel
-        
-        % Adversary starts the challenge by sending two messages
-        \mess{A}{$m_0, m_1$}{C}
-        \node[anchor=west] at (mess to) {};
-        % Challenger flips a coin, encrypts the chosen message and sends the cipherext
-        \mess{C}{$c$}{A}
-        \node[anchor=west] at (mess from) { \shortstack[l]{
-            $ b \pickUAR \{0, 1\} $ \\
-            $ c \pickUAR Enc(pk, m_b) $
-        }};
-      
-        \postlevel
-      
-        % Adversary can still query for other decryptions
-        \mess{A}{$c'$}{C}
-        \node[anchor=west] at (mess to) {};
-        \mess{C}{$m'$}{A}
-        \node[anchor=west] at (mess to) {};
-        \draw [->] (0.9,-6.9) to[out=200,in=150] (0.9,-6.0);
-      
-        \postlevel
+    \send{}{$m_0, m_1$}{}
 
-        % Adversary guesses which message has been encrypted
-        \mess{A}{$b'$}{C}
-        \node[anchor=west] at (mess to) {
-            \small{Output 1 iff $b' = b$}
-        };
-      
-        \sdend{}
-    \end{tikzpicture}
-    \caption{CCA on a PKE scheme}
-    \label{fig:game_pke-cca}
-\end{figure}
+    \receive{\shortstack[l]{
+        $ b \pickUAR \binary $ \\
+        $ c \pickUAR \enc(pk, m_b) $
+    }}{$c$}{}
+
+    \cseqdelay
+    \cseqbeginloop
+
+    \send{}{$c'$}{}
+    \receive{}{$m'$}{}
+
+    \cseqendloop
+    \cseqdelay
+
+    \send{}{$b'$}{\textsc{Output 1 iff} $b' = b$}
+\end{cryptogame}
+
 
 (Reminder): Encryptions are made like this: $Enc(k, m) = (r, F_k(r) \oplus m), r \simeq \mathcal{U}nif(\{0, 1\}^\lambda)$.
 
@@ -135,7 +107,7 @@ Note that the theorem is more general, and holds for any $p, q$ that are coprime
 
 How to use this theorem for constructing a \pke{} scheme:
 
-Reminder (Euler's theorem):\review{ $\forall x \in \mathbb{Z}_n \implies
+Reminder (Euler's theorem):\todo{ $\forall x \in \mathbb{Z}_n \implies
 x^{\varphi(n)} = x \mod n$ \\
 maybe the correct one is \\
 $\forall x \in \mathbb{Z}_n \implies
@@ -187,8 +159,8 @@ This is an \underline{insecure} toy example of the more complex \rsa{} (Rivest S
 
 \begin{itemize}
     \item Setup: $pk \pickUAR \integer_n^\times, sk \equiv_{\varphi(n)} pk^{-1}$
-    \item Encrypt: $Enc_{pk}(m) = m^{pk} \Mod{n}$
-    \item Decrypt: $Dec_{sk}(c) = c^{sk} \Mod{n}$
+    \item Encrypt: $Enc_{pk}(m) = m^{pk} \mod{n}$
+    \item Decrypt: $Dec_{sk}(c) = c^{sk} \mod{n}$
     \item Correctness: $Enc_{pk}(Dec_{sk}(m)) = m^{pk \cdot sk} \equiv_n m$
 \end{itemize}
 
@@ -197,21 +169,21 @@ Again, since the encryption routine is deterministic, the scheme is not \cpa-sec
 \textbf{Facts:}
 \begin{enumerate}
     \item $l \in \omega(log(\lambda))$ otherwise it is possible to eficiently bruteforce it.
-        \review{\item If $m \in \{0,1\}$ then I can prove it CPA secure under RSA
+        \todo{\item If $m \in \{0,1\}$ then I can prove it CPA secure under RSA
         (just use standard TDP)}
     \item If $m$ is "in the middle" ($\{0,1\} \leq m \leq \{0, 1\}^l$) RSA is believed to be secure and is \underline{standardized} (PKCS\#1,5)
-        \review{ \item Still not CCA secure! counterexample?}
+        \todo{ \item Still not CCA secure! counterexample?}
 \end{enumerate}
 
 
 \subsection{Trapdoor Permutation from Factoring}
-Let's look at $f(x) = x^2\Mod{n}$ where $f: \integer_n^\times \to \QR[n] (\subset \integer_n^\times)$, this is not a permutation in general.
+Let's look at $f(x) = x^2\mod{n}$ where $f: \integer_n^\times \to \QR[n] (\subset \integer_n^\times)$, this is not a permutation in general.
 
 Now let's consider the Chinese Reminder Theorem (CRT) representation:
 
 \begin{gather*}
-    x=(x_p,x_q) \rightarrow x_p\equiv x\Mod{p} , x_q\equiv x\Mod{q}\\
-    f(x)=x^2\Mod{p}; x \pickUAR \integer_p^\times
+    x=(x_p,x_q) \rightarrow x_p\equiv x\mod{p} , x_q\equiv x\mod{q}\\
+    f(x)=x^2\mod{p}; x \pickUAR \integer_p^\times
 \end{gather*}
 
 Since $\integer_p^\times$ is cyclic I can always write:
@@ -222,12 +194,12 @@ Since $\integer_p^\times$ is cyclic I can always write:
     |\QR[p]|=\frac{p-1}{2}
 \end{gather*}
 
-Moreover, since $(g^{\frac{p-1}{2}})^2 \equiv 1 \Mod{p} $ and $g^{\frac{p-1}{2}}$ cannot be 1 (since $g^{0}\not=g^{\frac{p-1}{2}}\not=g^{p-1}$ ) but must be one of the $p-1$ elements of $\integer_p^\times$, then $g^{\frac{p-1}{2}} \equiv -1 \Mod{p}$.
+Moreover, since $(g^{\frac{p-1}{2}})^2 \equiv 1 \mod{p} $ and $g^{\frac{p-1}{2}}$ cannot be 1 (since $g^{0}\not=g^{\frac{p-1}{2}}\not=g^{p-1}$ ) but must be one of the $p-1$ elements of $\integer_p^\times$, then $g^{\frac{p-1}{2}} \equiv -1 \mod{p}$.
 
 Now it's possible to show that $f: \QR[p]\to \QR[p] $ is a permutation, and we are going to show a method to invert it, aka $f^{-1}$.
 
-Assume $p\equiv 3 \Mod{4}$ ([*]$p=4t+3\Rightarrow t=\frac{p-3}{4}$), then squaring modulo $p$ is a permutation because, given
-\underline{$y=x^2 \Mod{p}$} if I compute:
+Assume $p\equiv 3 \mod{4}$ ([*]$p=4t+3\Rightarrow t=\frac{p-3}{4}$), then squaring modulo $p$ is a permutation because, given
+\underline{$y=x^2 \mod{p}$} if I compute:
 \begin{gather*}
     (y^{t+1})^2=\underbrace{y^{2t+2}}_{\text{[*]
     }2t+2=\frac{p-3}{2}+2=\frac{p+1}{2}=\frac{p-1}{2}+1}=(x^2)^{\frac{p-1}{2}+1}=1x^2=x^2\\
@@ -296,8 +268,7 @@ only 1 is a quadratic residue since we said, in the last lemma, that only one ou
 
 Therefore, we have that the Rabin's TDP is a permutation in $\QR[n]$, and that the cardinality of $ \mathbb{QR}_{n} $ is $\frac{|\integer_n^\times|}{4}$.
 
-Furthermore, with the following claim we can state that the Rabin cryptosystem
-is OWF thanks to the hardness of factoring.
+Furthermore, with the following claim we can state that the Rabin cryptosystem is OWF thanks to the hardness of factoring.
 
 \begin{claim}
     Given $x, z$ such that $x^{2}\text{ mod} n \equiv z^{2} \text{ mod } n
@@ -320,9 +291,9 @@ is OWF thanks to the hardness of factoring.
     Squaring mod $n$, where $n$ is a \emph{Blum integer}\footnotemark is a trapdoor permutation under the factoring assumption.
 \end{theorem}
 
-\footnotetext{a Blum integer $n$ is the product of two numbers $p$ and $q$ such that $p,q = 3 \mod 4$, as the definition of Rabin's \tdp}
+\footnotetext{a Blum integer $n$ is the product of two numbers $p$ and $q$ such that $p, q = 3 \mod 4$, as the definition of Rabin's \tdp}
 
-Since we have already shown tha Rabin's function is a permutation since it is invertible, we have to show that Rabin's function is also OWF.
+Since we have already shown tha Rabin's function is a permutation since it is invertible, we have to show that Rabin's function is also \owf.
 
 In other words
 \[
@@ -335,39 +306,24 @@ The following proof is by contraddiction.
 
     We can build the following reduction to show that $\A$ choses $x$, here $\mathcal{BG}en$ is a sampler for Blum integers:
 
-    \begin{figure}[ht]
-       \centering
-       \sdinit{}
-       \begin{tikzpicture}
-          \sdbegin{}
-          \newinst{A}{$ \A^{Rabin} $}
-          \newinst[2.5]{B}{$ \A_{fact} $}
-          \newinst[2]{C}{$\C_{(p,q,n) \pickUAR \mathcal{BG}en \wedge p,q \equiv 3
-          \text{ mod } 4}$}
-          
-                \postlevel
-                \mess{C}{$n=pq$}{B}
-                \node[anchor=west] at (mess to) {  };
-          
-          \postlevel
-          \mess{B}{$n,y$}{A}
-          \node[anchor=west] at (mess from) {\shortstack[l]{
-          $ x \pickUAR \mathbb{Z}^{*}_{n} $
-          \\
-          $ y=x^{2} $ mod $n$
-          }  };
-    
-          \postlevel
-          \mess{A}{$z$}{B}
-          \node[anchor=west] at (mess to) {\shortstack[l]{
-                  $ f(z)=f(x) $ 
-                 }};
-    
-    
-          \sdend{}
-          \sdend{}
-       \end{tikzpicture}
-    \end{figure}
+    % AP190902: The adversary had a "fact" subscript, is it important?
+    \begin{cryptoredux}
+        {blumtdp}
+        {---}
+        {$(p, q, n) \pickUAR \mathcal{BG}en \wedge p,q \equiv 3 \mod 4$}
+        {rabin}[1]
+
+        \receive{}{$n = pq$}{}
+
+        \invoke{\shortstack[l]{
+            $x \pickUAR \integer^{*}_n$ \\
+            $y = x^2 \mod n$
+        }}{$n, y$}{}
+
+        \return{}{$z$}{$f(z) = f(x)$}
+        
+    \end{cryptoredux}
+
     
     Once obtained $z\neq \pm x$ which $z^{2}=y$ we can use \textbf{Claim 1}(just summing $x$ and $z$ and analyzing the result)  to factorize $n$ in polytime. But factorizing $n$ in polytime is not possible.
 \end{proof}

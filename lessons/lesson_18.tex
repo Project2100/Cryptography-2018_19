@@ -65,12 +65,12 @@ Nevertheless, proving that a \textsc{ds} scheme is secure is largely defined in 
     
     \receive{$(pk, sk) \pickUAR \mathcal{KG}en(1^\lambda)$}{$pk$}{}
 
-    \postlevel
+    \cseqdelay
 
     \send{$m \in M$}{$m$}{}
     \receive{$\sigma \pickUAR Sign(sk, m)$}{$\sigma$}{}
 
-    \postlevel
+    \cseqdelay
 
     \send{$m^* \notin M$}{$(m^*, \sigma^*)$}{\textsc{Output} $\textit{Verify}(pk, m^*, \sigma^*)$}
 

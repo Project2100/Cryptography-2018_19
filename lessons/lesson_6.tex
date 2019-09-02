@@ -110,8 +110,7 @@ and thus, by XORing the result with $\bar{m}$, obtain the entire unknown message
     \end{cryptogame}
 
     \begin{lemma}
-        % AP181229: Lemma environment forces italics where it should not, this ugliness is a workaround
-        \emph{\textrm{$\textsc{Hyb}_{\Pi_{\xor}, \textsf{A}}(\lambda, 0) \equiv \textsc{Hyb}_{\Pi_{\xor}, \textsf{A}}(\lambda, 1)$}}
+        $\hybridg{}[\Pi_{\xor}](\lambda, 0) \equiv \hybridg{}[\Pi_{\xor}](\lambda, 1)$
     \end{lemma}
 
     \begin{proof}
@@ -120,7 +119,7 @@ and thus, by XORing the result with $\bar{m}$, obtain the entire unknown message
     \end{proof}
 
     \begin{lemma}
-        $ \forall b \in \{0,1\}, \textsc{Hyb}_{\Pi_{\xor}, \textsf{A}}(\lambda, b) \compindist \textsc{Game}_{\Pi_{\xor}, \textsf{A}}^{\textsc{ind}}(\lambda, b)$
+        $\forall b \in \binary, \hybridg{}[\Pi_{\xor}](\lambda, b) \compindist \cryptog{ind}[\Pi_{\xor}](\lambda, b)$
     \end{lemma}
 
     \begin{proof}
@@ -213,48 +212,26 @@ Usually, \prf{}s come as function families $F_k$, where $k$ is a key that identi
 
 With this in mind, let $\F=\{ F_{k}:\{0,1\}^{n(\lambda)} \to \{0,1\}^{l(\lambda)} \}_{k \in \{0,1\}^{\lambda}}$ be the \emph{keyed} function family that defines a \prf. Consider the two games in figure \ref{fig:prftwins}, each one involving respectively $\mathcal{F}$ and a random function $R$, where $\mathcal{R}=\{R : \{0, 1\}^{n} \to \{0, 1\}^{l}\}$, also written as $\mathcal{R}(\lambda, n, l)$ is the set of all random functions from $n$-bit strings to $l$-bit strings.
 
-\begin{figure}[ht]
+\begin{figure}[h]
     \centering
-    \sdinit{}
-    \begin{tikzpicture}[scale=0.5]
-        % Define symbols and names for the parties
-        \sdbegin{}
-        \newinst{A}{$ \A $}
-        \newinst[2.3]{B}{$ C $} % Increase "5" to widen
-        \mess{A}{$x$}{B}
-        \node[anchor=west] at (mess to) {  };
-        \postlevel
-        \mess{B}{z}{A}
-        \node[anchor=west] at (mess from) {\shortstack[l]{
+    \begin{cryptogame}{}{}{}[1.1]
+        \send{}{$x$}{}
+        \receive{\shortstack[l]{
             $k \pickUAR \{0,1\}^{\lambda}$ \\
-            $z = F_{k}(x)$}};
-        % Message from Bob to Alice, with computations by both sides
-        \postlevel
-        \mess{A}{$b'$}{B}
-        \node[anchor=west] at (mess to) {  };
-        \sdend{}
-    \end{tikzpicture}
-    \sdinit{}
-    \begin{tikzpicture}[scale=.5]
-        % Define symbols and names for the parties
-        \sdbegin{}
-        \newinst{A}{$ \A $}
-        \newinst[2.3]{B}{$ C $} % Increase "5" to widen
-        \mess{A}{$x$}{B}
-        \node[anchor=west] at (mess to) {  };
-        \postlevel
-        \mess{B}{z}{A}
-        \node[anchor=west] at (mess from) {\shortstack[l]{
+            $z = F_{k}(x)$}
+        }{$z$}{}
+        \send{}{$b'$}{}
+    \end{cryptogame}
+    \begin{cryptogame}{}{}{}[1.1]
+        \send{}{$x$}{}
+        \receive{\shortstack[l]{
             $R \pickUAR \R(\lambda, n, l)$ \\
-            $z = R(x)$}};
-        % Message from Bob to Alice, with computations by both sides
-        \postlevel
-        \mess{A}{$b'$}{B}
-        \node[anchor=west] at (mess to) {  };
-        \sdend{}
-    \end{tikzpicture}
-
-    \caption{$Real_{\F, \A}(\lambda)$ vs $Rand_{\R, \A}(\lambda)$}
+            $z = R(x)$}
+        }{$z$}{}
+        \send{}{$b'$}{}
+    \end{cryptogame}
+    
+    \caption{$Real_{\F, \A}(\lambda)$ vs $Rand_{\R, \A}(\lambda)$22}
     \label{fig:prftwins}
 \end{figure}
 

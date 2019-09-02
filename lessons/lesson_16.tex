@@ -5,12 +5,12 @@ Let's define a new $\Pi=$ (KGen, Enc, Dec). Generate the needed (\textbf{public}
 
 The KeyGen algorithm is defined as follows:
 \begin{itemize}
-    \item Pick $x \pickUAR \mathbb{Z}_q$
+    \item Pick $x \pickUAR \integer_q$
     \item Output the key pair $(pk, sk)$ as $(g^x, x)$
 \end{itemize}
 The encryption routine Enc($pk, m$) will:
 \begin{itemize}
-    \item Pick $r\pickUAR \mathbb{Z}_q$
+    \item Pick $r\pickUAR \integer_q$
     \item Output $c=(c_1, c_2)=(g^r, pk^r \cdot m)$\footnote{We need $r$ because we want to re-randomize $c$}
 \end{itemize}
 The decryption routine Dec($sk, c$) will:
@@ -33,76 +33,54 @@ Correctness of this scheme follows from some algebric steps:
 \begin{proof}
     Consider the two following games $H_0(\lambda,b)$ and $H_1(\lambda, b)$ defined as follows. Observe that b can be fixed without loss of generality.
     
-    \newpage
-    $H_0(\lambda,b):$
-    \begin{figure}[htp]
-        \centering
-        \sdinit{}
-        \begin{tikzpicture}
-            \sdbegin{}
-            \newinst{A}{$ \A $}
-            \newinst[4]{B}{$ \C^\textsc{pke} $}
-           
-            \mess{B}{$pk$}{A}
-            \node[anchor=west] at (mess from) { \shortstack[l]{
-                $x \pickUAR \mathbb{Z}_q$ \\
-                $pk = g^x$
-            }};
+    \begin{cryptogame}
+        {pke1}
+        {$H_0(\lambda, b)$}
+        {pke}
 
-            \postlevel
-            \mess{A}{$(m_0,m_1)\in \G$}{B}
-            \node[anchor=west] at (mess to) { };
-            \mess{B}{$ c = (c_1, c_2)$}{A}
-            \node[anchor=west] at (mess from) {  \shortstack[l]{
-                $r \pickUAR \mathbb{Z}_q$ \\
-                $b \pickUAR \{0, 1\}$ \\
-                $(c_1,c_2)=(g^r,(g^x)^r m_b)$
-            }};
+        \receive{\shortstack[l]{
+            $x \pickUAR \mathbb{Z}_q$ \\
+            $pk = g^x$
+        }}{$pk$}{}
 
-            \postlevel
-            \mess{A}{$b'$}{B}
-            \node[anchor=west] at (mess to) { \shortstack[l]{
-                \textsc{Output} 1 iff $b=b'$
-            }};
+        \cseqdelay
+        \send{}{$(m_0,m_1)\in \G$}{}
+        \cseqdelay
+        \receive{\shortstack[l]{
+            $r \pickUAR \mathbb{Z}_q$ \\
+            $b \pickUAR \{0, 1\}$ \\
+            $(c_1,c_2)=(g^r,(g^x)^r m_b)$
+        }}{$ c = (c_1, c_2)$}{}
+        \cseqdelay
 
-            \sdend{}
-        \end{tikzpicture}
-    \end{figure}
+        \send{}{$b'$}{\textsc{Output} 1 iff $b = b'$}
 
-    $H_1(\lambda,b):$
-    \begin{figure}[h]
-        \centering
-        \sdinit{}
-        \begin{tikzpicture}
-            \sdbegin{}
-            \newinst{A}{$ \A $}
-            \newinst[4]{B}{$ \C^\textsc{pke} $}
-           
-            \mess{B}{$pk$}{A}
-            \node[anchor=west] at (mess from) { \shortstack[l]{
-                $x \pickUAR \mathbb{Z}_q$ \\
-                $pk = g^x$
-            }};
+    \end{cryptogame}
 
-            \postlevel
-            \mess{A}{$(m_0,m_1)\in \G$}{B}
-            \node[anchor=west] at (mess to) { };
-            \mess{B}{$ c = (c_1, c_2)$}{A}
-            \node[anchor=west] at (mess from) {  \shortstack[l]{
-                $r \pickUAR \mathbb{Z}_q$ \\
-                $z \pickUAR \mathbb{Z}_q$ \\
-                $(c_1,c_2)=(g^r,g^z m_b)$
-            }};
+    \begin{cryptogame}
+        {pke2}
+        {$H_1(\lambda, b)$}
+        {pke}
 
-            \postlevel
-            \mess{A}{$b'$}{B}
-            \node[anchor=west] at (mess to) { \shortstack[l]{
-                \textsc{Output} 1 iff $b=b'$
-            }};
+        \receive{\shortstack[l]{
+            $x \pickUAR \mathbb{Z}_q$ \\
+            $pk = g^x$
+        }}{$pk$}{}
 
-            \sdend{}
-        \end{tikzpicture}
-    \end{figure}
+        \cseqdelay
+        \send{}{$(m_0,m_1)\in \G$}{}
+        \cseqdelay
+        \receive{\shortstack[l]{
+            $r \pickUAR \mathbb{Z}_q$ \\
+            $z \pickUAR \mathbb{Z}_q$ \\
+            $(c_1,c_2)=(g^r,g^z m_b)$
+        }}{$ c = (c_1, c_2)$}{}
+        \cseqdelay
+
+        \send{}{$b'$}{\textsc{Output} 1 iff $b = b'$}
+
+    \end{cryptogame}
+    
 
     % The reasoning was a bit cloudy, hope now it is clearer
     \textbf{Note:} it is important to note that we can measure the advantage of $\A$, so fixed its output $Adv_{\A}(\lambda) = |\underbrace{Pr[\overbrace{\A\rightarrow 1}^{b'=1}|b=0}_{"\A\ loses"}]-\underbrace{Pr[\overbrace{\A\rightarrow 1}^{b'=1}|b=1]}_{"\A\ wins"}|$. Since $b$ is fixed the above formula will give a value $\lambda \ in negl$, generally the advantage of an adversary is: $\frac{1}{2}+\lambda$ (random guessing + a negligible factor). %maybe this is a repetition but I think I never wrote it anywhere else
@@ -125,42 +103,28 @@ Correctness of this scheme follows from some algebric steps:
 
         Consider the following Game:
 
-        \begin{figure}[ht!]
-            \centering
-            \sdinit{}
-            \begin{tikzpicture}
-               \sdbegin{}
-               \newinst{A}{$ \D $}
-               \newinst[2]{B}{$ \D'_{DDH} $}
-               \newinst[2]{C}{$ \C_{DDH} $}
+        % Adversary was defined as D'_DDH, whereas the distinguisher was just D
+        \begin{cryptoredux}
+            {pkerdxddh}
+            {---}
+            {ddh}
+            {}
 
-               \postlevel
-               \mess{C}{$(X,Y,Z)$}{B}
-               \node[anchor=west] at (mess from) { \shortstack[l]{
-                   $X=g^x, Y=g^y$\\
-                   $Z=g^{xr}$ or $Z=g^z$}};
-               \postlevel
-               \mess{B}{$h=X$}{A}
-               \node[anchor=west] at (mess to) {  };
-               \postlevel
-               \mess{A}{$ (m_0,m_1) $}{B}
-               \node[anchor=west] at (mess from) { };
-               \postlevel
-               \mess{B}{$(Y,Z m_b)$}{A}
-               \node[anchor=west] at (mess to) {  };
-               \postlevel
-               \mess{A}{$b'$}{B}
-               \node[anchor=west] at (mess to) {  };
-               \postlevel
-               \mess{B}{$b'$}{C}
-               \node[anchor=west] at (mess to) {  };
-              
-               \sdend{}
-               \sdend{}
-            \end{tikzpicture}
-        \end{figure}
+            \receive{\shortstack[l]{
+                $X=g^x, Y=g^y$\\
+                $Z=g^{xr}$ or $Z=g^z$
+            }}{$(X, Y, Z)$}{}
 
-        \textbf{Contradiction}: $\D$ should be able to compute $log_g$ to distinguish the message.
+            \invoke{}{$h = X$}{}
+            \return{}{$(m_0, m_1)$}{}
+            \invoke{}{$(Y, Z \cdot m_b)$}{}
+            \return{}{$b'$}{}
+
+            \send{}{$b'$}{}
+
+        \end{cryptoredux}
+
+        \textbf{Contradiction}: $\distinguisher$ should be able to compute $log_g$ to distinguish the message.
 
     \end{proof}
 

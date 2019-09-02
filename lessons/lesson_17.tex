@@ -75,7 +75,7 @@ Some additional notes (may be incorrect):
         \send{}{}{}
         \receive{}{}{}
     
-        \postlevel
+        \cseqdelay
     
         % Adversary asks for a challenge
         \send{}{$m_0, m_1$}{}
@@ -88,13 +88,13 @@ Some additional notes (may be incorrect):
         {$c = ((y, (\pi_1 \cdot m_b)), \pi_2)$}
         {}
     
-        \postlevel
+        \cseqdelay
     
         % Adversary can query the challenger for polynomially-many decryptions
         \send{}{}{}
         \receive{}{}{}
     
-        \postlevel
+        \cseqdelay
     
         % Adversary guesses which message has been encrypted
         \send{}{$b'$}{\textsc{Output} 1 \textsc{iff} $b=b'$}
@@ -108,7 +108,7 @@ Some additional notes (may be incorrect):
         \send{}{}{}
         \receive{}{}{}
     
-        \postlevel
+        \cseqdelay
     
         % Adversary asks for a challenge
         \send{}{$m_0, m_1$}{}
@@ -121,13 +121,13 @@ Some additional notes (may be incorrect):
         {$c = ((y, (\pi_1 \cdot m_b)), \pi_2)$}
         {}
     
-        \postlevel
+        \cseqdelay
     
         % Adversary can query the challenger for polynomially-many decryptions
         \send{}{}{}
         \receive{}{}{}
     
-        \postlevel
+        \cseqdelay
     
         % Adversary guesses which message has been encrypted
         \send{}{$b'$}{\textsc{Output} 1 \textsc{iff} $b=b'$}
@@ -141,7 +141,7 @@ Some additional notes (may be incorrect):
         \send{}{}{}
         \receive{}{}{}
     
-        \postlevel
+        \cseqdelay
     
         % Adversary asks for a challenge
         \send{}{$m_0, m_1$}{}
@@ -154,13 +154,13 @@ Some additional notes (may be incorrect):
         {$c = ((y, (\pi_1 \cdot m_b)), \pi_2)$}
         {}
     
-        \postlevel
+        \cseqdelay
     
         % Adversary can query the challenger for polynomially-many decryptions
         \send{}{}{}
         \receive{}{}{}
     
-        \postlevel
+        \cseqdelay
     
         % Adversary guesses which message has been encrypted
         \send{}{$b'$}{\textsc{Output} 1 \textsc{iff} $b=b'$}
@@ -176,7 +176,7 @@ Some additional notes (may be incorrect):
         \send{}{}{}
         \receive{}{}{}
     
-        \postlevel
+        \cseqdelay
     
         % Adversary asks for a challenge
         \send{}{$m_0, m_1$}{}
@@ -189,13 +189,13 @@ Some additional notes (may be incorrect):
         {$c = ((y, (\pi_1 \cdot m_b)), \pi_2)$}
         {}
     
-        \postlevel
+        \cseqdelay
     
         % Adversary can query the challenger for polynomially-many decryptions
         \send{}{}{}
         \receive{}{}{}
     
-        \postlevel
+        \cseqdelay
     
         % Adversary guesses which message has been encrypted
         \send{}{$b'$}{\textsc{Output} 1 \textsc{iff} $b=b'$}
@@ -209,7 +209,7 @@ Some additional notes (may be incorrect):
         \send{}{}{}
         \receive{}{}{}
     
-        \postlevel
+        \cseqdelay
     
         % Adversary asks for a challenge
         \send{}{$m_0, m_1$}{}
@@ -221,13 +221,13 @@ Some additional notes (may be incorrect):
         }}
         {$c = ((y, (\pi_1 \cdot m_b)), \pi_2)$}{}
     
-        \postlevel
+        \cseqdelay
     
         % Adversary can query the challenger for polynomially-many decryptions
         \send{}{}{}
         \receive{}{}{}
     
-        \postlevel
+        \cseqdelay
     
         % Adversary guesses which message has been encrypted
         \send{}{$b'$}{\textsc{Output} 1 \textsc{iff} $b=b'$}
@@ -346,7 +346,7 @@ So,
 
 
 %==================================================
-\review{referencing something from another part of lesson 17}
+\todo{referencing something from another part of lesson 17}
 
 \subsection{Instantiation of U-HPS (Universal Hash Proof System)}
 \textbf{MHL(Membership Hard Language) from DDH}
@@ -362,7 +362,7 @@ Given a group $\G$ of order $q$ with $(g_1,g_2)$ as generators, we will have $(g
 Now we can define our U-HPS $\Pi:=$(Setup, Prove, Verify)
 
 \begin{itemize}
-    \item $Setup(1^\lambda)$: Pick $x_1,x_2 \pickUAR \Z_q$ and define:\\ $\omega=h_1=(g_1^{x_1},g_2^{x_2}$), $\tau=(x_1,x_2)$
+    \item $Setup(1^\lambda)$: Pick $x_1,x_2 \pickUAR \integer_q$ and define:\\ $\omega=h_1=(g_1^{x_1},g_2^{x_2}$), $\tau=(x_1,x_2)$
     \item $Prove(\omega, \underbrace{(c_1,c_2)}_{y}, r)$ output $\Pi=\omega^2$
     \item $Verify(\tau, \underbrace{(c_1,c_2)}_{y})$ output $\widetilde{\Pi}=c_1^{x_1}c_2^{x_2}$ %pretty shitty tilde here, I need a bigger tilde to cover the full length of Pi -> \usepackage{stackengine} \usepackage{scalerel} added in macro
 \end{itemize}
@@ -413,17 +413,17 @@ Now we can define our U-HPS $\Pi:=$(Setup, Prove, Verify)
 
 \begin{itemize}
     \item $Setup(1^\lambda)$: \begin{itemize}
-        \item Pick $x_3,x_4,x_5,x_6 \pickUAR \Z_q$ and define:
+        \item Pick $x_3,x_4,x_5,x_6 \pickUAR \integer_q$ and define:
         \begin{itemize}
             \item $\omega=(h_2,h_3,s)=(g_1^{x_3},g_2^{x_4},g_1^{x_5},g_2^{x_6},s)$ where $s$ is a \textbf{seed} for a CRH$\rightarrow \H=\{H_s\}$ %\item $\tau=(x_3,x_4,x_5,x_6)$
         \end{itemize}
     \end{itemize}
     \item $Prove(\omega, (c_1,c_2,l), r)$ \begin{itemize}
-        \item Compute $\beta=H_s(c_1,c_2,l)\in \Z_p$
+        \item Compute $\beta=H_s(c_1,c_2,l)\in \integer_p$
         \item Output $\Pi=h_2^rh_3^{r\beta}$
     \end{itemize}
     \item $Verify(\tau, (c_1,c_2,l))$\begin{itemize}
-        \item Compute $\beta=H_s(c_1,c_2,l)\in \Z_q$
+        \item Compute $\beta=H_s(c_1,c_2,l)\in \integer_q$
         \item Output $\widetilde{\Pi}=c_1^{x_3+\beta x_5}c_2^{x_4+\beta x_6}$
     \end{itemize}
 \end{itemize}
