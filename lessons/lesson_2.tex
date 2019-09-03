@@ -23,40 +23,41 @@
 
 In the usual case (deterministic), the verifier consists only of an equality check, reusing the \Tag{} routine: $\Tag(k, m) = \phi$
 
-% TODO: to review, idea/phrasing can be incorrect
-The security aspect to consider in these schemes is the signatures' \emph{unforgeability}: an attacker cannot efficiently declare a couple $(m, \phi)$ such that:
-\[
-    \exists k \in \K \implies \Ver(k, m, \phi) = 1
-\]
+The security aspect to consider in these schemes is the signatures' \emph{unforgeability}. Suppose that an attacker chooses a message $m$ and obtains its tag $\phi$ without knowing the key $k$ used in the process; then there shall be no better means of declaring a couple $(m', \phi') : \Ver(k, m', \phi') = 1$ other than random guessing, or knowing the key, of course.
 
-\begin{definition} \emph{($\varepsilon$-statistical one-time security)}: A given authentication scheme has $\varepsilon$-statistical one-time security iff, given a valid couple $(m_1, \phi_1)$, any adversary cannot \emph{forge} a fresh valid couple $(m_2, \phi_2)$ without knowing the signature key $k$. Formally:
+Some more formal definitions of unforgeability follow:
+
+\begin{definition} \emph{($\varepsilon$-statistical one-time security)}:
+    A given authentication scheme has $\varepsilon$-statistical one-time security iff, given a valid couple $(m_1, \phi_1)$, any adversary cannot \emph{forge} a fresh valid couple $(m_2, \phi_2)$ without knowing the signature key $k$. Formally:
     \begin{gather*}
         \forall m_1, m_2 \in \M : m_1 \neq m_2, \forall \phi_1, \phi_2 \in \Phi \\
         \Downarrow \\
         \Pr[\Tag(K, m_2) = \phi_2 \knowing \Tag(K, m_1) = \phi_1] \leq \varepsilon
     \end{gather*}
-    
 \end{definition}
 
 \subsubsection{Pairwise-independent hashing}
 
+%AP190903: The math stinks here...
 \begin{definition}
     Let $\mathcal{S}$ be a seeding space; define a family of \emph{hash functions} to be the following object:
     \[
         H \in \mathcal{S} \to (\M \to \Phi) : s \mapsto h_s
     \]
-    Let $S$ be a random variable in the seed space; the hash functions are deemed \emph{pairwise-independent} iff, for any two distinct messages $m$ and $m'$, the pair $(h_S(m), h_S(m'))$ distributes evenly in $\Phi^2$. In other words:
+    Let $S$ be a random variable in the seed space; the hash functions are deemed \emph{pairwise-independent}\footnotemark{} iff, for any two distinct messages $m$ and $m'$, the pair $(h_S(m), h_S(m'))$ distributes evenly in $\Phi^2$. In other words:
     \[
         \forall m, m' \in \M : m \neq m', \forall \phi, \phi' \in \Phi \implies \Pr[h_S(m) = \phi \wedge h_S(m') = \phi'] = \oneover{|\Phi|^2}
     \]
 \end{definition}
+
+\footnotetext{Care should be taken to not confuse \emph{pairwise} independency with \emph{mutual} independency: while the former acts only on pairs, the latter considers all possible subsets. The two notions are not necessarily equivalent.}
 
 A possible function family with this property can be constructed using prime numbers. Let $p$ be a prime number, and define the family:
 \[
     h_{(a, b)}(x) = ax + b \mod p
 \]
 
-where $\S = \integer_p^2$, and $\M = \Phi = \integer_p$. Therefore, a group arises: $(\integer_p, +)$.
+where $\mathcal{S} = \integer_p^2$, and $\M = \Phi = \integer_p$. Note that with these definitions a group construct arises over the message space and the tag space: $(\integer_p, +)$.
 
 \begin{theorem}
     The functions in the family $H$ are pairwise-independent.
@@ -106,10 +107,10 @@ where $\S = \integer_p^2$, and $\M = \Phi = \integer_p$. Therefore, a group aris
 \end{proof}
 
 \begin{theorem}
-    Define an authentication scheme to be such that its tagging routine defines a function family: $\Tag(k, m)=h_k(m)$. Let this function family be pairwise-independent. Then the authentication scheme is $\oneover{|\Phi|}$-statistical one-time secure. 
+    Define an authentication scheme to be such that its tagging routine is a hash function family: $\Tag(k, m) = h_k(m)$. Let this function family be pairwise-independent. Then the authentication scheme is $\oneover{|\Phi|}$-statistical one-time secure. 
 \end{theorem}
 
-\begin{proof}!
+\begin{proof}
     \begin{align*}
         \forall m \in \M, \phi \in \Phi &\implies \Pr[\Tag(K, m) = \phi] = \Pr[h_K(m) = \phi] = \oneover{|\Phi|} \\
         \forall m \neq m' \in \M, \phi, \phi' \in \Phi &\implies \Pr[\Tag(K, m) = \phi \wedge \Tag(K, m') = \phi'] = \oneover{|\Phi|^2} \\
@@ -128,4 +129,6 @@ where $\S = \integer_p^2$, and $\M = \Phi = \integer_p$. Therefore, a group aris
 
 \begin{proof}
     \underline{None given.}
+
+    % IDEA: For each "time", use one "subkey"
 \end{proof}

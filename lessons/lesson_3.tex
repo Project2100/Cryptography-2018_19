@@ -1,53 +1,71 @@
 \mychapter{3}{Lesson 3} %181003
 
+\newcommand{\ext}{\textup{\textsf{Ext}}}
+
 \section{Randomness Extraction}
 
-\textbf{Goal:} extract "real" randomness from "imperfect" randomness.
+In most of our discourse, the subject of uniformly random variables is much recurrent; this chapter/lesson delves deeper into the topic. For starters, we devise some attempts to extract uniform randomness from ``non-uniform'' randomness sources.
 
-\bigskip
-Suppose to have a biased coin $B s.t. Pr[B=0]=p\neq \frac{1}{2}$ and\\ $Pr[B=1]=1-p$.\\
-Can you make it uniform?
+Suppose to have a biased coin $B \sim Ber(p) : p \neq \half$. How to craft a fair coin out of it? In his time, Von Neumann devised a simple algorithm, which is now known as the \emph{Von Neumann extractor}:
 
-\subsection{Von Neumann Extractor}
 \begin{enumerate}
-    \item Sample $b_1\pickUAR B; b_2\pickUAR B$
-    \item If $b_1=b_2$ go to 1.
-    \item Else:
+    \item Let $B \sim \berdist(p)$ be a random variable
+    \item \label{enum:VNEsample} Sample $b_1 \pickUAR B$
+    \item Sample $b_2 \pickUAR B$
+    \item If $b_1 = b_2$ go to step \ref{enum:VNEsample}
+    \item \label{enum:VNEreturn} Else:
     \begin{itemize}
-        \item If $b_1=0;b_2=1$ output 1
-        \item If $b_1=1;b_2=0$ output 0 
+        \item If $b_1 = 0 \wedge b_2 = 1$ output 1
+        \item If $b_1 = 1 \wedge b_2 = 0$ output 0 
     \end{itemize}
 \end{enumerate}
-\textbf{Considerations: }
-\begin{itemize}
-    \item The probability of both cases in 3. is $p(p-1)$
-    \item The probability to reach 3. is $2p(p-1)$
-    \item $Pr[\text{Fail n-times}]=(1-2p(1-p))^n$ which is very small
-\end{itemize}
 
-\textbf{Goal: } Let $X$ be a Random Variable, I want to design an Extractor such that $Ext(X)$ is uniform.
-\underline{PROBLEM: } Impossible as stated. What if $X$ is constant? $\implies$ Add the requirement that $X$ has uncertainty (ENTROPY)
+Some considerations can be made: The probability of both single cases in step \ref{enum:VNEreturn} is $p(1 - p)$, therefore the probability to reach it is $2p(1 - p)$. Also, it is apparent that the number of possible failures in reaching step \ref{enum:VNEreturn} follow a geometric distribution in $p$, thus the probability of increased number of failures decrease exponentially.
 
-\begin{definition}
-    MIN-ENTROPY of $X$ (written as $H_{\infty}$) is:
+We now get back to our ultimate goal. Let $X$ be any random variable over a space $\Omega$, we wish to design an ``extraction'' algorithm \ext{} such that $U = \ext(X)$ distributes uniformly over $\Omega$. To help ourselves, we will deal with probability spaces of binary strings ($\binary^n$), and define a measure of ``how much'' a distribution is uniform over its space:
 
-    $$H_{\infty}(X)=-log_2 max_x Pr[X=x]$$
-    Where $max_x$ is the x that maximize the probability.
+\begin{definition} Let X be a random variable from a given probability distribution. Its \emph{min-entropy} is defined as follows:
+    \[
+        H_{\infty}(X) = -\log_2(\max(\Pr[X = x]))
+    \]
 \end{definition}
-\begin{example}
-    Say $X=\{0,1\}^n$
 
-    \begin{enumerate}
-        \item $X$ is constant($Pr[X=\bar{x}]=1, Pr[X=x\neq \bar{x}]=0$)\\
-        $\implies H_{\infty}(X)=0$
-        \item $X\equiv U_n \implies H_{\infty}(x)=n$ (since $X$ is uniform $Pr[X=x]=2^{-n}$)   
-    \end{enumerate}
-\end{example}
+Using this measure, we can already see an interesting case, which involves ``constant'' random variables:
+\begin{align*}
+    X \sim \mathcal{C}onst(\overline{x}) \implies& \Pr[X = \overline{x}] = 1 \\
+    \implies& \Pr[X \neq \overline{x}] = 0 \\
+    \implies& H_{\infty}(X) = -\log_2(\Pr[X = \overline{x}]) = -\log_2(1) = 0
+\end{align*}
 
-\textbf{Question: }We want $Ext:\{0,1\}^n \to \{0,1\}$ working $\forall X s.t. H_{\infty}(X)\geq k$\\
-\textbf{Claim: } Impossible even for $k=n-1$
+And in fact, a constant variable is useless in creating a uniform distribution: it always gives the same outcome, making everything deterministic. Therefore, such variables must be excluded in our search for a ``universal extractor''.
+On the other hand, looking at a uniform distribution:
+\begin{align*}
+    X \sim \unifdist(\Omega) \implies& \forall x \Pr[X = x] = \oneover{|\Omega|} \\
+    \implies& H_{\infty}(X) = -\log_2(\oneover{|\Omega|})
+\end{align*}
+
+Knowing that $\Omega$ is be our usual domain choice of binary strings of a given length $\binary^n$, the min-entropy becomes exactly $n$\footnote{This also sheds some light in how string length is a frequent topic in the cryptography realm, as it usually expresses a cryptosystem's strength: the greater its min-entropy, the better.}.
+Using this measure, we can actually seek how much min-entropy we require in the original distribution $X$ in order for the extractor to return a uniform distribution. Ideally, we would like a value as close to 0 as possible, because a min-entropy of zero leads to constant RVs, which have been excluded beforehand; alas, it turns out that:
+\begin{claim}
+    There is no such universal \ext{} algorithm that returns a uniform distribution from random variables $X$ with min-entropy $H_{\infty}(X) \leq n - 1$
+\end{claim}
+
 \begin{proof}
-    Let Ext be any candidate extractor, Let b be any binary value s.t. $|Ext^-1(b)|$ is maximal ($Ext^-1: \{0,1\} \to \{0,1\}^n$)\\
+    % Notes: In our domain, the extraction problem to a unifdist reduces to an extraction of a fair coin; from there, creating a unifdist consists in doing as many coin flips as the strings' length in the domain of choice (remember we're still in the domain of bianry strings, each coin flip is essentially one bit).
+
+    % Furthermore, extraction of a fair coin reduces to the extraction of a generic bernoulli variable: from there we can simply use the Von Neumann extractor to get a fair coin
+
+    % WHAT'S HAPPENING DOWN HERE?!?!?!
+
+    %Let \ext{} be a candidate extractor which outputs a fair coin from any given random variable $X$ in a fixed length binary string space. The resulting coin effectively splits $X$'s domain in two parts $X_0$ and $X_1$, in an attempt to balance the probability that $X$ is in either part. Now, pick the biggest one $X_b$
+
+    %ILLUMINATION: fix ext , run with any X, ext bipartitions the domain, define Y to be unif over an arbitrary part b. Ext(Y) will be forced to output the constant RV on b. contradiction
+
+    \todo{Help with the proof}
+
+    Let \ext{} be a candidate extractor, assume that $X$ is an arbitrary RV for which $\ext(X)$ is a fair coin. We are in a situation where 
+
+    Let \ext{} be a candidate extractor, Let b be any binary value s.t. $|Ext^-1(b)|$ is maximal ($Ext^-1: \{0,1\} \to \{0,1\}^n$)\\
     $\implies |Ext^-1(b)|\geq 2^{n-1}=\frac{2^2}{2}$
 
     \begin{figure}[ht]
@@ -62,12 +80,17 @@ Can you make it uniform?
             \node[below=0.3cm of a4] (a5) {};
             \node[below=0.3cm of a5] (a6) {};
 
+            \node[below=0.3cm of a3] (l) {};
+            \node[right=1.4cm of l] (l1) {};
+            \node[left=1.4cm of l] (l2) {};
+            \draw[-,black] (l2) -- (l1);
+
             \node[right=4cm of a2] (b1) {$x=0$};
             \node[right=4cm of a5] (b3) {$x=1$};
 
             \node[ellipse,line width = 1pt, draw=black,minimum size=3cm,fit={(a1) (a6)}] {};
 
-            \node[below=1cm of a6,font=\color{black}\Large] {$\{0,1\}^n$};
+            \node[below=1cm of a6,font=\color{black}\Large] {$\binary^n$};
 
             \draw[-,black] (a3) to[out=-10,in=190] (b1.190);
             \draw[-,black] (a2) -- (b1.180);
@@ -80,27 +103,57 @@ Can you make it uniform?
     \end{figure}
 
     Define $X$ to be uniform over $Ext^-1(b)$ so $H_{\infty}(x)=n-1$ but $Ext(X)=b$ CONSTANT.
-    \todo{Help with the proof}
+
+    \dots
+
 \end{proof}
 
-\begin{theorem}
-    \textbf{Way-Out-Seeded-Extractor} allow $X$ to take SMALL uniformly random SEED(catalyst)
+So this approach is doomed, unless we factor in a preemptive small amount of true randomness in the algorithm. This is what a \emph{seeded extractor} does:
+\[
+    \ext: \underbrace{\binary^d}_{seed(public)}\times \underbrace{\binary^n}_{input} \to \underbrace{\binary^l}_{output}
+\]
 
-    $$Ext: \underbrace{\{0,1\}^d}_{seed(public)}\times \underbrace{\{0,1\}^n}_{input} \to \underbrace{\{0,1\}^m}_{output}$$
-\end{theorem}
-\begin{definition}
-    We say that $Ext:\{0,1\}^d \times \{0,1\}^n \to \{0,1\}^l$ is a $(k,\varepsilon)$-extractor ("good") if $\forall x s.t. H_{\infty}(X)\geq k$ we have:
-    $$SD((S,Ext(S,x)),(S,U_l))\leq \varepsilon$$ 
-    where $S\equiv U_d$, $SD$ denotes the statistical distance and we are basically comparing two uniform values ($x$ and $U_l$) 
+Before giving a formal definition of such an extractor, we require another notion of measure related to probability distributions:
+
+\begin{definition} \emph{Statistical Distance}:
+    Let $X$ and $Y$ be two random variables on the same probability space. Their \emph{statistical distance} is defined as follows:
+    \[
+        SD(X, Y) = \half\sum_{x \in \Omega}|\Pr[X = x] - \Pr[Y = x]|
+    \]
+    
 \end{definition}
 
-\textbf{Idea: } Even if the seed is public the $SD$ must not be influenced. Therefore the two compared variables should be uniform so that $\varepsilon$ is small. In this way the output of the extractor can't be distinguished from a uniform string.
+In an intuitive stance, this distance amounts to half the area delimited by the two distributions.
+
+\todo{Image of the statistical distance}
 
 \begin{definition}
-    \textbf{Statistical Distance:} a distance between two random variables.\\
-    Say that $X,X'$ are Random Variables over $\Omega$.\\
-    $SD(x,x')=\frac{1}{2}\sum_{x\in \Omega }|Pr[X=x]-Pr[X'=x]|$
-    \todo{Image of the statistical distance}
+    Let $\ext \in \binary^d \times \binary^n \to \binary^l$ be a seeded extractor, and $S \sim \unifdist(\binary^d)$. Then it is a ($k$, $\varepsilon$)-extractor iff:
+    \[
+        \forall X : H_{\infty}(X) \geq k \implies SD((S, \ext(S, X)), (S, \unifdist(\binary^l))) \leq \varepsilon
+    \]
 \end{definition}
 
-\todo{Leftover hash lemma}
+Do note that $S$ takes part in both sides of the statistical distance: this is to be interpreted that the seed is known at the time of extraction.
+
+\subsection{Universal hash functions}
+
+Getting back to our hash function families, we see that they too use an argument as a random seed, and attempt to be as uniform as possible; thus they behave in most ways as seeded extractors. Let's further develop the idea:
+
+\begin{definition}
+    Let $S$ be a uniform seed. A hash function family $H$ is deemed \emph{universal} iff:
+    \[
+        \forall a \neq b \in \Omega \implies \Pr[h_S(a) = h_S(b)] = \oneover{\binary^l}
+    \]
+\end{definition}
+
+\begin{definition}
+    Let $X$ and $Y$ be two \iid{} random variables; a \emph{collision} is the event of both evaluating to the same outcome. The probability of such an event is:
+    \[
+        Col(X) = Col(Y) = \Pr[X = Y] = \sum_{x \in \Omega}\Pr[X = x \wedge Y = x] = \sum_{x \in \Omega}\Pr[X = x]^2
+    \]
+\end{definition}
+
+\subsubsection{Leftover hash lemma}
+
+\todo{---}
