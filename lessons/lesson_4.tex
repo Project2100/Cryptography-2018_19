@@ -8,122 +8,133 @@ What is exactly a negligible function? Below here there is a possible interpreta
 
     So consider a scheme $\Pi$ where the only attack against it is brute-force attack. We consider $\Pi$ to be secure if it cannot be broken by a brute-force attack in polynomial time.
 
-    The idea of \textbf{negligible probability} encompasses this exact notion. In $\Pi$, let's say that we have a polynomial-bounded adversary. Brute force attack is not an option.
+    The idea of \emph{negligible probability} encompasses this exact notion. In $\Pi$, let's say that we have a polynomial-bounded adversary. Brute force attack is not an option.
 
     But instead of brute force, the adversary can try (a polynomial number of) random values and hope to guess the right one. In this case, we define security using negligible functions: The probability of success has to be smaller than the reciprocal of any polynomial function.
 
-    And this makes a lot of sense: if the success probability for an individual guess is a reciprocal of a polynomial function, then the adversary can try a polynomial amount of guesses and succeed with high probability. If the overall success rate is $\frac{1}{poly(\lambda)}$ then we consider this attempt a feasible attack to the scheme, which makes the latter insecure.
+    And this makes a lot of sense: if the success probability for an individual guess is a reciprocal of a polynomial function, then the adversary can try a polynomial amount of guesses and succeed with high probability. If the overall success rate is $\oneover{\poly(\lambda)}$ then we consider this attempt a feasible attack to the scheme, which makes the latter insecure.
 
-    So, we require that the success probability must be less than the reciprocal of every polynomial function. This way, even if the adversary tries $poly(\lambda)$ guesses, it will not be significant since it will only have tried: $\frac{poly(\lambda)}{superpoly(\lambda)}$\footnote{If we design a function hard for $superpoly(\lambda)$ possible attempts and the attacker completed $poly(\lambda)$ attempts, he has just $ \P [\frac{poly(\lambda)}{superpoly(\lambda)}] $ of finding the key to break the scheme}
+    So, we require that the success probability must be less than the reciprocal of every polynomial function. This way, even if the adversary tries $\poly(\lambda)$ guesses, it will not be significant since it will only have tried: $\frac{\poly(\lambda)}{superpoly(\lambda)}$\footnote{If we design a function hard for $superpoly(\lambda)$ possible attempts and the attacker completed $\poly(\lambda)$ attempts, he has just $\Pr[\frac{poly(\lambda)}{superpoly(\lambda)}] $ of finding the key to break the scheme}
 
     As $\lambda$ grows, the denominator grows far faster than the numerator and the success probability will not be significant\footnote{\href{https://crypto.stackexchange.com/questions/5832/what-exactly-is-a-negligible-and-non-negligible-function}{\textsf{``What exactly is a negligible (and non-negligible) function?'' --- Cryptography Stack Exchange}}}.''
 
 \end{quotation}
 
-\subsubsection{Definition}
-Let $\nu : \mathbb{N} \to [0,1]$ be a function. Then it is deemed \textbf{negligible} iff:
-\begin{equation*}
-    \forall p(\lambda) \in poly(\lambda) \implies \nu(\lambda) \in o(\frac{1}{p(\lambda)})
-\end{equation*}
+
+\begin{definition}
+    Let $f : \nonneg \to \nonneg$ be a function. Then it is deemed \emph{polynomial}, and denoted as $f \in \poly(\lambda)$, iff:
+    \[
+        \exists c \in \nonneg : f(\lambda) \in O(\lambda^c)
+    \]
+\end{definition}
+
+% AP190904: Big O or small O?!?
+% ^^^^^^^^: Big O, as specified here: https://en.wikipedia.org/wiki/Randomness_extractor#Randomness_extractors_in_cryptography
+\begin{definition}
+    Let $\nu : \nonneg \to \real$ be a function. Then it is deemed \emph{negligible}, and denoted as $\nu \in \negl(\lambda)$, iff:
+    \[
+        \forall f \in \poly(\lambda)  \implies \nu(\lambda) \in O\left(\oneover{f(\lambda)}\right)
+    \]
+\end{definition}
+
+Note that these actually represent upper bounds for functions: a negligible function adheres to the polyomial function definition, whereas the opposite isn't true. To sum it up: $\negl \subset \poly$.
 
 \begin{exercise}
-    Let $p(\lambda), p'(\lambda) \in poly(\lambda)$ and $\nu(\lambda), \nu'(\lambda) \in \negl\lambda$. Then prove the following:
+    Let $p(\lambda), p'(\lambda) \in \poly(\lambda)$ and $\nu(\lambda), \nu'(\lambda) \in \negl(\lambda)$. Then prove the following:
 
     \begin{enumerate}
         \item $p(\lambda) \cdot p'( \lambda) \in  \poly(\lambda)$
-        \item $\nu(\lambda) + \nu'(\lambda) \in \negl\lambda$
+        \item \label{ex:negl} $\nu(\lambda) + \nu'(\lambda) \in \negl(\lambda)$
     \end{enumerate} 
 \end{exercise}
 
-\begin{solution}[1.1]
+\begin{solution}[\ref{ex:negl}]
 
     \todo{Questa soluzione usa disuguaglianze deboli; per essere negligibile una funzione dev'essere strettamente minore di un polinomiale inverso. Da approfondire}
-
-    We need to show that for any $c \in \mathbb{N} $, then there is $n_{0}$ such that $\forall n > n_{0} \implies h(n) \leq n^{-c}$.
     
-    So, consider an arbitrary $c \in \mathbb{N}$. Then, since $c+1 \in \mathbb{N} $, and both $f$ and $g$ are negligible, there exists $n_{f}$ and $n_{g}$ such that:
+    We need to show that for any $c \in \nonneg $, then there is $n_0$ such that $\forall n > n_{0} \implies \nu(n) + \nu'(n) < \oneover{n^c}$.
+    
+    Consider an arbitrary $c \in \nonneg$. Then, since $c + 1 \in \nonneg$, and both $\nu$ and $\nu'$ are negligible, there exist $n_\nu$ and $n_{\nu'}$ such that:
+    
     \begin{align*}
-        \forall n \geq n_{f} &\implies f(n) \leq n^{-(c+1)} \\
-        \forall n \geq n_{g} &\implies g(n) \leq n^{-(c+1)}
+        \forall n \geq n_{\nu} \implies& \nu(n) \leq n^{-(c+1)} \\
+        \forall n \geq n_{\nu'} \implies& \nu'(n) \leq n^{-(c+1)}
     \end{align*}
 
-    Fix $n_{0} = \max(n_{f}, n_{g})$. Then, since $n \geq n_{0} \geq 2$, $\forall n \geq n_{0}$ we have:
+    Fix $n_{0} = \max(n_{\nu}, n_{\nu'})$. Then, since $n_0 \geq 2$, $\forall n \geq n_0$ we have:
     \begin{align*}
-        h(n) &= f(n)+g(n) \\
-        &\leq n^{-(c+1)} + n^{-(c+1)} \\
-        &= 2n^{-(c+1)} \\
-        &\leq n^{-c}
+        & \nu(n) + \nu'(n) \\
+        \leq& n^{-(c+1)} + n^{-(c+1)} \\
+        =& 2n^{-(c+1)} \\
+        \leq& n^{-c}
     \end{align*}
-    Thus we conclude $h(n)$ is negligible.
+    Therefore, we conclude that $\nu(n) + \nu'(n) \in \negl(\lambda)$.
 \end{solution}
 
 
 \section{One-Way Functions}
 
-A One-Way Function (\textsc{owf}) is a function that is ``easy to compute'', but ``hard to invert''.
+From here, we start defining an object that is fundamental to everyday cryptography: the \emph{one-way} function, or \owf{} in short. Colloquially, a one-way function is a function that is ``easy to compute'', while being ``hard to invert'' a the same time, the concept of hardness being borrowed by complexity theory.
 
 \begin{definition}    
-    Let $f : \{0,1\}^{n(\lambda)} \to {0,1}^{n(\lambda)}$ be a function. Then it is a \textsc{owf} iff:
-
-    \begin{equation}
-        \forall\; \textsc{ppt}\; \adversary\;
-        \exists\nu(\lambda) \in \negl{x} :
-        \Pr \left[ \textsc{Game}_{f,A}^\textsc{owf} (\lambda) = 1 \right]
-        \leq \nu(\lambda)
-    \end{equation}
-
+    Let $f : \binary^{n(\lambda)} \to \binary^{n(\lambda)}$ be a function. Then it is a \owf{} iff:
+    \[
+        \forall \adversary \in \ppt \exists \nu(\lambda) \in \negl(\lambda) : \Pr\left[\cryptog{owf}[f](\lambda) = 1 \right] \leq \nu(\lambda)
+    \]
 \end{definition}
 
 
-\begin{cryptogame}{owfdef}{One-Way Function hardness}{owf}
+\begin{cryptogame}
+    {owfdef}
+    {One-Way Function hardness}
+    {owf}
+
     \receive{\shortstack[l]{
-        $x \pickUAR \{0,1\}^{n}$ \\
-        $y = f(x)$}}
-    {$y$}
-    {}
+        $x \pickUAR \binary^n$ \\
+        $y = f(x)$
+    }}{$y$}{}
 
     \cseqdelay
 
-    \send{}
-    {$x'$}
-    {\textsc{Output 1 iff} $f(x')=y$}
+    \send{}{$x'$}{\textsc{Output 1 iff} $f(x') = y$}
 
 \end{cryptogame}
 
-Do note that the game does not look for the equality $x' = x$, but rather for the equality of their images computed by $f$.
+The structure of the ``game'' appearing in the definition is depicted in figure \ref{cryptogame:owfdef}. Do note that the game does not check for $x = x'$, but rather for $f(x) = f(x')$; in a sense, the adversary is not trying to guess what the original $x$ was: its goal is to find any value such that its image is $y$ according to $f$, and such value may very well not be unique.
 
-\pagebreak
-
-\begin{exercise}
-    \
+\begin{exercise} \label{ex:owf}
+    Prove the following claims:
     \begin{enumerate}
-        \item Show that there exists an inefficient adversary that wins $\textsc{Game}^\textsc{owf}$ with probability 1
-        \item Show that there exists an efficient adversary that wins $\textsc{Game}^\textsc{owf}$ with probability $2^{-n}$
+        \item There exists an inefficient adversary that wins $\cryptog{owf}[f]$ with probability $1$
+        \item There exists an efficient adversary that wins $\cryptog{owf}[f]$ with probability $2^{-n}$
     \end{enumerate}
 \end{exercise}
 
+\begin{solution}[\ref{ex:owf}]\
+    \begin{enumerate}
+        \item Adversary uses a brute-force attack.
+        \item Adversary makes a random guess.
+    \end{enumerate}
+\end{solution}
 
-\subsubsection{One-Way puzzles}
-A one-way function can be thought as a function which is very efficient in generating puzzles that are very hard to solve. Furthermore, the person generating the puzzle can efficiently verify the validity of a solution when one is given.
+A one-way function can be thought as a function which is very efficient in generating ``puzzles'' that are very hard to solve from scratch. Furthermore, given a candidate solution, one can efficiently verify its validity. In a twist of perspective, for a given couple $(\mathcal{P}_\textsc{gen},\mathcal{P}_\textsc{ver})$ of a puzzle generator and a puzzle verifier, another ``game'' can be drawn as in figure \ref{cryptogame:owpuzzle}.
 
-For a given couple $(\mathcal{P}_\textsc{gen},\mathcal{P}_\textsc{ver})$ of a puzzle generator and a puzzle verifier, we have:
+It can also be said that the one-way puzzle problem is in \textsc{np}, because witness checking is easy, but not in \textsc{p} because finding a solution to begin with is hard.
 
-\begin{cryptogame}{owpuzzle}{The puzzle game}{puzzle}
-    \receive{$(x, y) \pickUAR \mathcal{P}_\textsc{gen}$}
-    {$y$}
-    {}
+\begin{cryptogame}
+    {owpuzzle}
+    {The puzzle game}
+    {puzzle}
+
+    \receive{$(x, y) \pickUAR \mathcal{P}_\textsc{gen}$}{$y$}{}
 
     \cseqdelay
 
-    \send{}
-    {$x'$}
-    {\textsc{Output} $\mathcal{P}_\textsc{ver}(x', y)$}
+    \send{}{$x'$}{\textsc{Output} $\mathcal{P}_\textsc{ver}(x', y)$}
 
 \end{cryptogame}
 
-So, we can say that one-way puzzle is a problem in \textsc{np}, because the verifier enables efficient solution verification, but not in \textsc{p} because finding a solution from scratch is impractical by definition.
-
-\subsection{Impagliazzo's Worlds}
+\subsubsection{Impagliazzo's Worlds}
 
 Suppose to have Gauss, a genius child, and his professor. The professor gives to Gauss some mathematical problems, and Gauss wants to solve them all.
 
@@ -148,62 +159,71 @@ Imagine now that, if using one-way functions, the problem is $f(x)$, and its sol
 
 Distribution ensembles $X = \{X_{\lambda \in \mathbb{N}}\}$ and $Y = \{Y_{\lambda \in \mathbb{N}}\}$ are distribution sequences.
 
-\begin{definition}
-    $X$ and $Y$ are \textbf{computationally indistinguishable} $(X \approx_{c} Y)$ if $\forall\; \textsc{ppt}\; D, \exists \nu(\lambda) \in \negl{\lambda}$ such that:
-    \begin{equation*}
-        \left| \Pr[D(X_\lambda) = 1] - \Pr[D(Y_\lambda) = 1] \right| \leq \nu(\lambda) 
-    \end{equation*}
+\begin{definition}[\emph{Comp. indist.}]
+    Let $X$ and $Y$ be two distribution sequences; they are deemed \emph{computationally indistinguishable}, written as ``$X \approx_{c} Y$'' iff:
+    \[
+        \forall \adversary \in \ppt \exists \nu(\lambda) \in \negl(\lambda) : \left|\Pr[\adversary(X_\lambda) = 1] - \Pr[\adversary(Y_\lambda) = 1]\right| \leq \nu(\lambda) 
+    \]
 \end{definition}
+
+In words: any \emph{efficient} adversary attempting to distinguish outputs between the two ensembles will succeed with a probability that is negligibly different than randomly guessing. Note the emphasis on ``efficient'', which makes this relationship between ensembles weaker than what would be a purely statistical one.
+
+With the purpose of making these new concepts clearer, it is presented this mental game.
 
 \todo{AP181129-2344: There may be room for improvement, but I like how it's worded: it puts some unusual perspective into the cryptographic game, and it could be a good thing since it closely precedes our first reduction, and the whole hybrid argument mish-mash.}
 
-Suppose we have this mental game: a Distinguisher $D$ receives the value $z$. This value has been chosen by me, the Challenger, among $X_{\lambda}$ and $Y_{\lambda}$, and the Distinguisher has to \textit{distinguish} which was the source of $z$. What does this formula mean?
+A \emph{challenger} \challenger{} chooses a value $z$ among $X_\lambda$ and $Y_\lambda$, and gives it to a \emph{distinguisher} \distinguisher{}. In turn, \distinguisher{} has to correctly guess which was the source of $z$: either $X_\lambda$ or $Y_\lambda$. 
 
-This formula means that, fixed 1 as one of the sources, the \textit{probability} that D says ``1!'' when I pick $z$ from $X_{\lambda}$ is \textbf{not so far} from the \textit{probability} that D says ``1!'' when I pick $z$ from $Y_{\lambda}$.
+If we let $X_\lambda$ and $Y_\lambda$ to be \emph{computationally indistinguishable}, then, fixed 1 as one of the sources, the probability that \distinguisher{} says ``1!'' when \challenger{} picks $z$ from $X_\lambda$ is \emph{not so far} from the probability that \distinguisher{} says ``1!'' when \challenger{} picks $z$ from $Y_\lambda$.
 
-So, this means that, when this property is verified by two random variables, there isn't too much \textit{difference} between the two variables in terms of exposed information (reachable by D), otherwise the distance between the two probabilities should be much more than a \textit{negligible} quantity.
+So, this means that, when this property is verified by two random variables, there isn't too much \textit{difference} between the two variables in terms of information avaliable to \distinguisher{}, otherwise the distance between the two probabilities should be much more than a negligible quantity.
 
 What's the deep meaning of this formula? This is something to do.
 
-\begin{lemma}\label{lem:tria}
-    $\forall\; \textsc{ppt}\; f,\; X \compindist Y \implies f(x) \compindist f(y)$
+\begin{lemma} \label{lem:compmall}
+    Let $f$ be a function that has polynomial time-complexity. Then, for any two ensembles $X$ and $Y$:
+    \[
+        X \compindist Y \implies f(x) \compindist f(y)
+    \]
 \end{lemma}
 
 \begin{proof}
-    We want to show that $f(x) \compindist f(y)$. So, let's suppose this property is not true.
-
-    Assume $\exists\; \textsc{ppt}\; f, A$ and some $p'(\lambda) \in \poly(\lambda) $ such that
-    \begin{equation}
-        \left| \Pr[D'(f(x)) = 1] - \Pr[D'(f(y)) = 1] \right| \geq \frac{1}{p'(\lambda)}
-    \end{equation}.
-
-    \begin{cryptogame}{fdistin}{A distinguisher for $f$}{$f$-\textsc{dist}}
+    This proof is by contradiction and uses a reduction. Let $X \compindist Y$ be two indistinguishable ensembles, and $f \in \ppt$ an arbitrary poly-time complex function. Assume there exists an adversary \adversary{} to the challenge of distinguishing the ensembles' images $f(X)$ from $f(Y)$ that does efficiently succeed, as shown in figure \ref{cryptogame:fdistin}. 
+    
+    \begin{cryptogame}
+        {fdistin}
+        {A distinguisher for $f$}
+        {$f$-\textsc{dist}}
 
         % Adversary asks for the challenge. Challenger chooses evenly between X and Y, and samples a value; then it sends that value's image by f to the adversary
         \receive{\shortstack[l]{
             $z_0 \pickUAR X$ \\
             $z_1 \pickUAR Y$ \\
             $b \pickUAR \{0, 1\}$
-        }}
-        {$f(z_b)$}
-        {}
+        }}{$f(z_b)$}{}
 
         \cseqdelay
 
         % Adversary attempts to guess from which distribution the value's image came from
-        \send{}
-        {$b'$}
-        {\textsc{Output 1 iff} $b' = b$}
+        \send{}{$b'$}{\textsc{Output 1 iff} $b' = b$}
 
     \end{cryptogame}
     
-    In the game depicted by figure \ref{cryptogame:fdistin}, the adversary can make use of $f$, because it is \textsc{ppt}. Thus, if such a distinguisher exists, then it can be used to distinguish $X$ from $Y$, as shown in figure \ref{cryptoredux:distin}. So, if $A$ could efficiently distinguish between $f(x)$ and $f(y)$, then $D$ can efficiently distinguish between $x$ and $y$. This contradicts the hypothesis $X \compindist Y$, which in turn means $f(X) \compindist f(Y)$.
+    Fix this adversary to be the distinguisher $\distinguisher_f$. From here, another adversary $\adversary \in \ppt$ can use $\distinguisher_f$ to effectively distinguish the original ensembles, as depicted in figure \ref{cryptoredux:fdistin}:
+    \begin{enumerate}
+        \item \adversary asks for the original sample from the challenger
+        \item \adversary applies $f$ on the sample
+        \item \adversary relays the resulting image to $\distinguisher_f$
+        \item $\distinguisher_f$ replies with his outcome
+        \item \adversary relays the outcome to the challenger
+    \end{enumerate}
+    All of this is done in polynomial time, since all functions and machines involved in the process opeate in \ppt. This contradicts the computational indistinguishablilty of $X$ and $Y$.
 
     \begin{cryptoredux}
-        {distin}
+        {fdistin}
         {Distinguisher reduction}
         {dist}
-        {}
+        {f-\textsc{dist}}
         
         % The distinguisher asks for the challenge
         \receive{\shortstack[l]{
@@ -224,33 +244,35 @@ What's the deep meaning of this formula? This is something to do.
 
 \end{proof}
 
-\pagebreak
 
-\section{Pseudorandom Generators}
+\section{Pseudo-random generators}
 
-A deterministic function $G:\{0,1\}^{\lambda} \to \{0,1\}^{\lambda + l(\lambda)} $ is called a PseudoRandom Generator, or \prg{} iff:
+A deterministic function $G \in \binary^\lambda \to \binary^{\lambda + l(\lambda)}$ is called a \emph{pseudo-random generator}, or \prg{} in short, iff:
+
 \begin{itemize}
-    \item $G$ runs in polinomial time
+    \item $G \in \ppt(\lambda)$
     \item $|G(s)| = \lambda + l(\lambda)$ % Well duh, we can see it by def...
-    \item $G(U_{\lambda}) \approx_{c} U_{\lambda + l(\lambda)}$
+    \item Given $U_n$ to be a distribution ensemble of $n$ uniform random variables:
+    \[
+        G(U_{\lambda}) \compindist U_{\lambda + l(\lambda)}
+    \]
 \end{itemize}
 
-\begin{cryptogame}{prg}{The pseudorandom game}{prg}
+\begin{cryptogame}
+    {prg}
+    {The pseudorandom game}
+    {prg}
     
     \receive{\shortstack[l]{
-        $x_0 \pickUAR G(\mathcal{U}_\lambda)$ \\
-        $x_1 \pickUAR \mathcal{U}_{\lambda+l(\lambda)}$ \\
-        $b \pickUAR \{0, 1\}$
-    }}
-    {$x_b$}
-    {}
+        $x_0 \pickUAR G(U_\lambda)$ \\
+        $x_1 \pickUAR U_{\lambda+l(\lambda)}$ \\
+        $b \pickUAR \binary$
+    }}{$x_b$}{}
 
     \cseqdelay
 
-    \send{}
-    {$b'$}
-    {\textsc{Output 1 iff} $b = b'$}
+    \send{}{$b'$}{\textsc{Output 1 iff} $b = b'$}
     
 \end{cryptogame}
 
-So, if we take $s \pickUAR U_{\lambda}$, the output of $G$ will be indistinguishable from a random draw from $U_{\lambda}$.
+So, if we take $s \pickUAR U_\lambda$, the output of $G$ will be indistinguishable from a random pick from $U_{\lambda + l(\lambda)}$.
