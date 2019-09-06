@@ -40,10 +40,13 @@ Some more formal definitions of unforgeability follow:
 
 %AP190903: The math stinks here...
 \begin{definition}
-    Let $\mathcal{S}$ be a seeding space; define a family of \emph{hash functions} to be the following object:
+    Let $\mathcal{S}$ be a seeding space; define a family of \emph{hash functions} to be the following object\footnotemark:
     \[
         H \in \mathcal{S} \to (\M \to \Phi) : s \mapsto h_s
     \]
+
+    \footnotetext{This kind of notation consisting in putting an argument as a subscript to a generic,  typically of higher-order function, is also called ``currying''; it will be used extensively throughout the lessons.}
+
     Let $S$ be a random variable in the seed space; the hash functions are deemed \emph{pairwise-independent}\footnotemark{} iff, for any two distinct messages $m$ and $m'$, the pair $(h_S(m), h_S(m'))$ distributes evenly in $\Phi^2$. In other words:
     \[
         \forall m, m' \in \M : m \neq m', \forall \phi, \phi' \in \Phi \implies \Pr[h_S(m) = \phi \wedge h_S(m') = \phi'] = \oneover{|\Phi|^2}

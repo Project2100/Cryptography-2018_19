@@ -2,22 +2,23 @@
 
 \section{Negligible function}
 
-What is exactly a negligible function? Below here there is a possible interpretation of this notion:
+What is exactly a negligible function? Below here there is a possible interpretation of this notion, taken from an answer to a question in the Cryptography Stack Exchange website:
 \begin{quotation}
-    ``In real life, we can just consider adversaries with limited computational power; even if every non-perfectly secure authentication scheme can resist to unbounded computational power, the true unbounded computational power doesn't exist at all. So, it's reasonable to consider just bounded adversaries.
+    ``[...] in modern cryptographic schemes, we generally do not try to achieve perfect secrecy [...]. Instead, we define security against a specific set of adversaries whose computational power is bounded. Generally, we assume an adversary that is bounded to run in time polynomial to $n$, where $n$ is the security parameter given to the key generation algorithm [...].
 
     So consider a scheme $\Pi$ where the only attack against it is brute-force attack. We consider $\Pi$ to be secure if it cannot be broken by a brute-force attack in polynomial time.
 
-    The idea of \emph{negligible probability} encompasses this exact notion. In $\Pi$, let's say that we have a polynomial-bounded adversary. Brute force attack is not an option.
+    The idea of \emph{negligible probability} encompasses this exact notion. In $\Pi$, let's say that we have a polynomial-bounded adversary. Brute force attack is not an option. But instead of brute force, the adversary can try (a polynomial number of) random values and hope to guess the right one. In this case, we define security using negligible functions: The probability of success has to be smaller than the reciprocal of any polynomial function.
 
-    But instead of brute force, the adversary can try (a polynomial number of) random values and hope to guess the right one. In this case, we define security using negligible functions: The probability of success has to be smaller than the reciprocal of any polynomial function.
+    And this makes a lot of sense: if the success probability for an individual guess is a reciprocal of a polynomial function, then the adversary can try a polynomial amount of guesses and succeed with high probability. If the overall success rate is $\oneover{\poly(n)}$ then we consider this attempt a feasible attack to the scheme, which makes the latter insecure.
 
-    And this makes a lot of sense: if the success probability for an individual guess is a reciprocal of a polynomial function, then the adversary can try a polynomial amount of guesses and succeed with high probability. If the overall success rate is $\oneover{\poly(\lambda)}$ then we consider this attempt a feasible attack to the scheme, which makes the latter insecure.
-
-    So, we require that the success probability must be less than the reciprocal of every polynomial function. This way, even if the adversary tries $\poly(\lambda)$ guesses, it will not be significant since it will only have tried: $\frac{\poly(\lambda)}{superpoly(\lambda)}$\footnote{If we design a function hard for $superpoly(\lambda)$ possible attempts and the attacker completed $\poly(\lambda)$ attempts, he has just $\Pr[\frac{poly(\lambda)}{superpoly(\lambda)}] $ of finding the key to break the scheme}
-
-    As $\lambda$ grows, the denominator grows far faster than the numerator and the success probability will not be significant\footnote{\href{https://crypto.stackexchange.com/questions/5832/what-exactly-is-a-negligible-and-non-negligible-function}{\textsf{``What exactly is a negligible (and non-negligible) function?'' --- Cryptography Stack Exchange}}}.''
-
+    So, we require that the success probability must be less than the reciprocal of every polynomial function. This way, even if the adversary tries $\poly(n)$ guesses, it will not be significant since it will only have tried:
+    \[
+        \frac{\poly(n)}{superpoly(n)}
+    \]
+    As $n$ grows, the denominator grows far faster than the numerator and the success probability will not be significant.''\footnote{\ding{226} \href
+        {https://crypto.stackexchange.com/questions/5832/what-exactly-is-a-negligible-and-non-negligible-function}
+        {\textsf{``What exactly is a negligible (and non-negligible) function?'' --- Cryptography Stack Exchange}}}
 \end{quotation}
 
 
