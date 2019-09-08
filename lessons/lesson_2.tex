@@ -32,7 +32,7 @@ Some more formal definitions of unforgeability follow:
     \begin{gather*}
         \forall m_1, m_2 \in \M : m_1 \neq m_2, \forall \phi_1, \phi_2 \in \Phi \\
         \Downarrow \\
-        \Pr[\Tag(K, m_2) = \phi_2 \knowing \Tag(K, m_1) = \phi_1] \leq \varepsilon
+        \Pr[\Tag(K, m_2) = \phi_2 \knowing \Tag(K, m_1) \evaluatesto \phi_1] \leq \varepsilon
     \end{gather*}
 \end{definition}
 
@@ -120,7 +120,7 @@ where $\mathcal{S} = \integer_p^2$, and $\M = \Phi = \integer_p$. Note that with
     \end{align*}
     Therefore:
     \begin{align*}
-        & \Pr[\Tag(K, m) = \phi \knowing \Tag(K, m') = \phi'] \\
+        & \Pr[\Tag(K, m) = \phi \knowing \Tag(K, m') \evaluatesto \phi'] \\
         =& \frac{\Pr[\Tag(K, m) = \phi \wedge \Tag(K, m') = \phi']}{\Pr[\Tag(K, m) = \phi]} \\
         =& \frac{|\Phi|}{|\Phi|^2} = \oneover{|\Phi|}
     \end{align*}

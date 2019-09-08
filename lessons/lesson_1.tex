@@ -25,25 +25,25 @@ The typical objects defined and used troughout cryptography discourse are:
 \begin{definition}
     (\textit{Shannon's ``Perfect secrecy''}): Let $M$ be any distribution over the message space $\M$, and $K$ a uniform distribution over $\K$. Then, the cryptosystem $\Xi: (\Enc, \Dec)$ is deemed \emph{perfectly secret} iff the ciphertext obtained by applying the encryption routine to a message sampled by $M$ using tke key in $K$ is effectively useless in retrieving any info about the message itself, apart from the key-supplied decryption routine. Formally:
     \[
-        \forall M \sim \mathcal{R}and(\M), C \sim \mathcal{R}and(\C) \implies \Pr[M \evaluatesto m] = \Pr[M \evaluatesto m \knowing C \evaluatesto c]
+        \forall M \sim \mathcal{R}and(\M),\, \forall C \sim \mathcal{R}and(\C) \implies \Pr[M = m] = \Pr[M = m \knowing C \evaluatesto c]
     \]
 \end{definition}
 Note how this definition doesn't involve the encryption key. % Is it important? Why?
 
 The perfect secrecy definition can be rephrased in different ways, bringing more details to light:
 \begin{enumerate}
-    \item $\Pr[M \evaluatesto m] = \Pr[M \evaluatesto m \knowing C \evaluatesto c]$
+    \item $\Pr[M = m] = \Pr[M = m \knowing C \evaluatesto c]$
     \item $M \indep C$
     %TODO - Better formalize: the variables m, m' and k are 'chosen' by their own distibutions, c is just a result instead
     % Maybe decompose it into smaller bits: use event sets instead
-    \item $\forall m_1, m_2 \in \M, c \in \C \implies \Pr[\Enc(K, m_1) \evaluatesto c] = \Pr[\Enc(K, m_2) \evaluatesto c]$
+    \item $\forall m_1, m_2 \in \M, c \in \C \implies \Pr[\Enc(K, m_1) = c] = \Pr[\Enc(K, m_2) = c]$
 \end{enumerate}
 
 A remark has to be done here:
 \begin{align*}
-    & \Pr[\Enc(K, m) \evaluatesto c] \\
-    =& \Pr[\Enc(K, M) \evaluatesto c \knowing M \evaluatesto m] \\
-    \neq& \Pr[\Enc(K, M) \evaluatesto c]
+    & \Pr[\Enc(K, m) = c] \\
+    =& \Pr[\Enc(K, M) = c \knowing M \evaluatesto m] \\
+    \neq& \Pr[\Enc(K, M) = c]
 \end{align*}
 
 which is exactly the difference between picking a specific message $m$, and choosing it at random, just as in $M$.
@@ -58,41 +58,41 @@ which is exactly the difference between picking a specific message $m$, and choo
     \begin{itemize}
         \item $(1) \implies (2)$: Start from one side of the independency ddefinition, and work through the other:
         \begin{align*}
-            & \Pr[C \evaluatesto c \wedge M \evaluatesto m] \\
-            =& \Pr[C \evaluatesto c] \Pr[M \evaluatesto m \knowing C \evaluatesto c] & \text{(Conditioned prob.)} \\
-            =& \Pr[C \evaluatesto c] \Pr[M \evaluatesto m] & \text{(Using 1.)} \\
+            & \Pr[C = c \wedge M = m]                           & \\
+            =& \Pr[C = c] \Pr[M = m \knowing C \evaluatesto c]  & \text{(Conditioned prob.)} \\
+            =& \Pr[C = c] \Pr[M = m]                            & \text{(Using 1.)} \\
         \end{align*}
         This proves that $M$ and $C$ are independent distributions.
         
         \item $(2) \implies (3)$: For the proof's purposes, let $M$ be an arbitrary distribution over $\M$; recall that, by definition: $C := \Enc(K, M)$:
         \begin{align*}
-            & \Pr[\Enc(K, m_1) \evaluatesto c] & \\
-            =& \Pr[\Enc(K, M) \evaluatesto c \knowing M \evaluatesto m_1] & \text{(Introducing $M$)} \\
-            =& \Pr[C \evaluatesto c \knowing M \evaluatesto m_1] & \text{($C$ defintion)} \\
-            =& \Pr[C \evaluatesto c] & \text{(Using 2.)} \\
-            =& \dots & \mathllap{\text{(Same steps reversed, where $m_1 \mapsto m_2$)}} \\
-            =& \Pr[\Enc(K, m_2) \evaluatesto c] & 
+            & \Pr[\Enc(K, m_1) = c]                             & \\
+            =& \Pr[\Enc(K, M) = c \knowing M \evaluatesto m_1]  & \text{(Introducing $M$)} \\
+            =& \Pr[C = c \knowing M \evaluatesto m_1]           & \text{($C$ defintion)} \\
+            =& \Pr[C = c]                                       & \text{(Using 2.)} \\
+            =& \dots                                            & \mathllap{\text{(Same steps reversed, where $m_1 \mapsto m_2$)}} \\
+            =& \Pr[\Enc(K, m_2) = c]                            & \\
         \end{align*}
 
 
         \item $(3) \implies (1)$:
         \begin{align*}
-            & \Pr[C \evaluatesto c] & \\
-            =& \sum_{m}\Pr[C \evaluatesto c \wedge M \evaluatesto m] & \text{(Total prob.)} \\
-            =& \sum_{m}\Pr[\Enc(K, M) \evaluatesto c \wedge M \evaluatesto m] & \text{($C$ definition)} \\
-            =& \sum_{m}\Pr[\Enc(K, M) \evaluatesto c \knowing M \evaluatesto m]\Pr[M \evaluatesto m] & \text{(Cond. prob. def.)} \\
-            =& \sum_{m}\Pr[\Enc(K, m) \evaluatesto c]\Pr[M \evaluatesto m] & \text{(Cond. collapse)} \\
-            =& \Pr[\Enc(K, \overline{m}) \evaluatesto c] \sum_{m}\Pr[M \evaluatesto m] & \text{(Using 3.)} \\ %TODO Not convinced thoroughly
-            =& \Pr[\Enc(K, \overline{m}) \evaluatesto c] & \text{(Total prob.)} \\
-            =& \Pr[\Enc(K, M) \evaluatesto c \knowing M \evaluatesto \overline{m}] & \text{(Introducing $M$)} \\
-            =& \Pr[C \evaluatesto c \knowing M \evaluatesto \overline{m}] & \text{($C$ definition)}
+            & \Pr[C = c] & \\
+            =& \sum_{m}\Pr[C = c \wedge M = m]                                  & \text{(Total prob.)} \\
+            =& \sum_{m}\Pr[\Enc(K, M) = c \wedge M = m]                         & \text{($C$ definition)} \\
+            =& \sum_{m}\Pr[\Enc(K, M) = c \knowing M \evaluatesto m] \Pr[M = m] & \text{(Cond. prob. def.)} \\
+            =& \sum_{m}\Pr[\Enc(K, m) = c] \Pr[M = m]                           & \text{(Cond. collapse)} \\
+            =& \Pr[\Enc(K, \overline{m}) = c] \sum_{m} \Pr[M = m]               & \text{(Using 3.)} \\ %TODO Not convinced thoroughly
+            =& \Pr[\Enc(K, \overline{m}) = c]                                   & \text{(Total prob.)} \\
+            =& \Pr[\Enc(K, M) = c \knowing M \evaluatesto \overline{m}]         & \text{(Introducing $M$)} \\
+            =& \Pr[C = c \knowing M \evaluatesto \overline{m}]                  & \text{($C$ definition)} \\
         \end{align*}
 
         Knowing this, and applying Bayes' theorem, we get back to the first definition:
         \begin{align*}
-            & \Pr[C \evaluatesto c] = \Pr[C \evaluatesto c \knowing M \evaluatesto m] & \\
-            \implies& \Pr[C \evaluatesto c] = \Pr[M \evaluatesto m \knowing C \evaluatesto c]\frac{\Pr[C \evaluatesto c]}{\Pr[M \evaluatesto m]} & \text{(Bayes' theorem)} \\
-            \implies& \Pr[M \evaluatesto m] = \Pr[M \evaluatesto m \knowing C \evaluatesto c] &
+            & \Pr[C = c] = \Pr[C = c \knowing M \evaluatesto m]                                         & \\
+            \implies& \Pr[C = c] = \Pr[M = m \knowing C \evaluatesto c] \frac{\Pr[C = c]}{\Pr[M = m]}   & \text{(Bayes' theorem)} \\
+            \implies& \Pr[M = m] = \Pr[M = m \knowing C \evaluatesto c]                                 & \\
         \end{align*}
 
     \end{itemize}
@@ -117,12 +117,12 @@ Proof of correctness goes like: $\Dec(k, \Enc(k, m)) = \Dec(k, k \xor m) = k \xo
 \begin{proof}
     Let $K \sim \unifdist(\K)$. Then, $\forall m_1, m_2, c \in \binary^l$:
     \begin{align*}
-        & \Pr[\Enc(K, m_1) \evaluatesto c] & \\
-        =& \Pr[K \xor m_1 \evaluatesto c] & \\
-        =& \Pr[K \evaluatesto c \xor m_1] & \\
-        =& |\K|^{-1} & \text{(K is uniform)} \\
-        =& \dots & \text{(Same steps reversed, where $m_1 \mapsto m_2$)} \\
-        =& \Pr[\Enc(K, m_2) \evaluatesto c] &  
+        & \Pr[\Enc(K, m_1) = c]     & \\
+        =& \Pr[K \xor m_1 = c]      & \\
+        =& \Pr[K = c \xor m_1]      & \\
+        =& |\K|^{-1}                & \text{(K is uniform)} \\
+        =& \dots                    & \text{(Same steps reversed, where $m_1 \mapsto m_2$)} \\
+        =& \Pr[\Enc(K, m_2) = c]    & \\  
     \end{align*}
     This satisfies the third definition of perfect secrecy.
 \end{proof}
@@ -147,7 +147,7 @@ Combined with the fact that keys must be preemptively shared in a secure fashion
     In any perfectly secret \ske{}: $|\K| \geq |\M|$
 \end{theorem}
 \begin{proof}
-    Perfection will be disproved by breaking the first definition. Let $M \sim \unifdist(\M)$, and take $c \in \C : \Pr[C \evaluatesto c] > 0$. Consider $D = \{\Dec(k, c) : k \in \K\}$ as the set of all images of the decryption routine with all keys in $\K$. The offending assumption is that $|\K| < |\M|$. Then, by how $D$ is defined:
+    Perfection will be disproved by breaking the first definition. Let $M \sim \unifdist(\M)$, and take $c \in \C : \Pr[C = c] > 0$. Consider $D = \{\Dec(k, c) : k \in \K\}$ as the set of all images of the decryption routine with all keys in $\K$. The offending assumption is that $|\K| < |\M|$. Then, by how $D$ is defined:
     \[
         |D| \leq |\K| < |\M| \implies \exists m \in \M \setminus D
     \]
@@ -165,9 +165,9 @@ Combined with the fact that keys must be preemptively shared in a secure fashion
         \caption{Where the messages stand}
     \end{figure}
 
-    Fix this message $m$, and remember that by $M$'s definition, $\Pr[M \evaluatesto m] = |\M|^{-1}$. Since $m \notin D$, there can be no key in $\K$ such that $\Dec(k, c) = m$. By observing that $C$ strictly distributes over $D$, where $m$ is not present, $\Pr[M \evaluatesto m \knowing C \evaluatesto c] = 0$. Summarizing up:
+    Fix this message $m$, and remember that by $M$'s definition, $\Pr[M = m] = |\M|^{-1}$. Since $m \notin D$, there can be no key in $\K$ such that $\Dec(k, c) = m$. By observing that $C$ strictly distributes over $D$, where $m$ is not present, $\Pr[M = m \knowing C \evaluatesto c] = 0$. Summarizing up:
     \[
-        0 = \Pr[M \evaluatesto m \knowing C \evaluatesto c] \neq \Pr[M \evaluatesto m] = |\M|^{-1}
+        0 = \Pr[M = m \knowing C \evaluatesto c] \neq \Pr[M =o m] = |\M|^{-1}
     \]
     This clearly violates the first definition of perfect secrecy.
 \end{proof}

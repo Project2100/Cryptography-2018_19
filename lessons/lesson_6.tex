@@ -117,12 +117,12 @@ so now, for any second ciphertext \adversary{} receives, he can ``mimick'' the d
 
     To prove it, notice that $r$ is chosen uniformly at random, and independently of $b$. Thus, no matter how the messages $m_0$ and $m_1$ are structured, $r$ will effectively make the chosen message completely unrecognizable. In formal terms, let $B$ and $R$ be the random variables for \challenger{}'s picks of $b$ and $r$ respectively; then:
     \begin{align*} % AP190906: Totally original, need a peer review here
-        & \left| \Pr(B = 0 \knowing C = c) - \Pr(B = 1 \knowing C = c) \right| & \\
-        =& \left| \Pr(B = 0 \knowing R \xor m_B = c) - \Pr(B = 1 \knowing R \xor m_B = c) \right| & \text{(C definition)}\\
-        =& \mathrlap{\frac{\left| \Pr(R \xor m_B = c \knowing B = 0) \Pr(B = 0) - \Pr(R \xor m_B = c \knowing B = 1) \Pr(B = 1) \right|}{\Pr(R \xor m_B = c)}} & \\
+        & \left| \Pr(B = 0 \knowing C = c) - \Pr(B = 1 \knowing C \evaluatesto c) \right| & \\
+        =& \left| \Pr(B = 0 \knowing R \xor m_B \evaluatesto c) - \Pr(B = 1 \knowing R \xor m_B \evaluatesto c) \right| & \text{(C definition)} \\
+        =& \mathrlap{\frac{\left| \Pr(R \xor m_B = c \knowing B \evaluatesto 0) \Pr(B = 0) - \Pr(R \xor m_B = c \knowing B \evaluatesto 1) \Pr(B = 1) \right|}{\Pr(R \xor m_B = c)}} & \\
         & & \text{(Bayes' theorem)} \\
         =& \frac{\left| \Pr(R \xor m_0 = c) \Pr(B = 0) - \Pr(R \xor m_1 = c) \Pr(B = 1) \right|}{\Pr(R \xor m_B = c)} & \text{(Cond. collapse)} \\
-        =& \frac{\left| \oneover{2^l} \half - \oneover{2^l} \half \right|}{\Pr(R \xor m_B = c)} = 0
+        =& \frac{\left| \oneover{2^l} \half - \oneover{2^l} \half \right|}{\Pr(R \xor m_B = c)} = 0 & \\
     \end{align*}
 
     Having proven that \adversary's success is equivalent to straight guessing in $\hybridg{}[\Pi_\xor]$, we now relate the hybrid game to the original one, affirming that:

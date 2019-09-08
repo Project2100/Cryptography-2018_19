@@ -1,18 +1,20 @@
 \mychapter{7}{Lesson 7} %181017
 
+\subsection{\textsc{Ggm}-tree (cont'd)}
+
 % Reminders: k is the scheme key
-Recall the \textsc{ggm}-tree construct used to define a function family $\F := \{F_k\}$ from a \prg{} G. From now on we will refer to this function family as $F_k$, implicitly stating that $k$ represents a uniform probability distribution. Our wish is that $F_k$ is indeed a \prf. 
+As stated in the previous lesson, given a \prg{} $G \in \binary^\lambda \to \binary^{2\lambda}$, we can build a function family $f_k$ by repeatedly taking halves of $G$'s images, and plugging them back into $G$. Our goal is to prove the following theorem:
 
 \begin{theorem}
-    If $G$ is a \prg, then $F_k$ is a \prf.
+    If $G$ is a \prg, then $f_k$ is a \prf.
 \end{theorem}
 
 % AP190103: All notation is still left in an inconsistent state, it's difficult here to establish which things can go where...
 \begin{proof}
 
-    Concerning $F_k$'s efficiency, one can observe that it involves computing $G$ a polynomial number of times, and $G$ itself is efficient, thus $F_k$ is indeed easy to compute.
+    Before starting to prove the \prf-ness of $f_k$, we make a brief consideratin about its time complexity: computing $f_k(x)$ consists in computing $G$ and taking half of the resulting image as many times as is the length of $x$. Since the length of $x$ is polynomial in $\lambda$, so is the number of $G$'s iterations; combine this with the fact that $G$ is itself polynomial by definition, and we conclude that $f_k$ is polynomial too.
 
-    The rest of the proof, regarding $F_k$'s hardness, will proceed by induction over $F_k$'s domain length $n$, which indirectly defines its \textsc{ggm}-tree's height.
+    Having cleared any doubts about $f_k$'s time complexity, we now turn to the essential point of interest: $f_k$'s pseudo-randomness. The proof will proceed by induction over $f_k$'s domain length $n$, which indirectly defines its \textsc{ggm}-tree's height.
     
     % AP190103: Some rewording is in order...
     \textbf{Base case} ($n=1$): $F_k$'s domain is restricted to $\{0, 1\}$, meaning that its images will be respectively the two halves on a single iteration of $G(k)$, which are pseudorandom by $G$'s definition:
