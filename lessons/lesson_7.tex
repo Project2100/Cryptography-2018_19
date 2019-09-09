@@ -1,6 +1,6 @@
 \mychapter{7}{Lesson 7} %181017
 
-\subsection{\textsc{Ggm}-tree (cont'd)}
+\subsubsection{\textsc{Ggm}-tree (cont'd)}
 
 % Reminders: k is the scheme key
 As stated in the previous lesson, given a \prg{} $G \in \binary^\lambda \to \binary^{2\lambda}$, we can build a function family $f_k$ by repeatedly taking halves of $G$'s images, and plugging them back into $G$. Our goal is to prove the following theorem:
@@ -12,54 +12,57 @@ As stated in the previous lesson, given a \prg{} $G \in \binary^\lambda \to \bin
 % AP190103: All notation is still left in an inconsistent state, it's difficult here to establish which things can go where...
 \begin{proof}
 
-    Before starting to prove the \prf-ness of $f_k$, we make a brief consideratin about its time complexity: computing $f_k(x)$ consists in computing $G$ and taking half of the resulting image as many times as is the length of $x$. Since the length of $x$ is polynomial in $\lambda$, so is the number of $G$'s iterations; combine this with the fact that $G$ is itself polynomial by definition, and we conclude that $f_k$ is polynomial too.
+    Before starting to prove the \prf-ness of $f_k$, we make a brief consideration about its time complexity: computing $f_k(x)$ consists in computing $G$ and taking half of the resulting image as many times as is the length of $x$. Since the length of $x$ is polynomial in $\lambda$, so is the number of $G$'s iterations; combine this with the fact that $G$ is itself polynomial by definition, and we conclude that $f_k$ is polynomial too.
 
-    Having cleared any doubts about $f_k$'s time complexity, we now turn to the essential point of interest: $f_k$'s pseudo-randomness. The proof will proceed by induction over $f_k$'s domain length $n$, which indirectly defines its \textsc{ggm}-tree's height.
+    Having cleared any doubts about $f_k$'s time complexity, we now turn to the essential point of interest: its pseudo-randomness. The proof will proceed by induction over the lentgth of $x$, which is also the height of the tree-like structure modeling the algorithm.
     
-    % AP190103: Some rewording is in order...
-    \textbf{Base case} ($n=1$): $F_k$'s domain is restricted to $\{0, 1\}$, meaning that its images will be respectively the two halves on a single iteration of $G(k)$, which are pseudorandom by $G$'s definition:
+    \textbf{Base case} ($n = 1$): $f_k$'s domain is restricted to $\binary$, meaning that its images will be respectively the two halves on a single iteration of $G(k)$; they are, of course, pseudorandom by $G$'s definition:
     \[
-        (F_k(0), F_k(1))=(G_0(k), G_1(k)) \compindist U_{2\lambda}
+        (f_k(0), f_k(1)) = (G_0(k), G_1(k)) \compindist U_{2\lambda}
     \]
     therefore, in this case, $F_k$ is pseudorandom.
 
     % AP190103: Here too...
-    \textbf{Inductive step}: Let $F_k' : \{0, 1\}^{n-1} \to \{0, 1\}^\lambda$ be a \prf. Define $F_k(x,y)$ as $G_x(F_k'(y))$, where $F_k : \{0, 1\}^n \to \{0, 1\}^\lambda$ and $x \in \{0, 1\}$. It must be proven that if $F_k'$ is a \prf, then so is $F_k$. We will proceed by hybrid games, depicted in figures \ref{cryptogame:ggmhyb0}, \ref{cryptogame:ggmhyb1} and \ref{cryptogame:ggmhyb2}:
+    \textbf{Inductive step}: Let $f'_k : \binary^{n - 1} \to \binary^\lambda$ be a \prf. Define $f_k$ as follows:
+    \[
+        f_k : \binary^n \to \binary^\lambda : (b, x) \in \binary \times \binary^{n - 1} \mapsto G_b(f'_k(x))
+    \]
+    It must be proven that if $f_k'$ is a \prf, then so is $f_k$. To help ourselves, we'll define some hybrid games as usual. We will proceed by hybrid games, depicted in figures \ref{cryptogame:ggmhyb0}, \ref{cryptogame:ggmhyb1} and \ref{cryptogame:ggmhyb2}:
 
     \begin{cryptogame}
         {ggmhyb0}
-        {$\hybridg{0}[\F](\lambda) = \cryptog{prf}[\F](\lambda)$}
+        {$\hybridg{0}[f_k](\lambda) = \cryptog{prf}[f_k](\lambda)$}
         {}
 
         \send{}{$r = (r_0, r_{1 \dots n})$}{}
         \receive{\shortstack[l]{
-            $k \pickUAR \{0, 1\}^\lambda$ \\
-            $z = F_k(r) = G_{r_0}(F_k'(r_{1 \dots n}))$
+            $k \pickUAR \binary^\lambda$ \\
+            $z = f_k(r) = G_{r_0}(f'_k(r_{1 \dots n}))$
         }}{$z$}{}
 
     \end{cryptogame}
 
     \begin{cryptogame}
         {ggmhyb1}
-        {$\hybridg{1}[\overline{\R}](\lambda)$}
+        {$\hybridg{1}[\overline{R} \circ G](\lambda)$}
         {}
 
         \send{}{$r = (r_0, r_{1 \dots n})$}{}
         \receive{\shortstack[l]{
-            $\overline{R} \pickUAR \R(\lambda, n-1, \lambda)$ \\
-            $z = H(r) = G_{r_0}(\overline{R}(r_{1 \dots n}))$
+            $\overline{R} \pickUAR \mathfrak{R}(n-1, \lambda)$ \\
+            $z = G_{r_0}(\overline{R}(r_{1 \dots n}))$
         }}{$z$}{}
 
     \end{cryptogame}
 
     \begin{cryptogame}
         {ggmhyb2}
-        {$\hybridg{2}[\R](\lambda)$}
+        {$\hybridg{2}[R](\lambda)$}
         {}
 
         \send{}{$r = (r_0, r_{1 \dots n})$}{}
         \receive{\shortstack[l]{
-            $R \pickUAR \R(\lambda, n, \lambda)$ \\
+            $R \pickUAR \mathfrak{R}(n, \lambda)$ \\
             $z = R(r)$
         }}{$z$}{}
 
@@ -68,23 +71,24 @@ As stated in the previous lesson, given a \prg{} $G \in \binary^\lambda \to \bin
     %AP190103: Actually, we're going to be inductive twice, one time for each hybrid couple
 
     \begin{lemma}
-        $\hybridg{0}[\F](\lambda) \compindist \hybridg{1}[\overline{\R}](\lambda)$       
+        $\hybridg{0}[f_k](\lambda) \compindist \hybridg{1}[\overline{R} \circ G](\lambda)$       
     \end{lemma}
 
     \begin{proof}
-        Assume $\exists\; \ppt\; \distinguisher$ that can distinguish $F_k$ from $H$; then an adversary $\adversary$ can use \distinguisher{} as in figure \ref{cryptoredux:ggmhyb01} to break the induction hypothesis (i.e. can distinguish $F_k'$ from $\overline{R}$).
+        Assume $\exists \distinguisher^{f_k} \in \ppt$ that can distinguish $f_k$ from $\overline{R} \circ G$; then an adversary \adversary{} can use $\distinguisher^{f_k}$ as in figure \ref{cryptoredux:ggmhyb01} to break in turn $f'_k$, and distingush it from $\overline{R} \circ G$:
 
         % AP190103: It is not immediately clear by the sequence that we're simulating two games in two different "inductive" steps, instead of trying to break one standard assumption
         % The reasoning is: distinguish the hybrids, simulate the induction steps
         \begin{cryptoredux}
             {ggmhyb01}
-            {}
-            {}
-            {}
+            {Using $f_k$ to break $f'_k$}
+            {f'-prf}
+            {f-prf}
 
             \cseqchallenger{\shortstack[l]{
-                $k \pickUAR U_\lambda$ \\
-                $\overline{R} \pickUAR \R(\lambda, n-1, \lambda)$
+                $k \pickUAR U_{\lambda - 1}$ \\
+                $\overline{R} \pickUAR \R(n - 1, \lambda)$ \\
+                $b \pickUAR \binary$
             }}
 
             \return{}{$(r_0, r_{1 \dots n})$}{}
@@ -93,11 +97,14 @@ As stated in the previous lesson, given a \prg{} $G \in \binary^\lambda \to \bin
 
             \receive{\shortstack[l]{
                 $z_0 = F_k'(r_{1 \dots n})$ \\
-                $z_1 = \overline{R}(r_{1 \dots n})$ \\
-                $b \pickUAR \{0, 1\}$
+                $z_1 = \overline{R}(r_{1 \dots n})$
             }}{$z_b$}{}
 
-            \invoke{}{$G_{r_0}(z_b)$}{}
+            \cseqdelay
+
+            \invoke{\shortstack[l]{
+                $y_b = f_k(r_0, z_b)$  % AP190909 - IMPORTANT : Make a note here: y is either f_k or RcircG
+            }}{$y_b$}{}
 
             \return{}{$b'$}{}
 
@@ -107,28 +114,73 @@ As stated in the previous lesson, given a \prg{} $G \in \binary^\lambda \to \bin
 
     \end{proof}
 
-    Before tackling the reduction from the last two hybrids, it is best to introduce another lemma:
+    Before tackling the reduction of the last two hybrids, it is best to introduce another lemma:
 
     \begin{lemma}
-        If $G : \{0, 1\}^\lambda \to \{0, 1\}^{2\lambda}$ is a PRG, then for any $t(\lambda) \in \poly{\lambda}$:
+        If $G : \binary^\lambda \to \binary^{2 \lambda}$ is a \prg, then:
         \[
-            (G(k_1), \dots , G(k_t)) \compindist (U_{2\lambda}, \dots , U_{2\lambda}) \quad \forall k_i \pickUAR U_\lambda
+            \forall K_i \sim \unifdist(\lambda) \iid \implies (G(K_1), \dots , G(K_t)) \compindist (U_{2 \lambda}, \dots , U_{2\lambda})
         \]
     \end{lemma}
 
     \begin{proof}
         \todo{Idea: all values are independent and pseudorandom on their own, hybridize progressively...}
+        % AP190909: Wait: isn't that a property of a PRG already? No, the definition states indist for a single sample, not for an arbitrary sequence; hence the idea, btw
     \end{proof}
 
     Now for the final lemma:
 
     \begin{lemma}
-        $\hybridg{1}[\overline{\R}](\lambda) \compindist \hybridg{2}[\R](\lambda)$       
+        $\hybridg{1}[\overline{R} \circ G](\lambda) \compindist \hybridg{2}[R](\lambda)$       
     \end{lemma}
     
     \begin{proof}
         
-        \todo{Bad proof: the idea is to reduce to a distinguishing game for the previous lemma)}
+        \todo{Bad proof: the idea is to reduce to a distinguishing game for the previous lemma)
+        
+        Notes: The game could look like this:
+
+        but it cannot work: there is no way to pass the 'r' information to the challenger in the prg game. Also, k stays the same in all iterations, as is specified in the PRF game, whereas in the original prg game adapted to the lemma, k is picked UAR on each iteration.
+        Therefore, a consideration regarding the computation path in the tree must be done.
+
+        NOTES: Let T1, T2 be empty tables.
+
+        Given query x input x1---n let xbar=x1---i
+
+        if xbar notin T1 then x <-\$ binarylambda and add k\_xbar to T2
+
+        if xbar in T2 let k\_xbar = T2[T1[xbar]]
+
+        output y = G\_x\_n(g\_x\_n-1(...G\_x\_i+1(k\_xbar)))
+
+        H\_0: GGM treee
+        
+        H\_n: random function
+
+        exploit lemma prg => prf
+        }
+        
+        \begin{cryptoredux}
+            {}
+            {}
+            {prg}
+            {prf}
+
+            \cseqbeginloop
+
+            \return{}{}{}
+
+            \receive{}{}{}
+
+            \invoke{}{}{}
+
+            \cseqendloop
+
+            \return{}{$b'$}{}
+
+            \send{}{$b'$}{}
+            
+        \end{cryptoredux}
         
         \sout{Consider the distinguishing game for $H$ and $R$ in figure \ref{cryptogame:ggmhyb12}. The random functions $\overline{R}$ and $R$ are entirely independant, and $G$ transforms randomness in pseudorandomness, so this game boils down into distinguishing pseudorandom values from random ones, which is possible only with negligible probability.}
         
@@ -168,33 +220,33 @@ As stated in the previous lesson, given a \prg{} $G \in \binary^\lambda \to \bin
 
 \section{\textsc{Cpa}-security}
 
-Now it's time to define a stronger notion of security, which is widely used in cryptology for first assessments on cryptographic schemes. Let $\Pi := (Enc, Dec)$ be a \ske{} scheme, and consider the game depicted in figure \ref{cryptogame:cpadef}. Observe that this time, the adversary can ``query'' the challenger for the ciphertexts of any messages of his choice, with the only reasonable restriction that the query amount must be polynomially bound by $\lambda$. This kind of game/attack is called the \emph{Chosen Plaintext Attack}, because of the adversary's capability of obtaining ciphertexts from messages. The usual victory conditions found in n-time security games, which are based on ciphertext distinguishability, apply.
+Now it's time to define a stronger notion of security, which is widely used in cryptology for first assessments of cryptographic strength. Let $\Pi := (\Enc, \Dec)$ be a \ske{} scheme, and consider the game depicted in figure \ref{cryptogame:cpadef}. Observe that this time, the adversary can ``query'' the challenger for the ciphertexts of any messages of his choice, with the only reasonable restriction that the query amount must be polynomially bound by $\lambda$. This kind of game/attack is called the \emph{Chosen Plaintext Attack}, because of the adversary's capability of obtaining ciphertexts from messages. The usual victory conditions found in n-time security games, which are based on ciphertext distinguishability, apply.
 
 \begin{cryptogame}
     {cpadef}
     {The \cpa-security game: $\cryptog{cpa}(\lambda, b)$}
     {cpa}
 
-    \cseqchallenger{$k \pickUAR \{0, 1\}^\lambda$}
+    \cseqchallenger{$k \pickUAR \binary^\lambda$}
 
     \cseqbeginloop
     \send{}{$m$}{}
-    \receive{$c \pickUAR Enc(k, m)$}{$c$}{}
+    \receive{$c \pickUAR \Enc(k, m)$}{$c$}{}
     \cseqendloop
 
     \cseqdelay
 
     \send{}{$m_0^*, m_1^*$}{}
     \receive{\shortstack[l]{
-        $b \pickUAR \{0, 1\}$ \\
-        $c^* \pickUAR Enc(k, m_b^*)$
+        $b \pickUAR \binary$ \\
+        $c^* \pickUAR \Enc(k, m_b^*)$
     }}{$c^*$}{}
 
     \cseqdelay
 
     \cseqbeginloop
     \send{}{$m$}{}
-    \receive{$c \pickUAR Enc(k, m)$}{$c$}{}
+    \receive{$c \pickUAR \Enc(k, m)$}{$c$}{}
     \cseqendloop
 
     \cseqdelay
@@ -217,26 +269,26 @@ Having given this definition of security, recall the $\Pi_{\xor}$ scheme defined
 
 This is true, because nothing prevents the adversary from asking the challenger to encrypt either $m_0$ or $m_1$, or even both, before starting the actual challenge; just as in the 2-time case for $\Pi_{\xor}$, he will know the messages' ciphertexts in advance, so he will be able to tell which message the challenger has encrypted every time. The solution for obtaining a \cpa-secure encryption scheme consists of returning different ciphertexts for the same message, even better if they look random. This can be achieved by using \prf{}s.
 
-Consider the following \ske{} scheme $\Pi_{\F}$, with $\F=\{ F_{k}:\{0,1\}^{n} \to \{0,1\}^{l} \}$ being a \prf:
+Consider the following \ske{} scheme $\Pi_{f_k}$, where $f_k$ is a \prf{} structured as follows:
 
 \begin{itemize}
-    \item $Enc(k, m) = (c_1, c_2) = (r, F_k(r) \xor m)$, where $k \pickUAR \{0,1\}^\lambda$ and $r \pickUAR \{0,1\}^n$
+    \item $\Enc(k, m) = (c_1, c_2) = (r, f_k(r) \xor m)$, where $k \pickUAR \binary^\lambda$ and $r \pickUAR \binary^n$
     
-    \item $Dec(k, (c_{1}, c_{2}))=F_{k}(c_{1}) \xor c_{2}$
+    \item $\Dec(k, (c_1, c_2)) = f_k(c_1) \xor c_2$
 \end{itemize}
 
 Observe that the random value $r$ is part of the ciphertext, making it long $n+l$ bits; also more importantly, the adversary can and will always see $r$. The key $k$ though, which gives a \textit{flavour} to the \prf, is still secret.
 
 \begin{theorem} \label{thm:prfcpa}
-    If $\F$ is a \prf, then $\Pi_{\F}$ is \cpa-secure.
+    If $f_k$ is a \prf, then $\Pi_{f_k}$ is \cpa-secure.
 \end{theorem}
 
 \begin{proof}
     We have to prove that $\cryptog{cpa}[\Pi_{\F}](\lambda, 0) \compindist \cryptog{cpa}[\Pi_{\F}](\lambda, 1)$; to this end, the hybrid argument will be used. Let the first hybrid $\hybridg{0}$ be the original game, the second hybrid $\hybridg{1}$ will have a different encryption routine:
 
     \begin{itemize}
-        \item $r \pickUAR \{0, 1\}^n$
-        \item $R \pickUAR \R(\lambda, n, l)$
+        \item $r \pickUAR \binary^n$
+        \item $R \pickUAR \mathfrak{R}(n, l)$
         \item $c = (r, R(r) \xor m)$, where $m$ is the plaintext to be encrypted
     \end{itemize}
 
