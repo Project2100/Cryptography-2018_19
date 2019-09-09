@@ -166,12 +166,12 @@ so now, for any second ciphertext \adversary{} receives, he can ``mimick'' the d
 
     \end{cryptoredux}
 
-    Again, notice how the games of indistinguishability and pseudo-random generation are reliably reproduced on their respective sides. This construct's value centers on how \distinguisher{\textsc{ind}} will perform in its own challenge:
+    Again, notice how the games of indistinguishability and pseudo-random generation are reliably reproduced on their respective sides. This construct's value centers on how $\distinguisher^\textsc{ind}$ will perform in its own challenge:
     \begin{itemize}
         \item if $x_b$ is a random value, then $\distinguisher^\textsc{ind}$ will perform as depicted in the hybrid game, thus giving right or wrong answers at random;
         \item if b is the result of $G$, then $\distinguisher^\textsc{ind}$ has a better chance in finding the right answer by its own design;
     \end{itemize}
-    From these observations, especially the second point, the adversary $\adversary$ has a better chance of winning the \prg{} game by asserting that $x_b$ comes from $G$ whenever $\distinguisher^\textsc{ind}$ makes a correct guess; conversely, \adversary{} will preferrably declare that $x_b$ is truly random whenever $\distinguisher^\textsc{ind}$ fails a guess, as the probability of the latter getting fooled by a random value is sensibly greater than by a pseudo-random one.
+    From these observations, especially the second point, the adversary \adversary{} has a better chance of winning the \prg{} game by asserting that $x_b$ comes from $G$ whenever $\distinguisher^\textsc{ind}$ makes a correct guess; conversely, \adversary{} will preferrably declare that $x_b$ is truly random whenever $\distinguisher^\textsc{ind}$ fails a guess, as the probability of the latter getting fooled by a random value is sensibly greater than by a pseudo-random one.
 
     Either way, by the existence of $\distinguisher{}^\textsc{ind}$, \adversary{} gains an edge in efficiently recognizing $G$, which cannot happen by $G$'s definition; the claim is proven. The theorem's proof can be completed by putting the pieces together, as is usual in the hybrid argument:
     \[

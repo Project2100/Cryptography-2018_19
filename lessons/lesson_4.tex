@@ -80,7 +80,7 @@ From here, we start defining an object that is fundamental to everyday cryptogra
 \begin{definition}    
     Let $f : \binary^{n(\lambda)} \to \binary^{n(\lambda)}$ be a function. Then it is a \owf{} iff:
     \[
-        \forall \adversary \in \ppt \exists \nu(\lambda) \in \negl(\lambda) : \Pr\left[\cryptog{owf}[f](\lambda) = 1 \right] \leq \nu(\lambda)
+        \forall \adversary \in \ppt\, \exists \nu(\lambda) \in \negl(\lambda) : \Pr\left[\cryptog{owf}[f](\lambda) = 1 \right] \leq \nu(\lambda)
     \]
 \end{definition}
 
@@ -212,11 +212,11 @@ What's the deep meaning of this formula? This is something to do.
     
     Fix this adversary to be the distinguisher $\distinguisher_f$. From here, another adversary $\adversary \in \ppt$ can use $\distinguisher_f$ to effectively distinguish the original ensembles, as depicted in figure \ref{cryptoredux:fdistin}:
     \begin{enumerate}
-        \item \adversary asks for the original sample from the challenger
-        \item \adversary applies $f$ on the sample
-        \item \adversary relays the resulting image to $\distinguisher_f$
+        \item \adversary{} asks for the original sample from the challenger
+        \item \adversary{} applies $f$ on the sample
+        \item \adversary{} relays the resulting image to $\distinguisher_f$
         \item $\distinguisher_f$ replies with his outcome
-        \item \adversary relays the outcome to the challenger
+        \item \adversary{} relays the outcome to the challenger
     \end{enumerate}
     All of this is done in polynomial time, since all functions and machines involved in the process opeate in \ppt. This contradicts the computational indistinguishablilty of $X$ and $Y$.
 

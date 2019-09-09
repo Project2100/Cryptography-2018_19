@@ -10,14 +10,14 @@ Modern confidentiality/authentication systems are forged under \emph{Kerckhoffs'
 
 The typical objects defined and used troughout cryptography discourse are:
 \begin{itemize}
-    \item $\K = $ Key Space
-    \item $\M = $ Message Space
-    \item $\C = $ Ciphertext Space
+    \item $\K = $ Key space
+    \item $\M = $ Message space
+    \item $\C = $ Ciphertext space
     \item $\Enc: \K \times \M \to \C$
     \item $\Dec: \K \times \C \to \M$
 \end{itemize}
 
-\Enc and \Dec form a cryptographic scheme (a secrecy one, in detail), and it must abide by the rule:
+\Enc{} and \Dec{} form a \emph{cryptographic secrecy scheme}, or just \emph{secrecy scheme} for brevity, and as such, it must abide by the rule:
 \[
     \forall m \in \M, \forall k \in \K \implies \Dec(k, \Enc(k, m)) = m
 \]
@@ -46,7 +46,7 @@ A remark has to be done here:
     \neq& \Pr[\Enc(K, M) = c]
 \end{align*}
 
-which is exactly the difference between picking a specific message $m$, and choosing it at random, just as in $M$.
+which is exactly the difference between picking a specific message $m$ (as in: \emph{choosing} $m$), and picking it at random, just as $M$ describes.
     
 \begin{proposition}
     All the previous statements are equivalent.
@@ -101,7 +101,7 @@ which is exactly the difference between picking a specific message $m$, and choo
 
 \end{proof}
 
-\section{One Time Pad (OTP)}
+\subsection{One Time Pad (OTP)}
 
 Let $\K = \M = \C = \binary^l$, and define the following cryptographic scheme:
 \begin{itemize}
@@ -112,7 +112,7 @@ Let $\K = \M = \C = \binary^l$, and define the following cryptographic scheme:
 Proof of correctness goes like: $\Dec(k, \Enc(k, m)) = \Dec(k, k \xor m) = k \xor k \xor m = m$.
 
 \begin{theorem}
-    The \emph{One-Time Pad} scheme is perfectly secret.
+    The \emph{One-time pad} scheme is perfectly secret.
 \end{theorem}
 \begin{proof}
     Let $K \sim \unifdist(\K)$. Then, $\forall m_1, m_2, c \in \binary^l$:
@@ -144,7 +144,7 @@ By observing our recent proof, some insights (and problems) arise:
 Combined with the fact that keys must be preemptively shared in a secure fashion, these problems make for a quite impractical cryptographic scheme. One can further this analysis and generalize it to all ``perfect'' schemes, giving a rather delusive conclusion:
 
 \begin{theorem}
-    In any perfectly secret \ske{}: $|\K| \geq |\M|$
+    For a secrecy scheme to be perfectly secret: $|\K| \geq |\M|$
 \end{theorem}
 \begin{proof}
     Perfection will be disproved by breaking the first definition. Let $M \sim \unifdist(\M)$, and take $c \in \C : \Pr[C = c] > 0$. Consider $D = \{\Dec(k, c) : k \in \K\}$ as the set of all images of the decryption routine with all keys in $\K$. The offending assumption is that $|\K| < |\M|$. Then, by how $D$ is defined:

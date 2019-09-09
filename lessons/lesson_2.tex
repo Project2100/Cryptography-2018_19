@@ -9,14 +9,14 @@
 \textbf{Syntax:}
 
 \begin{itemize}
-    \item $\K = $ Key Spac 
-    \item $\M = $ Message Space
-    \item $\Phi = $ Tag (or signature) Space
+    \item $\K = $ Key space
+    \item $\M = $ Message space
+    \item $\Phi = $ Tag (or signature) space
     \item $\Tag: \K \times \M \to \Phi$
     \item $\Ver: \K \times \M \times \Phi \to \binary$
 \end{itemize}
 
-\Tag{} and \Ver{} form a cryptographic scheme (an authentication one, in detail), and it must abide by the rule:
+\Tag{} and \Ver{} form a \emph{cryptographic authentication scheme}, or just \emph{authentication scheme}, and it must abide by the rule:
 \[
     \forall m \in \M, \forall k \in \K \implies \Ver(k, m, \Tag(k, m)) = 1
 \]
@@ -55,12 +55,12 @@ Some more formal definitions of unforgeability follow:
 
 \footnotetext{Care should be taken to not confuse \emph{pairwise} independency with \emph{mutual} independency: while the former acts only on pairs, the latter considers all possible subsets. The two notions are not necessarily equivalent.}
 
-A possible function family with this property can be constructed using prime numbers. Let $p$ be a prime number, and define the family:
+As an example of such a family, consider the additive group of integers modulo $p$: $(\integer_p, +)$, where $p$ is a prime integer. Define the family:
 \[
     h_{(a, b)}(x) = ax + b \mod p
 \]
 
-where $\mathcal{S} = \integer_p^2$, and $\M = \Phi = \integer_p$. Note that with these definitions a group construct arises over the message space and the tag space: $(\integer_p, +)$.
+where $\mathcal{S} = \integer_p^2$, and $\M = \Phi = \integer_p$. 
 
 \begin{theorem}
     The functions in the family $H$ are pairwise-independent.
@@ -120,8 +120,8 @@ where $\mathcal{S} = \integer_p^2$, and $\M = \Phi = \integer_p$. Note that with
     \end{align*}
     Therefore:
     \begin{align*}
-        & \Pr[\Tag(K, m) = \phi \knowing \Tag(K, m') \evaluatesto \phi'] \\
-        =& \frac{\Pr[\Tag(K, m) = \phi \wedge \Tag(K, m') = \phi']}{\Pr[\Tag(K, m) = \phi]} \\
+        & \Pr[\Tag(K, m') = \phi' \knowing \Tag(K, m) \evaluatesto \phi] \\
+        =& \frac{\Pr[\Tag(K, m') = \phi' \wedge \Tag(K, m) = \phi]}{\Pr[\Tag(K, m) = \phi]} \\
         =& \frac{|\Phi|}{|\Phi|^2} = \oneover{|\Phi|}
     \end{align*}
 \end{proof}
