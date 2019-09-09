@@ -171,7 +171,7 @@ In essence, the hybrid argument proves that computational indistinguishability i
         {i-th}
 
         \receive{\shortstack[l]{
-            $Z \pickUAR \{H_{\lambda}^{i}, H_{\lambda}^{i+1}\} \simeq \{0, 1\}$ \\
+            $Z \pickUAR \{H_{\lambda}^{i}, H_{\lambda}^{i+1}\} \simeq \binary$ \\
             $z \pickUAR Z$}}
         {$z = (b_{1}, \dots ,b_{l(\lambda)}, s_{l(\lambda)})$}{}
 
@@ -193,7 +193,7 @@ In essence, the hybrid argument proves that computational indistinguishability i
             $s \pickUAR U_\lambda$ \\
             $z_0 = G(s)$ \\
             $z_1 \pickUAR U_{\lambda+1}$ \\
-            $a \pickUAR \{0, 1\}$}}
+            $a \pickUAR \binary$}}
         {$z_a = (b, s)$}{}
 
         \cseqdelay
@@ -255,10 +255,10 @@ Two definitions for hardcore predicates are given:
 \begin{cryptogame}{hcpreddef2}{Another hardcore game, $f$ and $\mathfrak{hc}$ are known}{hc(2)}
     \cseqdelay
     \receive{\shortstack[l]{
-        $x \pickUAR \{0, 1\}^n$ \\
+        $x \pickUAR \binary^n$ \\
         $z_0 = \mathfrak{hc}(x)$ \\
-        $z_1 \pickUAR \{0, 1\}$ \\
-        $b \pickUAR \{0, 1\}$
+        $z_1 \pickUAR \binary$ \\
+        $b \pickUAR \binary$
     }}{$(f(x), z_b)$}{}
 
     \cseqdelay

@@ -203,7 +203,7 @@ As stated in the previous lesson, given a \prg{} $G \in \binary^\lambda \to \bin
             \receive{\shortstack[l]{
                 $z_0 = G_{r_0}(\overline{R}(r_{1 \dots n}))$ \\
                 $z_1 = R(r)$ \\
-                $b \pickUAR \{0, 1\}$
+                $b \pickUAR \binary$
             }}{$z_b$}{}
 
             \cseqdelay
@@ -295,7 +295,7 @@ Observe that the random value $r$ is part of the ciphertext, making it long $n+l
     and then the last hybrid $\hybridg{2}$ will simply output $(r_1, r_2) \pickUAR U_{n+l}$.
 
     \begin{lemma}
-        $\forall b \in \{0, 1\} \implies \hybridg{0}(\lambda, b) \compindist \hybridg{1}(\lambda, b)$.
+        $\forall b \in \binary \implies \hybridg{0}(\lambda, b) \compindist \hybridg{1}(\lambda, b)$.
     \end{lemma}
 
     \begin{proof}
@@ -312,13 +312,13 @@ Observe that the random value $r$ is part of the ciphertext, making it long $n+l
             {}
 
             \cseqchallenger{\shortstack[l]{
-                $k \pickUAR \{0, 1\}^\lambda$ \\
-                $b \pickUAR \{0, 1\}$
+                $k \pickUAR \binary^\lambda$ \\
+                $b \pickUAR \binary$
             }}
         
             \cseqbeginloop
             \return{}{$m$}{}
-            \send{$r \pickUAR \{0, 1\}^n$}{$r$}{}
+            \send{$r \pickUAR \binary^n$}{$r$}{}
             \receive{\shortstack[l]{
                 $z_0 \pickUAR F_k(r)$ \\
                 $z_1 \pickUAR R(r)$
@@ -329,7 +329,7 @@ Observe that the random value $r$ is part of the ciphertext, making it long $n+l
             \cseqdelay
         
             \return{}{$m_0^*, m_1^*$}{}
-            \send{$r^* \pickUAR \{0, 1\}^n$}{$r^*$}{}
+            \send{$r^* \pickUAR \binary^n$}{$r^*$}{}
             \receive{\shortstack[l]{
                 $z_0^* \pickUAR F_k(r)$ \\
                 $z_1^* \pickUAR R(r)$
@@ -340,7 +340,7 @@ Observe that the random value $r$ is part of the ciphertext, making it long $n+l
         
             \cseqbeginloop
             \return{}{$m$}{}
-            \send{$r \pickUAR \{0, 1\}^n$}{$r$}{}
+            \send{$r \pickUAR \binary^n$}{$r$}{}
             \receive{\shortstack[l]{
                 $z_0 \pickUAR F_k(r)$ \\
                 $z_1 \pickUAR R(r)$
@@ -367,7 +367,7 @@ Observe that the random value $r$ is part of the ciphertext, making it long $n+l
     \pagebreak
 
     \begin{lemma}
-        $\forall b \in \{0, 1\} \implies \hybridg{1}(\lambda, b) \compindist \hybridg{2}(\lambda, b)$.
+        $\forall b \in \binary \implies \hybridg{1}(\lambda, b) \compindist \hybridg{2}(\lambda, b)$.
     \end{lemma}
 
     \begin{proof}
@@ -383,8 +383,8 @@ Observe that the random value $r$ is part of the ciphertext, making it long $n+l
         \Pr[\textsc{Repeat}] &= \Pr[\exists i, j \in q \text{ such that } r_i = r_j] \\
             &\leq \sum_{i \neq j} \Pr[r_i=r_j] \\
             &= Col(U_n) \\
-            &= \sum_{i \neq j} \sum_{e \in \{0, 1\}^n} \Pr[r_1 = r_2 = e] \\
-            &= \sum_{i \neq j} \sum_{e \in \{0, 1\}^n} \Pr[r = e]^{2} \\
+            &= \sum_{i \neq j} \sum_{e \in \binary^n} \Pr[r_1 = r_2 = e] \\
+            &= \sum_{i \neq j} \sum_{e \in \binary^n} \Pr[r = e]^{2} \\
             &= \binom{q}{2} 2^{n} \frac{1}{2^{2n}} \\
             &= \binom{q}{2} 2^{-n} \\
             &\leq q^{2}2^{-n} \in \negl{\lambda} 

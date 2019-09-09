@@ -88,7 +88,7 @@ An important difference is that $F_k$ is efficiently invertible, although knowle
     {$Real_{\F, \A}(\lambda)$}
     {}
 
-    \cseqchallenger{$k \pickUAR \{0, 1\}^\lambda$}
+    \cseqchallenger{$k \pickUAR \binary^\lambda$}
 
     \cseqbeginloop
     \send{}{$x$}{}
@@ -117,7 +117,7 @@ An important difference is that $F_k$ is efficiently invertible, although knowle
 
 \subsection{Feistel network}
 
-\textsc{Prp}s have been successfully constructed by using existing \prf{}s into what is called a \emph{Feistel network}. As a starting point, let $F : \{0, 1\}^n \to \{0, 1\}^n$ be a \prf, and define the function $\psi_F$ as follows:
+\textsc{Prp}s have been successfully constructed by using existing \prf{}s into what is called a \emph{Feistel network}. As a starting point, let $F : \binary^n \to \binary^n$ be a \prf, and define the function $\psi_F$ as follows:
 
 \begin{align*}
     \psi_F(x, y) &= (y, x \xor F(y)) = (x', y') \\

@@ -203,7 +203,7 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
 
         \send{}{$m = (m_1, \dots, m_t)$}{}
         \receive{\shortstack[l]{
-            $r = c_0 \pickUAR \{0, 1\}^n$ \\
+            $r = c_0 \pickUAR \binary^n$ \\
             $c_i = F_k(r + i - 1) \xor m_i \quad \forall i$
         }}
         {$c = (c_0, c_1, \dots, c_t)$}{}
@@ -214,8 +214,8 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
         
         \send{$|\mu_0| = |\mu_1| \in \mathcal{M}$}{$\mu_0, \mu_1$}{}
         \receive{\shortstack[l]{
-            $\rho = \gamma_0 \pickUAR \{0, 1\}^n$ \\
-            $b \pickUAR \{0, 1\}$ \\
+            $\rho = \gamma_0 \pickUAR \binary^n$ \\
+            $b \pickUAR \binary$ \\
             $(\gamma_b)_i = F_k(\rho + i - 1) \xor (\mu_b)_i \quad \forall i$
         }}
         {$\gamma_b = (\gamma_0, \gamma_1, \dots, \gamma_t)$}{}
@@ -226,7 +226,7 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
 
         \send{}{$m = (m_1, \dots, m_t)$}{}
         \receive{\shortstack[l]{
-            $r = c_0 \pickUAR \{0, 1\}^n$ \\
+            $r = c_0 \pickUAR \binary^n$ \\
             $c_i = F_k(r + i - 1) \xor m_i \quad \forall i$
         }}
         {$c = (c_0, c_1, \dots, c_t)$}{}
@@ -243,11 +243,11 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
 
     \begin{itemize}
         \item $\hybridg{1}[\textsc{ctr}](\lambda, b)$: A random function $R$ is chosen \uar{} from $\R(\lambda, n, n)$ at the beginning of the game, and is used in place of $F_k$ in all block encryptions;
-        \item $\hybridg{2}[\textsc{ctr}](\lambda, b)$: The challenger will pick random values from $\{0, 1\}^n$ as ciphered blocks, disregarding any encryption routine.
+        \item $\hybridg{2}[\textsc{ctr}](\lambda, b)$: The challenger will pick random values from $\binary^n$ as ciphered blocks, disregarding any encryption routine.
     \end{itemize}
 
     \begin{lemma}
-        $\cryptog{cpa}[\textsc{ctr}](\lambda, b) \compindist \hybridg{1}[\textsc{ctr}](\lambda, b) \quad \forall b \in \{0, 1\}$
+        $\cryptog{cpa}[\textsc{ctr}](\lambda, b) \compindist \hybridg{1}[\textsc{ctr}](\lambda, b) \quad \forall b \in \binary$
     \end{lemma}
 
     \begin{proof} The proof is left as exercise.
@@ -256,7 +256,7 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
     \end{proof}
 
     \begin{lemma}
-        $\hybridg{1}[\textsc{ctr}](\lambda, b) \compindist \hybridg{2}[\textsc{ctr}](\lambda, b) \quad \forall b \in \{0, 1\}$
+        $\hybridg{1}[\textsc{ctr}](\lambda, b) \compindist \hybridg{2}[\textsc{ctr}](\lambda, b) \quad \forall b \in \binary$
     \end{lemma}
 
     \begin{proof}

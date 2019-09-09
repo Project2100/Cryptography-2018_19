@@ -39,7 +39,7 @@ $\cryptog{pke-cca}{}$:
 \end{cryptogame}
 
 
-(Reminder): Encryptions are made like this: $Enc(k, m) = (r, F_k(r) \oplus m), r \simeq \mathcal{U}nif(\{0, 1\}^\lambda)$.
+(Reminder): Encryptions are made like this: $Enc(k, m) = (r, F_k(r) \oplus m), r \simeq \mathcal{U}nif(\binary^\lambda)$.
 
 Every time an encryption is made, a fresh value $r$ is picked UAR.
 
@@ -136,7 +136,7 @@ So we conjecture that the above is a valid \tdp-based \pke{} scheme. This is act
     {rsa}
 
     \receive{\shortstack[l]{
-        $b \pickUAR \{0, 1\}$ \\
+        $b \pickUAR \binary$ \\
         $c \pickUAR \textrm{Enc}(pk, m_b)$
     }}{$n, pk, m^{pk}$}{}
 
@@ -164,14 +164,14 @@ This is an \underline{insecure} toy example of the more complex \rsa{} (Rivest S
     \item Correctness: $Enc_{pk}(Dec_{sk}(m)) = m^{pk \cdot sk} \equiv_n m$
 \end{itemize}
 
-Again, since the encryption routine is deterministic, the scheme is not \cpa-secure. However, a hardcore predicate can be inserted to the routine: $\hat{m} = r||m$, where $r \pickUAR \{0, 1\}^l$. Now the encryption is pseudorandom.
+Again, since the encryption routine is deterministic, the scheme is not \cpa-secure. However, a hardcore predicate can be inserted to the routine: $\hat{m} = r||m$, where $r \pickUAR \binary^l$. Now the encryption is pseudorandom.
 
 \textbf{Facts:}
 \begin{enumerate}
     \item $l \in \omega(log(\lambda))$ otherwise it is possible to eficiently bruteforce it.
         \todo{\item If $m \in \{0,1\}$ then I can prove it CPA secure under RSA
         (just use standard TDP)}
-    \item If $m$ is "in the middle" ($\{0,1\} \leq m \leq \{0, 1\}^l$) RSA is believed to be secure and is \underline{standardized} (PKCS\#1,5)
+    \item If $m$ is "in the middle" ($\{0,1\} \leq m \leq \binary^l$) RSA is believed to be secure and is \underline{standardized} (PKCS\#1,5)
         \todo{ \item Still not CCA secure! counterexample?}
 \end{enumerate}
 

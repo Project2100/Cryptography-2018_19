@@ -78,9 +78,9 @@ Having defined a good notion of security in the \mac{} scheme domain, we turn ou
         {ufcma}[1.94]
 
         \cseqchallenger{\shortstack[l]{
-            $k \pickUAR \{0, 1\}^\lambda$ \\
+            $k \pickUAR \binary^\lambda$ \\
             $R \pickUAR \R(\lambda, n, l)$ \\
-            $b \pickUAR \{0, 1\}$
+            $b \pickUAR \binary$
         }}
     
         \cseqbeginloop
@@ -130,7 +130,7 @@ Having defined a good notion of security in the \mac{} scheme domain, we turn ou
 
 The previous scheme works on fixed length messages; as in the encryption domain, there are techinques for tagging variable length messages which are \ufcma-secure. However, before showing them, some other apparently secure modes are described here to give some possible insights on how to tackle the problem. 
 
-Assume the message $m = (m_1, \dots, m_t) \in \{0,1\}^{n\cdot t}$ for some $t \geq 1$. Given the tagging function $\textit{Tag}_{k} : \{0, 1\}^n \to \{0, 1\}^l$, an attempt to tag the whole message may be to:
+Assume the message $m = (m_1, \dots, m_t) \in \{0,1\}^{n\cdot t}$ for some $t \geq 1$. Given the tagging function $\textit{Tag}_{k} : \binary^n \to \binary^l$, an attempt to tag the whole message may be to:
 
 \begin{itemize}    
     \item \textsc{xor} all the message blocks, and then tag: $\phi = \textit{Tag}_k(\bigxor_{i=1}^{t} m_i)$. But then, given an authenticated message $(m, \phi)$, an adversary can always forge a valid couple $(m', \phi)$, where $m'$ is the original message with two flipped bits in two distinct blocks at the same offset; the resulting \textsc{xor} would be the same.
@@ -145,13 +145,13 @@ Assume the message $m = (m_1, \dots, m_t) \in \{0,1\}^{n\cdot t}$ for some $t \g
 
 A devised solution which has been proven to be secure relies on the following definition: a function family $\H$ which can be used to ``shrink'' variable length messages and then composed with a \prf{}:
 \[
-   \H = \{h_s : \{0, 1\}^{n\cdot t} \to \{0, 1\}^n \}_{s \in \{0, 1\}^\lambda}
+   \H = \{h_s : \binary^{n\cdot t} \to \binary^n \}_{s \in \binary^\lambda}
 \]
 \[
    \textit{Tag}_{k, s}(m) = F_k(h_s(m))
 \]
 
-So what are the properties of the induced family $\F(\H) = \{F_{k}(h_{s}(.))\}$? The main problem are \emph{collisions}, since for each $m \in \{0,v1\}^{n\cdot t}$ it should be hard to find $m' \neq m$ such that $h_s(m) = h_s(m')$. But collisions do exist for functions in $\F(\H)$, because they map elements from $\{0, 1\}^{n\cdot t} $ to $\{0,1\}^t$, and since the codomain is smaller than the domain, the functions cannot be injective in any way.
+So what are the properties of the induced family $\F(\H) = \{F_{k}(h_{s}(.))\}$? The main problem are \emph{collisions}, since for each $m \in \{0,v1\}^{n\cdot t}$ it should be hard to find $m' \neq m$ such that $h_s(m) = h_s(m')$. But collisions do exist for functions in $\F(\H)$, because they map elements from $\binary^{n\cdot t} $ to $\{0,1\}^t$, and since the codomain is smaller than the domain, the functions cannot be injective in any way.
 
 To overcome this problem, we can consider two options:
 \begin{itemize}
@@ -162,7 +162,7 @@ To overcome this problem, we can consider two options:
 \begin{definition}
     A function family $\H$ is deemed \emph{$\varepsilon$-universal} iff:
     \[
-        \forall x \neq x' \in \{0, 1\}^{n\cdot t} \implies \Pr_{s \pickUAR \{0, 1\}^\lambda}[h_s(x) = h_s(x') ] \leq \varepsilon  
+        \forall x \neq x' \in \binary^{n\cdot t} \implies \Pr_{s \pickUAR \binary^\lambda}[h_s(x) = h_s(x') ] \leq \varepsilon  
     \]
 \end{definition}
 
@@ -196,8 +196,8 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
         {}
 
         \cseqchallenger{\shortstack[l]{
-            $k \pickUAR \{0, 1\}^\lambda$ \\
-            $s \pickUAR \{0, 1\}^\lambda$
+            $k \pickUAR \binary^\lambda$ \\
+            $s \pickUAR \binary^\lambda$
         }}
 
         \cseqbeginloop
@@ -214,7 +214,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
 
         \cseqchallenger{\shortstack[l]{
             $\overline{R} \pickUAR \R(\lambda, n, l)$ \\
-            $s \pickUAR \{0, 1\}^\lambda$
+            $s \pickUAR \binary^\lambda$
         }}
 
         \cseqbeginloop
@@ -279,7 +279,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
         where $q$ denotes the adversary's query count. It suffices to show that $\Pr[\textsc{Bad}] \in \negl{\lambda}$.
 
         % AP190108: Copied verbatim from my notes, maybe this is something Venturi wrote. Doesn't mean I fully understand it...
-        Since we don't care what happens after a collision, we can alternatively consider a mental experiment where we answer all queries at random, and only at the end sample $s \pickUAR \{0, 1\}^\lambda$ and check ofr collisions: this does not change the value of $\Pr(\textsc{Bad})$. Now queries are independent of $s$, and this eases our proof:
+        Since we don't care what happens after a collision, we can alternatively consider a mental experiment where we answer all queries at random, and only at the end sample $s \pickUAR \binary^\lambda$ and check ofr collisions: this does not change the value of $\Pr(\textsc{Bad})$. Now queries are independent of $s$, and this eases our proof:
         \begin{align*}
             \Pr[\textsc{Bad}] &= \Pr_s [\exists x_i \neq x_j, h_s(x_i) = h_s(x_j)] &\\
             &\leq \sum_{i \neq j} \Pr_s [h_s(x_i) = h_s(x_j)] & h_s \text{ is \textsc{au} by definition} \\

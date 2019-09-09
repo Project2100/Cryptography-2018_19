@@ -7,7 +7,7 @@
 
 Another way to obtain domain extension for a \mac{} scheme, using the $\F_k(h_s)$ approach, is to construct the hash function family from another \prf{}. We expect to have:
 \begin{itemize}
-    \item $\Pr[h_s(m) = h_s(m'), s \pickUAR \{0, 1\}^\lambda, (m, m') \pickUAR A(1^\lambda)] \in \negl{\lambda}$;
+    \item $\Pr[h_s(m) = h_s(m'), s \pickUAR \binary^\lambda, (m, m') \pickUAR A(1^\lambda)] \in \negl{\lambda}$;
     \item We need two \prf{}s: one is $F_{k}$, and the other is $F_{s}$
 \end{itemize}
 
@@ -161,7 +161,7 @@ Going back to the encryption realm, a new definition of attack to a \ske{} schem
     \send{}{$m_0^*, m_1^*$}{}
     \receive{\shortstack[l]{
         $r^* \text{ chosen \uar}$ \\
-        $b \pickUAR \{0, 1\}$ \\
+        $b \pickUAR \binary$ \\
         $c^* = Enc_k(m_b^*, r^*)$
     }}{$c_b^*$}{}
 
@@ -196,7 +196,7 @@ Going back to the encryption realm, a new definition of attack to a \ske{} schem
 
 \begin{proof}
 
-    Let $m_0$ and $m_1$ be the messages the adversary sends to the challenger as the challenge plaintexts; on receiving the ciphertext $c_b = (r, F_k(r \xor m_b) : b \pickUAR \{0, 1\}$, the adversary crafts another ciphertext with an arbitrary value $\alpha$:
+    Let $m_0$ and $m_1$ be the messages the adversary sends to the challenger as the challenge plaintexts; on receiving the ciphertext $c_b = (r, F_k(r \xor m_b) : b \pickUAR \binary$, the adversary crafts another ciphertext with an arbitrary value $\alpha$:
     \[
         \widehat{c_b} = (r, F_k(r) \xor m_b \xor \alpha)
     \]
@@ -318,7 +318,7 @@ Of the three options, only the last one is proven to be \cca-secure for arbitrar
         \return{}{$m_0^*, m_1^*$}{}
         \send{}{$m_0^*, m_1^*$}{}
         \receive{\shortstack[l]{
-            $b \pickUAR \{0, 1\}$ \\
+            $b \pickUAR \binary$ \\
             $c^* \pickUAR Enc_k(m_b)$
         }}{$c^*$}{}
         \invoke{$\phi^* \pickUAR Tag_k(c^*)$}{$(c, \phi^*)$}{}

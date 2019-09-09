@@ -48,7 +48,7 @@ Correctness of this scheme follows from some algebric steps:
         \cseqdelay
         \receive{\shortstack[l]{
             $r \pickUAR \mathbb{Z}_q$ \\
-            $b \pickUAR \{0, 1\}$ \\
+            $b \pickUAR \binary$ \\
             $(c_1,c_2)=(g^r,(g^x)^r m_b)$
         }}{$ c = (c_1, c_2)$}{}
         \cseqdelay
@@ -210,7 +210,7 @@ This scheme is based on the standard \textsc{ddh} assumption, and has the advant
 
 \subsubsection{Proof systems}
 
-Let $L$ be a Turing-recognizable language in $NP$, and a predicate $\mathcal{R} \in X \times Y \to \{0, 1\}$ such that:
+Let $L$ be a Turing-recognizable language in $NP$, and a predicate $\mathcal{R} \in X \times Y \to \binary$ such that:
 \begin{equation*}
     L := \{y \in Y : \exists x \in X \: \mathcal{R}(x, y) = 1\}
 \end{equation*}

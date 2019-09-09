@@ -4,7 +4,7 @@
 
 This section exposes a construction of a \textsc{cca}-secure \textsc{pke} scheme, using hash-proof systems, membership-hardness, and the $n$-universality property.
 
-Let $\Pi_1, \Pi_2$ be two distinct hash-proof systems for some \textsc{np} language $L$ and the range of $Prove_2$ supports labels ($L'=L||\{0, 1\}^\ell$).
+Let $\Pi_1, \Pi_2$ be two distinct hash-proof systems for some \textsc{np} language $L$ and the range of $Prove_2$ supports labels ($L'=L||\binary^\ell$).
 
 Construct the \textsc{cca} scheme as follows: $\Pi := (\mathcal{KG}en, Enc, Dec)$
 \begin{itemize}
@@ -53,7 +53,7 @@ Some additional notes (may be incorrect):
 \end{theorem}
 
 \begin{proof}
-    Five different games will be defined, from $\cryptog{0}$ up to $\cryptog{4}$; the first game will be an analogous formalization of how the above \textsc{pke} scheme works. It shall be proven that, for arbitrarily fixed $b$ in $\{0, 1\}$:
+    Five different games will be defined, from $\cryptog{0}$ up to $\cryptog{4}$; the first game will be an analogous formalization of how the above \textsc{pke} scheme works. It shall be proven that, for arbitrarily fixed $b$ in $\binary$:
     \[
         \cryptog{0}(\lambda, b) \equiv \cryptog{1}(\lambda, b) \approx_C \cryptog{2}(\lambda, b) \approx_S \cryptog{3}(\lambda, b) \equiv \cryptog{4}(\lambda, b)
     \]
@@ -83,7 +83,7 @@ Some additional notes (may be incorrect):
         \receive{\shortstack[l]{
             $(x, y) \pickUAR Sample_1$ \\
             $\pi_1 \pickUAR Prove_1(\omega_1, y, x)$ \\
-            $b \pickUAR \{0, 1\}$ \\
+            $b \pickUAR \binary$ \\
             $\pi_2 \pickUAR Prove_2(\omega_2, (y, (\pi_1 \cdot m_b)), x)$ }}
         {$c = ((y, (\pi_1 \cdot m_b)), \pi_2)$}
         {}
@@ -116,7 +116,7 @@ Some additional notes (may be incorrect):
         \receive{\shortstack[l]{
             $(x, y) \pickUAR Sample_1$ \\
             $\pi_1 \pickUAR Verify_1(\tau_1, y)$ \\
-            $b \pickUAR \{0, 1\}$ \\
+            $b \pickUAR \binary$ \\
             $\pi_2 \pickUAR Verify_2(\tau_2, (y, (\pi_1 \cdot m_b)))$ }}
         {$c = ((y, (\pi_1 \cdot m_b)), \pi_2)$}
         {}
@@ -149,7 +149,7 @@ Some additional notes (may be incorrect):
         \receive{\shortstack[l]{
             $(x, y) \pickUAR \overline{Sample}_1$ \\
             $\pi_1 \pickUAR Verify_1(\tau_1, y)$ \\
-            $b \pickUAR \{0, 1\}$ \\
+            $b \pickUAR \binary$ \\
             $\pi_2 \pickUAR Verify_2(\tau_2, (y, (\pi_1 \cdot m_b)))$ }}
         {$c = ((y, (\pi_1 \cdot m_b)), \pi_2)$}
         {}
@@ -184,7 +184,7 @@ Some additional notes (may be incorrect):
         \receive{\shortstack[l]{
             $(x, y) \pickUAR \overline{Sample}_1$ \\
             $\pi_1 \pickUAR Verify_1(\tau_1, y)$ \\
-            $b \pickUAR \{0, 1\}$ \\
+            $b \pickUAR \binary$ \\
             $\pi_2 \pickUAR Verify_2(\tau_2, (y, (\pi_1 \cdot m_b)))$ }}
         {$c = ((y, (\pi_1 \cdot m_b)), \pi_2)$}
         {}
@@ -216,7 +216,7 @@ Some additional notes (may be incorrect):
         %Challenger replies with an encrypted message
         \receive{ \shortstack[l]{
             $\pi_1 \pickUAR Im(Prove_1)$ \\
-            $b \pickUAR \{0, 1\}$ \\
+            $b \pickUAR \binary$ \\
             $\pi_2 \pickUAR Prove_2(\omega_2, (y, (\pi_1 \cdot m_b)), x)$
         }}
         {$c = ((y, (\pi_1 \cdot m_b)), \pi_2)$}{}

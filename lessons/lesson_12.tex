@@ -14,7 +14,7 @@ Remember one solution to domain-exetension for \prf{}s, as a composition of a pr
         {The corresponding \emph{collision-resistance} game}
         {crh}
 
-        \receive{$s \pickUAR \{0, 1\}^\lambda$}{$s$}{}
+        \receive{$s \pickUAR \binary^\lambda$}{$s$}{}
 
         \send{}{$x, y$}{\textsc{Output 1 iff} $H_s(x) = H_s(y)$}
         
@@ -23,7 +23,7 @@ Remember one solution to domain-exetension for \prf{}s, as a composition of a pr
 
 A note: before, we were dealing with unbounded adversaries, and the key was hidden. Now the tables are turned: key is public, but the adversary must be efficient.
 
-Exercise: Let $\Pi$ be a \ufcma authentication scheme over the message space $\{0, 1\}^n$. Show that $\Pi' = (Tag', Verify') : Tag'_{k, s}(m) = Tag_k(H_s(m))$ is \ufcma-secure over $\{0l, 1\}^l$, where $l \in \poly(n)$, as long as $H$ is resistant to collisions.
+Exercise: Let $\Pi$ be a \ufcma authentication scheme over the message space $\binary^n$. Show that $\Pi' = (Tag', Verify') : Tag'_{k, s}(m) = Tag_k(H_s(m))$ is \ufcma-secure over $\{0l, 1\}^l$, where $l \in \poly(n)$, as long as $H$ is resistant to collisions.
 
 \subsection{Merkle-Damg\r{a}rd construction}
 
