@@ -238,11 +238,11 @@ where the $\perp$ value is returned whenever the decryption algorithm is supplie
     \emph{Hint}: consider the experiment where $\Dec(k, c)$:
 
     \begin{itemize}
-        \item if $c$ not fresh ( i.e. output of previous encryption query $m$, output $m$)
+        \item if $c$ is not fresh (i.e. output of previous encryption query $m$),  then output $m$
         \item else output $\perp$
     \end{itemize}
     
-    The approach would be to reduce cca to cpa; given $\distinguisher^{\cca}$, we can build $\distinguisher^{\cpa}$. $\distinguisher^{\cca}$ will ask decryption queries, but $\distinguisher^{\cpa}$ can answer just with these two properties shown above, so it can reply just if he asked these $(c, m)$ before to its challenger $\challenger$.
+    The approach would be to reduce \cca{} to \cpa; given $\distinguisher^{\cca}$, we can build $\distinguisher^{\cpa}$. $\distinguisher^{\cca}$ will ask decryption queries, but $\distinguisher^{\cpa}$ can answer just with these two properties shown above, so it can reply just if he asked these $(c, m)$ before to its challenger $\challenger$.
 
 \end{proof}
 
@@ -251,6 +251,7 @@ where the $\perp$ value is returned whenever the decryption algorithm is supplie
 Let $\Pi_1 = (\Enc, \Dec)$ be a \ske{} scheme, and $\Pi_2 = (\Tag, \Ver)$ be a \mac{} scheme; there are 3 ways to combine them into an authenticated encryption scheme:
 % AP190112: A note should be made about notation, for what it means to "pick at random" from an encryption/tagging function (random nonce in the encryption, seeded AU hash function in the tagging)
 % Plus, keys aren't curried, but subsubscripting may turn ugly...
+% AP190910: Keys are part of the signature, nonces are a thing to rethink yet. For now, a pickUAR predicate implies the function is itself randomized, because there are no distributions on the right (Farfetched...)
 \begin{itemize}
     \item \emph{Encrypt-and-Tag}:
     \begin{enumerate}
@@ -327,7 +328,7 @@ Of the three options, only the last one is proven to be \cca-secure for arbitrar
 
     \end{cryptoredux}
 
-    \todo{Professor says that we have to show that $Game^{cpa}(\lambda, 0) \approx_{c} Game^{cpa}(\lambda, 1)$ , but why??? Isn't   this proof enough?}
+    \todo{Professor says that we have to show that $\cryptog{cpa}(\lambda, 0) \compindist \cryptog{cpa}(\lambda, 1)$, but why? Isn't this proof enough?}
 
 \end{proof}
 

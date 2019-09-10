@@ -55,9 +55,9 @@ Some additional notes (may be incorrect):
 \begin{proof}
     Five different games will be defined, from $\cryptog{0}$ up to $\cryptog{4}$; the first game will be an analogous formalization of how the above \textsc{pke} scheme works. It shall be proven that, for arbitrarily fixed $b$ in $\binary$:
     \[
-        \cryptog{0}(\lambda, b) \equiv \cryptog{1}(\lambda, b) \approx_C \cryptog{2}(\lambda, b) \approx_S \cryptog{3}(\lambda, b) \equiv \cryptog{4}(\lambda, b)
+        \cryptog{0}(\lambda, b) \equiv \cryptog{1}(\lambda, b) \compindist \cryptog{2}(\lambda, b) \statindist \cryptog{3}(\lambda, b) \equiv \cryptog{4}(\lambda, b)
     \]
-    and finally that $\textsc{Game}_{\Pi, A}^4(\lambda, 0) = \textsc{Game}_{\Pi, A}^4(\lambda, 1)$, therefore concluding that $\textsc{Game}_{\Pi, A}^0(\lambda, 0) \approx_C \textsc{Game}_{\Pi, A}^0(\lambda, 1)$, and proving this scheme is \textsc{cca}-secure.
+    and finally that $\textsc{Game}_{\Pi, A}^4(\lambda, 0) = \textsc{Game}_{\Pi, A}^4(\lambda, 1)$, therefore concluding that $\textsc{Game}_{\Pi, A}^0(\lambda, 0) \compindist \textsc{Game}_{\Pi, A}^0(\lambda, 1)$, and proving this scheme is \textsc{cca}-secure.
 
     \todo{Non sono per niente sicuro riguardo all'origine di $x$ ed $y$, né tantomeno dove sia definito il sampler per essi}
 
@@ -264,7 +264,7 @@ Some additional notes (may be incorrect):
 
 \begin{lemma}
     \[
-        \forall b, G_{1}(\lambda, b) \approx_{c} G_{2}(\lambda, b)   
+        \forall b, G_{1}(\lambda, b) \compindist G_{2}(\lambda, b)   
     \]
 \end{lemma}
 \begin{proof}
@@ -273,7 +273,7 @@ Some additional notes (may be incorrect):
 
 \begin{lemma}
     \[
-        \forall b, G_{2}(\lambda , b) \approx_{c} G_{3}(\lambda, b)
+        \forall b, G_{2}(\lambda , b) \compindist G_{3}(\lambda, b)
     \]
 \end{lemma}
 \todo{I'm not completely sure the next proof is complete}

@@ -90,11 +90,11 @@ Correctness of this scheme follows from some algebric steps:
     % Venturi prefers to fix $b$ beforehand, without loss of generality, meaning the whole proof can be stated by setting b to either 0 or 1, and mantain its validity without changing anything else. In this way, he somehow bounds the probability of success to be $\leq \mathcal{N}egl(\lambda)$}
 
     \underline{Proof techinique:}
-    $H_0(\lambda,0) \approx_c H_0(\lambda,1)\equiv H_1(\lambda,0) \approx_c H_1(\lambda,1)$
-    $$\implies H_0(\lambda,0) \approx_c H_1(\lambda,1)$$
+    $H_0(\lambda,0) \compindist H_0(\lambda,1)\equiv H_1(\lambda,0) \compindist H_1(\lambda,1)$
+    $$\implies H_0(\lambda,0) \compindist H_1(\lambda,1)$$
 
     \begin{lemma}
-        $\forall b \in \binary, H_0(\lambda,0) \approx_c H_0(\lambda,1)$\\
+        $\forall b \in \binary, H_0(\lambda,0) \compindist H_0(\lambda,1)$\\
         Fix b. (Reduction to DDH)\\
         Assume $\exists$ PPT D which is able to distinguish $H_0(\lambda,b)$ and $H_1(\lambda,b)$ with non negl. probability.
     \end{lemma}
@@ -324,7 +324,7 @@ l_{i})$.
             (it's possible
             to say that $Samp(1^{\lambda}) \pickUAR (y,x)$)
         \item $ \exists$ PPT $\bar{Samp}$ outputting $y \pickUAR \bar{L}$
-        \item $\{y:(y,x) \pickUAR Samp(1^{\lambda})\} \approx_{c} \{y:y
+        \item $\{y:(y,x) \pickUAR Samp(1^{\lambda})\} \compindist \{y:y
             \pickUAR \bar{Samp}(1^{\lambda})\}$
     \end{enumerate}
     

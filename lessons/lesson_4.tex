@@ -161,7 +161,7 @@ Imagine now that, if using one-way functions, the problem is $f(x)$, and its sol
 Distribution ensembles $X = \{X_{\lambda \in \mathbb{N}}\}$ and $Y = \{Y_{\lambda \in \mathbb{N}}\}$ are distribution sequences.
 
 \begin{definition}[\emph{Comp. indist.}]
-    Let $X$ and $Y$ be two distribution sequences; they are deemed \emph{computationally indistinguishable}, written as ``$X \approx_{c} Y$'' iff:
+    Let $X$ and $Y$ be two distribution sequences; they are deemed \emph{computationally indistinguishable}, written as ``$X \compindist Y$'' iff:
     \[
         \forall \adversary \in \ppt \exists \nu(\lambda) \in \negl(\lambda) : \left|\Pr[\adversary(X_\lambda) = 1] - \Pr[\adversary(Y_\lambda) = 1]\right| \leq \nu(\lambda) 
     \]

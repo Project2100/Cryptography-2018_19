@@ -6,17 +6,17 @@
 Having proven that an authenticated encryption scheme in an \emph{Encrypt-then-Tag} mode is \cpa-secure, it remains to prove that it has the \textsc{auth} property. Before this, a new unforgeability definition is needed:
 
 \begin{definition}
-    Let $\Pi = (\textit{Tag}, \textit{Verify})$ be a \mac{} scheme. Then $\Pi$ is \textsc{eufcma}-secure iff it is \ufcma-secure, that is:
+    Let $\Pi = (\Tag, \Ver)$ be a \mac{} scheme. Then $\Pi$ is \emph{strongly} resistant to \emph{existential forgery under chosen message attack}, or s\textsc{ef-cma}-secure in short, iff:
     \[
-        \Pr[\cryptog{ufcma}(\lambda) = 1] \in \negl{\lambda}
+        \Pr[\cryptog{ufcma}(\lambda) = 1] \in \negl(\lambda)
     \]
-    with the additional restriction that the tag $\phi^*$ of the forged message must be ``fresh'' itself.
+    i.e. it is \ufcma, but with the additional restriction that the tag $\phi^*$ of the forged message must be ``fresh'' itself.
 \end{definition}
 
-Note the small difference in security between \ufcma{} and \textsc{eufcma}.
+Note the small difference in security between \ufcma{} and s\textsc{ef-cma}.
 
 \begin{theorem}
-    Let $\Pi = (Enc, Dec, Tag, Verify)$ be an authenticated encryption scheme, composed by a \ske{} scheme $\Pi_1$ and a \mac{} scheme $\Pi_2$. If $\Pi_2$ is \textsc{eufcma}, then $\Pi$ has the \textsc{auth} property.
+    Let $\Pi = (\Enc, \Dec, \Tag, \Ver)$ be an authenticated encryption scheme, composed by a \ske{} scheme $\Pi_1$ and a \mac{} scheme $\Pi_2$. If $\Pi_2$ is s\textsc{ef-cma}, then $\Pi$ has the \textsc{auth} property.
 \end{theorem}
 
 % AP190114: Need to phrase theorems differently
@@ -26,14 +26,14 @@ Note the small difference in security between \ufcma{} and \textsc{eufcma}.
     \begin{cryptoredux}
         {ettauth}
         {Breaking authenticity of $\Pi_2$}
-        {eufcma$_2$}
+        {sef-cma$_2$}
         {auth}[1.7]
 
         \cseqbeginloop
 
         \return{}{$m$}{}
-        \send{$c \pickUAR Enc(k_{1}, m)$}{$c$}{}
-        \receive{$\phi \pickUAR Tag(k_{2}, c)$}{$\phi$}{}
+        \send{$c \pickUAR \Enc(k_1, m)$}{$c$}{}
+        \receive{$\phi \pickUAR \Tag(k_2, c)$}{$\phi$}{}
         \invoke{}{$(c, \phi)$}{\shortstack[r]{
             $c \in C$ \\
             $\phi \in \Phi$
@@ -46,29 +46,30 @@ Note the small difference in security between \ufcma{} and \textsc{eufcma}.
         \return{\shortstack[r]{
             $c^* \notin C$ \\
             $\phi^* \notin \Phi$
-        }}{$(c^{*}, \phi^{*})$}{}
+        }}{$(c^*, \phi^*)$}{}
+
         \send{}{$(c^*, \phi^*)$}{\shortstack[l]{
             \textsc{Output 1 iff} \\
-            $\quad \textit{Verify}_k(c^*, \phi^*) = 1$}}
+            $\quad \Ver(k_2, c^*, \phi^*) = 1$
+        }}
 
     \end{cryptoredux}
 
-From $A^{auth}$ perspective, all the couples $(c_{i}, \phi_{i})$ received are made with the following schema:
+From $\distinguisher^{\textsc{auth}}$'s perspective, all the couples $(c_i, \phi_i)$ received are made from $m$ as follows:
 
-\begin{equation*}
-    c_{i} \in Enc(k_{1}, m \in \M) \wedge \phi_{i}\pickUAR Enc(k_{2}, c_{i})
-\end{equation*}
+\[
+    c_i \pickUAR \Enc(k_1, m) \wedge \phi_i \pickUAR \Tag(k_2, c_i)
+\]
 
-Since $\A^{auth}$ wins $Game^{auth}$, the challenge couple $(c^{}{*}, \phi^{*})$ which breaks $Game^{auth}$ will be produced to be decrypted as
+Since $\distinguisher^{\textsc{auth}}$ is able to break the \textsc{auth} property of $\Pi$, the couple it outputs $(c^*, \phi^*)$ will be such that:
 
-\begin{equation*}
-    Dec(k, (c^{*}, \phi^{*})) \rightarrow Dec(k_{1}, c^{*}) \in \M \wedge
-    Dec(k_{2}, \phi^{*})=c^{*}
-\end{equation*}
+\[
+    \Dec(k_1, c^*) = \widehat{m^*} \wedge \Ver(k_2, c^*, \phi^*) = 1
+\]
 
-But if this happens , then $\A$ can use the same challenge couple of $\A^{auth}$ to win $Game^{ufcma}$, which is impossible.
+Note that it is not important that the ciphertext decodes to the original plaintext; the mater at hand is that \adversary{} can now use the same couple to break $\Pi_2$'s \ufcma{} property, which is a contradiction.
 
-It could happen that, for $c^{*}=c$ previously seen, $\phi^{*}$ is a new fresh tag, never seen before. Just in this case the $auth$ game would be valid because $(c^{*}, \phi^{*})$ would have never been seen before, but \textbf{not } the eufcma game, because $c^{*}$ was previously sent to the challenger.
+It could happen that, for $c^* = c$ previously seen, $\phi^*$ is a new fresh tag, never seen before. Just in this case the $auth$ game would be valid because $(c^{*}, \phi^{*})$ would have never been seen before, but \textbf{not } the eufcma game, because $c^{*}$ was previously sent to the challenger.
 \end{proof}
     
 Now we want an ufcma secure scheme able to resist against message-tag challenge couples where the tag is fresh but the message has been already requested to the challenger.
@@ -77,57 +78,50 @@ Now we want an ufcma secure scheme able to resist against message-tag challenge 
 
 \todo{Luby-Rackoff is cited here, but it's related to both \prf{}s-\prp{}s and the Feistel network analysis} 
 
-Nothing prevents a \prf{} $F_k$ to be bijective; in this case, it is referred to as a \emph{pseudorandom permutation}, or \prp{} in short. Their definition is analogous to a generic \prf: as shown in figures \ref{cryptogame:prpreal} and \ref{cryptogame:prpideal}, \prp{}s are computationally indistinguishable from a random permutation:
+Nothing prevents a \prf{} $g_k$ to be bijective; in this case, it is referred to as a \emph{pseudorandom permutation}, or \prp{} in short. Their definition is analogous to a generic \prf, as shown in figure \ref{cryptogame:prp}: \prp{}s are computationally indistinguishable from a random permutation.
+
+\begin{cryptogame}
+    {prp}
+    {$\cryptog{prp}[g_k](\lambda, b)$}
+    {prp}
+
+    \cseqchallenger{\shortstack[l]{
+        $k \pickUAR \binary^\lambda$ \\
+        $P \pickUAR \mathfrak{P}(n)$ \\
+        $b \pickUAR \binary$
+    }}
+
+    \cseqdelay
+    \cseqbeginloop
+    \send{}{$x$}{}
+    \receive{\shortstack[l]{
+        $y_0 = g_k(x)$ \\
+        $y_1 = P(x)$
+    }}{$y_b$}{}
+    \cseqendloop
+    \cseqdelay
+
+    \send{}{$b'$}{\textsc{Output 1 iff} $b' = b$}
+    
+\end{cryptogame}
+
 \[
-    Real_{\F, \A}(\lambda) \approx_{c} Ideal_{\F, \A}(\lambda)
+    \cryptog{prp}[g_k](\lambda, 0) \compindist \cryptog{prp}[g_k](\lambda, 1)
 \]
-An important difference is that $F_k$ is efficiently invertible, although knowledge of $k$ is reqiuired in order to do so.
 
-\begin{cryptogame}
-    {prpreal}
-    {$Real_{\F, \A}(\lambda)$}
-    {}
-
-    \cseqchallenger{$k \pickUAR \binary^\lambda$}
-
-    \cseqbeginloop
-    \send{}{$x$}{}
-    \receive{$y = F_k(x)$}{$y$}{}
-    \cseqendloop
-
-    \send{}{$b'$}{}
-    
-\end{cryptogame}
-
-\begin{cryptogame}
-    {prpideal}
-    {$Ideal_{\P, \A}(\lambda)$}
-    {}
-
-    \cseqchallenger{$P \pickUAR \P(\lambda, n)$}
-
-    \cseqbeginloop
-    \send{}{$x$}{}
-    \receive{$y = P(x)$}{$y$}{}
-    \cseqendloop
-
-    \send{}{$b'$}{}
-    
-\end{cryptogame}
+An important difference is that $g_k$ is efficiently invertible, although knowledge of $k$ is reqiuired in order to do so.
 
 \subsection{Feistel network}
 
-\textsc{Prp}s have been successfully constructed by using existing \prf{}s into what is called a \emph{Feistel network}. As a starting point, let $F : \binary^n \to \binary^n$ be a \prf, and define the function $\psi_F$ as follows:
+\textsc{Prp}s have been successfully constructed by using existing \prf{}s into what is called a \emph{Feistel network}. As a starting point, let $f_k \in \binary^n \to \binary^n$ be a \prf, and define the function $\psi_f$ as follows:
 
 \begin{align*}
-    \psi_F(x, y) &= (y, x \xor F(y)) = (x', y') \\
-    \psi^{-1}_F(x', y') &= (F(x') \xor y', x') = (F(y) \xor x \xor F(y), y) = (x, y)
+    \psi_f(x, y)        &= (y, x \xor F(y)) = (x', y')                                  \\
+    \psi^{-1}_f(x', y') &= (F(x') \xor y', x') = (F(y) \xor x \xor F(y), y) = (x, y)    \\
 \end{align*}
 
-\begin{figure}[ht]
+\begin{figure}
     \centering
-    
-    \tikzstyle{box}  = [draw, minimum size=2em]
 
     \begin{tikzpicture}[auto]
         
@@ -141,7 +135,7 @@ An important difference is that $F_k$ is efficiently invertible, although knowle
         \draw[->] (y) -- (xor);
         \draw[->] (xor) -- +(1cm, 0) -- +(2cm, 3cm) -- +(3cm, 3cm);
 
-        \draw[->] (x)+(1cm, 0)  -- (F);
+        \draw[->] (x)+(1cm, 0) -- (F);
         \draw[->] (F) -- (xor);
         
     \end{tikzpicture}
@@ -151,7 +145,7 @@ An important difference is that $F_k$ is efficiently invertible, although knowle
 \end{figure}
 
 % AP190121: Some more intermediate steps might be useful
-While this construct is invertible and uses a \prf{}, it is not pseudorandom itself, because the first $n$ bits of $\psi_{F}$'s image are always equal to $y$, and thus visible to any adversary. A first attempt at fixing this vulnerability would be to apply the construct two times on two different \prf{}s $\psi^2_{F, F'}$, in an attempt to ``hide'' $y$. Yet, this approach still leaks valuable information:
+While this construct is invertible and uses a \prf{}, it is not pseudorandom itself, because the first $n$ bits of $\psi_F$'s image are always equal to $y$, and thus visible to any adversary. A first attempt at fixing this vulnerability would be to apply the construct two times on two different \prf{}s $\psi^2_{F, F'}$, in an attempt to ``hide'' $y$. Yet, this approach still leaks valuable information:
 \[
     \psi_{F, F'}(x, z) \xor \psi_{F, F'}(y, z) = (x \xor y, \dots)
 \]
@@ -168,11 +162,11 @@ However, this example with additional restrictions will be useful very soon, so 
     \centering
     \begin{cryptogame}{}{}{}[0.5]
         \send{}{$x, y$}{}
-        \receive{\small{$F, F' \pickUAR \R(\lambda, n, n)$}}{$\psi^2_{F, F'}(x, y)$}{}
+        \receive{\small{$F, F' \pickUAR \mathfrak{R}(\lambda, n, n)$}}{$\psi^2_{F, F'}(x, y)$}{}
     \end{cryptogame}
     \begin{cryptogame}{}{}{}[0.5]
         \send{}{$x, y$}{}
-        \receive{\small{$R \pickUAR \R(\lambda, 2n, 2n)$}}{$R(x, y)$}{}
+        \receive{\small{$R \pickUAR \mathfrak{R}(\lambda, 2n, 2n)$}}{$R(x, y)$}{}
     \end{cryptogame}
 
     \caption{The two Feistel games}

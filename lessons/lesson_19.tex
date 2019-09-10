@@ -18,7 +18,7 @@ Venturi said something here related to Weil pairing over an elliptic curve. I fo
 \noindent\textbf{Assumption:} CDH is HARD in $\G$.\\
 \textbf{Observation:} DDH is EASY in $\G$!
 \begin{proof}
-    $(g,g^a,g^b,g^c)\approx_c (g,g^a,g^b,g^{ab}) \implies \hat{e}(g^a,g^b)=_?\hat{e}(g,g^c)$ now just move the exponents and I can transform the first element in $\hat{e}(g,g^{ab})$ and check if it is equal to $\hat{e}(g,g^c)$.
+    $(g,g^a,g^b,g^c)\compindist (g,g^a,g^b,g^{ab}) \implies \hat{e}(g^a,g^b)=_?\hat{e}(g,g^c)$ now just move the exponents and I can transform the first element in $\hat{e}(g,g^{ab})$ and check if it is equal to $\hat{e}(g,g^c)$.
 \end{proof}
 
 Now $KGen(1^{\lambda})$ will:
