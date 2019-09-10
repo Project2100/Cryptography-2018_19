@@ -169,9 +169,9 @@ Again, since the encryption routine is deterministic, the scheme is not \cpa-sec
 \textbf{Facts:}
 \begin{enumerate}
     \item $l \in \omega(log(\lambda))$ otherwise it is possible to eficiently bruteforce it.
-        \todo{\item If $m \in \{0,1\}$ then I can prove it CPA secure under RSA
+        \todo{\item If $m \in \binary$ then I can prove it CPA secure under RSA
         (just use standard TDP)}
-    \item If $m$ is "in the middle" ($\{0,1\} \leq m \leq \binary^l$) RSA is believed to be secure and is \underline{standardized} (PKCS\#1,5)
+    \item If $m$ is "in the middle" ($\binary \leq m \leq \binary^l$) RSA is believed to be secure and is \underline{standardized} (PKCS\#1,5)
         \todo{ \item Still not CCA secure! counterexample?}
 \end{enumerate}
 

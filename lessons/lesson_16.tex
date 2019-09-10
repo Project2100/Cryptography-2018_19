@@ -94,7 +94,7 @@ Correctness of this scheme follows from some algebric steps:
     $$\implies H_0(\lambda,0) \approx_c H_1(\lambda,1)$$
 
     \begin{lemma}
-        $\forall b \in \{0,1\}, H_0(\lambda,0) \approx_c H_0(\lambda,1)$\\
+        $\forall b \in \binary, H_0(\lambda,0) \approx_c H_0(\lambda,1)$\\
         Fix b. (Reduction to DDH)\\
         Assume $\exists$ PPT D which is able to distinguish $H_0(\lambda,b)$ and $H_1(\lambda,b)$ with non negl. probability.
     \end{lemma}
@@ -301,11 +301,11 @@ where $(\omega, \tau) \pickUAR Setup(1^{\lambda})$ and $v_{1}, \ldots, v_{t}
 \end{definition}
 
 \subsubsection{Enriching DV-NIKZ}
-Can we enrich DV-NIKZ with labels $l \in \{0,1\}^{*}$?
+Can we enrich DV-NIKZ with labels $l \in \binary^{*}$?
 
 Suppose to have the following:
 \[
-    L'=L \| \{0,1\}^{*}=\{(y,l): y \in L \wedge l \in \{0,1\}^{*}\}
+    L'=L \| \binary^{*}=\{(y,l): y \in L \wedge l \in \binary^{*}\}
 \]
 Then our scheme changes :
 $Prove(\omega, (y,l), x)=\Pi; Ver(\tau, (y, l)) $

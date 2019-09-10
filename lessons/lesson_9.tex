@@ -2,18 +2,18 @@
 
 \section{Message Authentication Codes and unforgeability}
 
-After having explored the security conerns and challenges of the \ske{} realm, it is time to turn the attention to symmetric \mac{} schemes. Recall that a \mac{} scheme is a couple $(\textit{Tag}, \textit{Verify})$, with the purpose of auhenticating the message's source. In this chapter, the tagging function will be denoted as $\textit{Tag}_k$, akin to a \prf.
+After having explored the security conerns and challenges of the \ske{} realm, it is time to turn the attention to symmetric authentication schemes, or \mac{} schemes. Recall that a \mac{} scheme is a couple $(\textit{Tag}, \textit{Verify})$, with the purpose of auhenticating the message's source. In this chapter, the tagging function will be denoted as $\textit{Tag}_k$, akin to a \prf.
 
 The desirable property that a \mac{} scheme should hold is to prevent any attacker from generating a valid couple $(m^*, \phi^*)$, even after querying a tagging oracle polynomially many times\footnotemark.
-\footnotetext{Do note how this property resembles \cpa-security in the encryption setting}
+\footnotetext{Do note the similarities (and differences) between unforgeability in this setting and \cpa-security in the secrecy setting}
 The act of generating a valid couple from scratch is called \emph{forging}, and the aforementioned propery is defined as \emph{unforgeability against chosen-message attacks} (or \ufcma, in short); its game diagram is shown in figure \ref{cryptogame:ufcma}. Do note that $m^*$ is stated to be outside the query set $M$, expressing the ``freshness'' of the forged couple\footnotemark. In formal terms:
 
-\footnotetext{Observe how this setup resembles the original \owf{} game}
+\footnotetext{Observe how this setup bears a striking resemblance to the \prf{} game. We're onto something...}
 
 \begin{definition}
     A \textsc{mac} scheme $\Pi$ is \textsc{ufcma}-secure iff:
     \[
-        \forall\; \ppt\; \adversary\; \implies \Pr[\cryptog{ufcma}(\lambda) = 1] \in \negl{\lambda}  
+        \forall \adversary \in \ppt \implies \Pr[\cryptog{ufcma}(\lambda) = 1] \in \negl(\lambda) \qedhere
     \]
 \end{definition}
 
@@ -25,31 +25,35 @@ The act of generating a valid couple from scratch is called \emph{forging}, and 
     \cseqchallenger{$k \pickUAR \K$}
 
     \cseqbeginloop
-    \send{}{$m_i \in M$}{}
-    \receive{$\phi_i = Tag_k(m_i)$}{$\phi_i$}{}
+    \send{}{$m \in M$}{}
+    \receive{$\phi = \Tag(k, m)$}{$\phi$}{}
     \cseqendloop
     
     \cseqdelay
 
-    \send{$m^* \notin M$}{$(m^*, \phi^*)$}{\textsc{Output 1 iff} $Tag_k(m^*) = \phi^*$}
+    \send{$m^* \notin M$}{$(m^*, \phi^*)$}{\textsc{Output 1 iff} $\Ver(k, m^*, \phi^*) = 1$}
     
 \end{cryptogame}
 
-Having defined a good notion of security in the \mac{} scheme domain, we turn our attention to a somewhat trivial scheme, and find out that it is indeed secure:
+Having defined a good notion of security in the \mac{} scheme domain, we turn our attention to a somewhat trivial scheme, and find out that it is indeed \ufcma-secure:
 
 \begin{theorem}
-    Let $\Pi$ be a \mac{} scheme such that $\textit{Tag}_k = \textit{Verify}_k = F_k$, where $F_k$ is a \prf. Then $\Pi$ is \ufcma-secure.
+    Let $f_k$ be a \prf, and define the following \mac{} scheme: 
+    \[
+        \Pi = (\Tag, \Ver) := (f_k(m), [f_k(m) = \phi])
+    \]
+    Then $\Pi$ is \ufcma-secure.
 \end{theorem}
 
 \begin{proof}
-    The usual proof by randomic hybridization entails. The original game is identical to the \ufcma{} game, where the tagging function is the \prf, whereas the hybrid game will have it replaced with a truly random function, as shown in figure \ref{cryptogame:prfufcmahyb}.
+    The usual proof by hybridization to random functions entails. The original game is identical to the \ufcma{} game, where the tagging function is the \prf, whereas the hybrid game will have it replaced with a truly random function, as shown in figure \ref{cryptogame:prfufcmahyb}.
 
     \begin{cryptogame}
         {prfufcmahyb}
         {$\hybridg{1}(\lambda)$}
         {}
 
-        \cseqchallenger{$R \pickUAR \R(\lambda, n, l)$}
+        \cseqchallenger{$R \pickUAR \mathfrak{R}(\lambda, n, l)$}
 
         \cseqbeginloop
         \send{}{$m_i \in M$}{}
@@ -58,7 +62,7 @@ Having defined a good notion of security in the \mac{} scheme domain, we turn ou
 
         \cseqdelay
 
-        \send{$m^* \notin M$}{$(m^*, \phi^*)$}{\textsc{Output 1 iff} $\textit{Tag}_k(m^*) = \phi^*$}
+        \send{$m^* \notin M$}{$(m^*, \phi^*)$}{\textsc{Output 1 iff} $\Tag(k, m^*) = \phi^*$}
 
     \end{cryptogame}
 
@@ -79,7 +83,7 @@ Having defined a good notion of security in the \mac{} scheme domain, we turn ou
 
         \cseqchallenger{\shortstack[l]{
             $k \pickUAR \binary^\lambda$ \\
-            $R \pickUAR \R(\lambda, n, l)$ \\
+            $R \pickUAR \mathfrak{R}(n, l)$ \\
             $b \pickUAR \binary$
         }}
     
@@ -87,7 +91,7 @@ Having defined a good notion of security in the \mac{} scheme domain, we turn ou
         \return{}{$m \in M$}{}
         \send{}{$m$}{}
         \receive{\shortstack[l]{
-            $\phi_0 \pickUAR F_k(r)$ \\
+            $\phi_0 \pickUAR f_k(r)$ \\
             $\phi_1 \pickUAR R(r)$
         }}{$\phi_b$}{}
         \invoke{}{$\phi_b$}{}
@@ -98,7 +102,7 @@ Having defined a good notion of security in the \mac{} scheme domain, we turn ou
         \return{$m^* \notin M$}{$(m^*, \phi^*)$}{}
         \send{}{$m^*$}{}
         \receive{\shortstack[l]{
-            $\varphi_0 \pickUAR F_k(r)$ \\
+            $\varphi_0 \pickUAR f_k(r)$ \\
             $\varphi_1 \pickUAR R(r)$
         }}{$\varphi_b$}{}
 
@@ -113,7 +117,7 @@ Having defined a good notion of security in the \mac{} scheme domain, we turn ou
     \end{cryptoredux}
 
     \begin{lemma}
-        $\forall\; \ppt\; \adversary \implies \Pr[\hybridg{1}(\lambda) = 1] \leq 2^{-l}$
+        $\forall \adversary \in \ppt \implies \Pr[\hybridg{1}(\lambda) = 1] \leq 2^{-l}$
     \end{lemma}
 
     \begin{proof}
@@ -124,51 +128,50 @@ Having defined a good notion of security in the \mac{} scheme domain, we turn ou
 \end{proof}
 
 % AP190107: Don't want the next section to creep in before the above figure, so I'm breaking the page. THe best solution would be to put some more text into the previous proof...
-\pagebreak
 
 \section{Domain extension for \mac{} schemes}
 
 The previous scheme works on fixed length messages; as in the encryption domain, there are techinques for tagging variable length messages which are \ufcma-secure. However, before showing them, some other apparently secure modes are described here to give some possible insights on how to tackle the problem. 
 
-Assume the message $m = (m_1, \dots, m_t) \in \{0,1\}^{n\cdot t}$ for some $t \geq 1$. Given the tagging function $\textit{Tag}_{k} : \binary^n \to \binary^l$, an attempt to tag the whole message may be to:
+Assume the message $m = (m_1, \dots, m_t) \in \binary^{n \cdot t}$ for some $t \geq 1$. Given the tagging function $\Tag_k \in \binary^n \to \binary^l$, an attempt to tag the whole message may be to:
 
 \begin{itemize}    
-    \item \textsc{xor} all the message blocks, and then tag: $\phi = \textit{Tag}_k(\bigxor_{i=1}^{t} m_i)$. But then, given an authenticated message $(m, \phi)$, an adversary can always forge a valid couple $(m', \phi)$, where $m'$ is the original message with two flipped bits in two distinct blocks at the same offset; the resulting \textsc{xor} would be the same.
+    \item \textsc{xor} all the message blocks, and then tag: $\phi = \Tag(k, \bigxor_{i = 1}^{t} m_i)$. This approach opens to some easy forgeries: given an authenticated message $(m, \phi)$, an adversary can create a valid couple $(m', \phi)$, where $m'$ is the original message with two flipped bits in two distinct blocks at the same offset; the resulting \textsc{xor} would be the same.
 
-    \item define the tag to be a $t$-sequence of tags, one for each message block. Hovever, an adversary can just flip the position of two arbitrary distinct message blocks and their relative tags, and would succesfully forge a distinct authenticated message.
+    \item define the tag to be a $t$-sequence of tags, one for each message block. Again, there is an easy way to forge authenticated messages: an adversary can just flip the position of two arbitrary distinct message blocks along with their relative tags, resulting in a different, yet authentic message.
 
-    \item attempt a variant of the above approach, by adding the block number to the block itself to avoid the previous forging. Again, this is not \ufcma-secure: the adversary may just make two queries on two distinct messages, obtain the two tag sequences, and then forge an authenticated message by choosing at each position $i$ whether to pick the message-tag blocks from the first or second query.
+    \item attempt a variant of the above approach, by adding the block number to the block itself to avoid the previous forging. Yet again, this is not \ufcma-secure: the adversary may just make two queries on two distinct messages, obtain the two tag sequences, and then forge an authenticated message by choosing at each position $i$ whether to pick the message-tag blocks from the first or second query. Possibilities are endless...
 
 \end{itemize}
 
 \subsection{Universal hash functions}
 
-A devised solution which has been proven to be secure relies on the following definition: a function family $\H$ which can be used to ``shrink'' variable length messages and then composed with a \prf{}:
+A devised solution which has been proven to be secure relies on the following definition: a function family $\H$ which can be used to ``shrink'' variable length messages and then composed with a \prf{} $f_k$:
 \[
-   \H = \{h_s : \binary^{n\cdot t} \to \binary^n \}_{s \in \binary^\lambda}
+   \H \in \binary^\lambda \to (\binary^{n \cdot t} \to \binary^n) : s \mapsto h_s
 \]
 \[
-   \textit{Tag}_{k, s}(m) = F_k(h_s(m))
+    \Tag((k, s), m) = f_k(h_s(m))
 \]
 
-So what are the properties of the induced family $\F(\H) = \{F_{k}(h_{s}(.))\}$? The main problem are \emph{collisions}, since for each $m \in \{0,v1\}^{n\cdot t}$ it should be hard to find $m' \neq m$ such that $h_s(m) = h_s(m')$. But collisions do exist for functions in $\F(\H)$, because they map elements from $\binary^{n\cdot t} $ to $\{0,1\}^t$, and since the codomain is smaller than the domain, the functions cannot be injective in any way.
+So what are the properties of the such a function family $\H \circ \F$? The main problem are \emph{collisions}, since for each $m \in \binary^{n \cdot t}$ it should be hard to find $m' \neq m$ such that $h_s(m) = h_s(m')$. But collisions do exist for functions in $\H \circ \F$, because they map elements from $\binary^{n \cdot t} $ to $\binary^t$, and since the codomain is smaller than the domain, the functions cannot be injective in any way.
 
 To overcome this problem, we can consider two options:
 \begin{itemize}
-    \item assume collisions are hard to find given $s \in \{0,1\}^{\lambda}$ publicly, and we have a \textit{collision resistant hashing};
-    \item let $s$ be secret, and assume collisions are hard to find because it is hard to know how $h_{s}$ works.
+    \item assume collisions are hard to find, even when $s \in \binary^{\lambda}$ is known; in this case we have a family of \textit{collision-resistant hash functions};
+    \item let $s$ be secret, and assume collisions are hard to find because it is hard to know how $h_s$ works.
 \end{itemize}
 
 \begin{definition}
-    A function family $\H$ is deemed \emph{$\varepsilon$-universal} iff:
+    A family of hash functions $h_s$ is deemed \emph{$\varepsilon$-universal} iff:
     \[
-        \forall x \neq x' \in \binary^{n\cdot t} \implies \Pr_{s \pickUAR \binary^\lambda}[h_s(x) = h_s(x') ] \leq \varepsilon  
+        \forall x \neq x' \in \binary^{n \cdot t}, S \sim \unifdist(\binary^\lambda) \implies \Pr[h_S(x) = h_S(x')] \leq \varepsilon  
     \]
 \end{definition}
 
-If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then the family is also called \emph{perfectly universal}; in the case where $\varepsilon \in \negl{\lambda}$ isntead, it is defined as \emph{almost universal} (\textsc{au}). Take care abotu telling the difference between universality and pairwise independence, which states:
+If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then the family is also called \emph{perfectly universal}; in the case where $\varepsilon \in \negl(\lambda)$ isntead, it is defined as \emph{almost universal} (\textsc{au}). Care should be taken in telling the difference between universality and pairwise independence, which states:
 \[
-    (h_s(x), h_s(x')) \equiv U_{2n}
+    (h_S(x), h_S(x')) \equiv U_{2n}
 \]
 
 \begin{lemma}
@@ -176,14 +179,20 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
 \end{lemma}
 
 \begin{proof} The proof is left as exercise.
+    \todo{
     % AP190108: Leaving this part as-is
-    (should I use $Col$ for solving this? What is the difference and when I should use $Col$ instead of one-shot-probability?) \textbf{ASK FOR SOLVING PROPERLY} (Thoughts: when I ask \textit{what's the probability that, chosen 2 distinct x-es, their hashes are the same \textbf{on a certain value}?}, maybe I have to use one-shot, because one-shot refers to the prob. that the two inputs collide on a specific value, even if not specified.
+    (should I use $Col$ for solving this? What is the difference and when should I use $Col$ instead of one-shot-probability?)
+
+    \textbf{ASK FOR SOLVING PROPERLY}
+
+    (Thoughts: when I ask \textit{what's the probability that, chosen 2 distinct x-es, their hashes are the same \textbf{on a certain value}?}, maybe I have to use one-shot, because one-shot refers to the prob. that the two inputs collide on a specific value, even if not specified.
 
     Instead, if I consider \textit{what's the prob. that , chosen 2 distinct x-es, their hashes are the same?}, maybe I have to calculate all the possible collisions, because I want to know if the 2 inputs can collide in general. )
+    }
 \end{proof}
 
 \begin{theorem}
-    Assuming $\F$ is a \prf{} with $n$-bit domain and $\H$ is \textsc{au}, then $\F' = \F(\H)$ is a \prf{} on $(n\cdot t)-$ bit domain, for $t \geq 1$.
+    Assuming $f_k$ is a \prf{} with $n$-bit domain and $h_s$ is an \textsc{au} hash function family, then $\H \circ \F$ is a \prf{} on $(n \cdot t)$-bit domain, for $t \geq 1$.
 \end{theorem}
 
 \begin{proof}
@@ -202,7 +211,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
 
         \cseqbeginloop
         \send{}{$x$}{}
-        \receive{$y = F_k(h_s(x))$}{$y$}{}
+        \receive{$y = f_k(h_s(x))$}{$y$}{}
         \cseqendloop
         
     \end{cryptogame}
@@ -213,7 +222,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
         {}
 
         \cseqchallenger{\shortstack[l]{
-            $\overline{R} \pickUAR \R(\lambda, n, l)$ \\
+            $\overline{R} \pickUAR \mathfrak{R}(n, l)$ \\
             $s \pickUAR \binary^\lambda$
         }}
 
@@ -229,7 +238,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
         {$Rand_{\R', \A}(\lambda)$}
         {}
 
-        \cseqchallenger{$R \pickUAR \R(\lambda, n, l)$}
+        \cseqchallenger{$R \pickUAR \mathfrak{R}(n, l)$}
 
         \cseqbeginloop
         \send{}{$x$}{}
@@ -257,7 +266,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
 
     \begin{proof}
 
-        Again, collisions come into play there, but in a much sneakier way. Given two queries with arguments $x_1, x_2$ returning the same image $y$, the random game can model two scenarios:
+        Again, collisions come into play there, but there are multiple cases that complicate things. Given two queries with arguments $x_1, x_2$ returning the same image $y$, the random game can model two scenarios:
 
         \begin{itemize}
             \item the arguments are equal, but with negligible probability
@@ -276,14 +285,14 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
         \[
             \exists i \neq j \in [q] : h_s(x_i) = h_s(x_j)
         \]
-        where $q$ denotes the adversary's query count. It suffices to show that $\Pr[\textsc{Bad}] \in \negl{\lambda}$.
+        where $q$ denotes the adversary's query count. It suffices to show that $\Pr[\textsc{Bad}] \in \negl(\lambda)$.
 
         % AP190108: Copied verbatim from my notes, maybe this is something Venturi wrote. Doesn't mean I fully understand it...
         Since we don't care what happens after a collision, we can alternatively consider a mental experiment where we answer all queries at random, and only at the end sample $s \pickUAR \binary^\lambda$ and check ofr collisions: this does not change the value of $\Pr(\textsc{Bad})$. Now queries are independent of $s$, and this eases our proof:
         \begin{align*}
-            \Pr[\textsc{Bad}] &= \Pr_s [\exists x_i \neq x_j, h_s(x_i) = h_s(x_j)] &\\
-            &\leq \sum_{i \neq j} \Pr_s [h_s(x_i) = h_s(x_j)] & h_s \text{ is \textsc{au} by definition} \\
-            &\leq \binom{q}{2} \negl{\lambda} \in \negl{\lambda} &
+            \Pr[\textsc{Bad}] &= \Pr[\exists x_i \neq x_j, h_S(x_i) = h_S(x_j)] &                               \\
+            &\leq \sum_{i \neq j} \Pr[h_S(x_i) = h_S(x_j)]                      & \text{$h_s$ is \textsc{au})}  \\
+            &\leq \binom{q}{2} \negl(\lambda) \in \negl(\lambda)                &
         \end{align*}
 
         By ruling out this event, the lemma is proven.
@@ -293,14 +302,14 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
 \end{proof}
 
 \begin{corollary}
-    Let $\Pi = (\textit{Tag}, \textit{Verify})$ be a variable length message \mac{} scheme where, given a \prf{} $F_k$ and an \textsc{au} hash funcion family $h_s$, the tagging function is defined as $F_k(h_s)$. Then $\Pi$ is \ufcma-secure.
+    Let $\Pi = (\Tag, \Ver)$ be a variable length message \mac{} scheme where, given a \prf{} $f_k$ and an \textsc{au} hash funcion family $h_s$, the tagging function is defined as $f_k(h_s)$. Then $\Pi$ is \ufcma-secure.
 \end{corollary}
 
 \subsection{Hash function families from finite fields}
 
 % AP190110: A "finite field" aka galois field, is a field with finite elements. (...)
 %       - Finite fields exist only for carrier cardinality of q^k, where q is prime and k is nonnegative
-%       - Both operations are done modulo 
+%       - Both operations are done modulo q
 
 A generic $2^n$-order finite field has very useful properties: adding two of its elements is equal to \textsc{xor}-ing their binary representations, while multiplying them is done modulo $2^n$. It is possible to define a hash function family that makes good use of these properties, and is suitable for a \ufcma-secure \mac{} scheme.
 
@@ -330,42 +339,40 @@ A generic $2^n$-order finite field has very useful properties: adding two of its
     Since the messages are different from each other, there is at least some $i$-th block that contains some of the differences. Assume, without loss of generality, that some of the differences are contained in the first block ($i = 1$); the sum can then be split between the first block itself $\delta_1 s_1$ and the rest:
 
     \begin{align*}
-        \sum_{i = 1}^t \delta_i s_i = \delta_1 s_1 + \sum_{i = 2}^{t} \delta_i s_i &= 0 \\
-        \delta_ 1 s_1 &= -\sum_{i = 2}^{t} \delta_i s_i \\
-        s_1 &= \frac{-\sum_{i = 2}^{t} \delta_i s_i}{\delta_1}
+        \sum_{i = 1}^t \delta_i s_i                     &= 0                                                \\
+        \delta_1 s_1 + \sum_{i = 2}^{t} \delta_i s_i    &= 0                                                \\
+        \delta_ 1 s_1                                   &= -\sum_{i = 2}^{t} \delta_i s_i                   \\
+        s_1                                             &= \frac{-\sum_{i = 2}^{t} \delta_i s_i}{\delta_1}  \\
     \end{align*}
 
-    which means when a collision happens, $s_1$ must be exactly equal to the sum of the other blocks, which is another element of $\mathbb{F}$. But since every seed is chosen at random among $\mathbb{F}$, the probability of picking the element $s_1$ satisfying the above equation is just $\left|\mathbb{F}\right|^{-1} = 2^{-n} \in \negl{\lambda}$. By repeating this reasoning for every difference-block, a sum of negligible probabilities is obtained, which is in turn negligible; therefore the hash function family $h_s$ is almost universal.
+    which means when a collision happens, $s_1$ must be exactly equal to the sum of the other blocks, which is another element of $\mathbb{F}$. But since every seed is chosen at random among $\mathbb{F}$, the probability of picking the element $s_1$ satisfying the above equation is just $\left|\mathbb{F}\right|^{-1} = 2^{-n} \in \negl(\lambda)$. By repeating this reasoning for every difference-block, a sum of negligible probabilities is obtained, which is in turn negligible; therefore the hash function family $h_s$ is almost universal.
 
 \end{proof}
 
 % AP190111: Leaving this section as-is; will come back to it at a later time
 \subsubsection{$\H$ with Galois fields elements and polynomials}
 
-\begin{construction}
-    Take $ \mathbb{F}=GF(2^{n})$, a \textit{Galois field} of $2^{n}$ elements.
-    
-    Let $m=(m_{1}, ..., m_{t}) \in \mathbb{F}^{t} $ and $s \pickUAR \mathbb{F}^t$. We state that 
-    \[
-        h_{s}(m)= \sum_{i=1}^{t}s^{i-1}m_{i}
-    \]
-\end{construction}
-
-
 \begin{exercise}
-    Prove that this construction is \textbf{almost universal}.
+    Let $\mathbb{F} = GF(2^n)$ be a finite field of $2^n$ elements, and let $m = (m_1, \dots, m_t) \in \mathbb{F}^t$ and $s \pickUAR \mathbb{F}^t$. Construct the following hash function family:
+    \[
+        h_{s}(m) = \sum_{i=1}^{t}s^{i-1}m_{i}
+    \]
 
+    Prove that this construction is \textsc{au}.
+\end{exercise}
+
+\begin{solution}
     (possible proof: to be almost universal, looking at the definition, collisions with $m \not= m'$ must be negligible.
 
     So consider a collision as above: it must be true that  
+    \begin{align*}
+        \sum_{i=1}^{t} m_{i}s^{i-1}                                 &= \sum_{i=1}^{t} m'_{i}s^{i-1} \\ 
+        \sum_{i=1}^{t} m_{i}s^{i-1}-\sum_{i=1}^{t} m'_{i}s^{i-1}    &= 0                            \\
+        q_{m-m'}(s)                                                 &= 0                            \\
+    \end{align*}
+    How can we make a polynomial equal to 0? We have to find the \textbf{roots} of the polynomial, which we know are at most the polynomial's rank. The rank is $t - 1$, and the probability of picking a root from $\mathbb{F}$ as seed of $h_s$ is:
     \[
-        \sum_{i=1}^{t} m_{i}s^{i-1}=\sum_{i=1}^{t} m'_{i}s^{i-1} \Leftrightarrow 
-        \sum_{i=1}^{t} m_{i}s^{i-1}-\sum_{i=1}^{t} m'_{i}s^{i-1}=0 \Leftrightarrow
-        q_{m-m'}(s)=0
+        \Pr[s=root] = \frac{t - 1}{2^{n}} \in \negl(\lambda)
     \]
-    How can we make a polynomial equal to 0? We have to find the \textbf{roots} of the polynomial, which we know are at most the \textbf{grade} of the polynomial. So, the grade of this polynomial is $t-1$, and the probability of picking a root from $ \mathbb{F} $ as seed of $h_{s}(.)$ is 
-    \[
-        \P [s=root]=\frac{t-1}{2^{n}}   \in \negl{\lambda} 
-    \] )
-\end{exercise}
+\end{solution}
  

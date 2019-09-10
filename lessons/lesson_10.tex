@@ -1,96 +1,93 @@
 \mychapter{10}{Lesson 10} %181026
 
-% AP190125: Yeah, that's impossible to hyphenate...
-\section{Domain extension for \prf-based \mac{} schemes}
+\section{Domain extension for \prf-based authentication schemes}
 
 \subsection{Hash function families from \prf{}s}
 
-Another way to obtain domain extension for a \mac{} scheme, using the $\F_k(h_s)$ approach, is to construct the hash function family from another \prf{}. We expect to have:
+Another way to obtain domain extension for a \mac{} scheme, using the $\H \circ \F$ approach, is to construct the hash function family from another \prf{}. We expect to have:
 \begin{itemize}
-    \item $\Pr[h_s(m) = h_s(m'), s \pickUAR \binary^\lambda, (m, m') \pickUAR A(1^\lambda)] \in \negl{\lambda}$;
-    \item We need two \prf{}s: one is $F_{k}$, and the other is $F_{s}$
+    \item $\forall \adversary \in \ppt, S \sim \unifdist(\binary^\lambda) \implies \Pr[h_S(m) = h_S(m')] \in \negl(\lambda)$;
+    \item We need two \prf{}s: one is $f_k$, and the other is $f_s$
 \end{itemize}
 
 \subsection{\textsc{xor}-mode}
 
-Assume that we have this function
+Let $f_s$ be a \prf, and assume that we have this function
 \[
-    h_{s}(m)=F_{s}(m_{1}||1) \xor ... \xor F_{s}(m_{t}||t)
+    h_s(m) = f_s(m_1||1) \xor ... \xor f_s(m_t||t)
 \]
-so that the input to the PRF $F_{s}(.)$ is $n + log_{2} t$ bytes long.
+so that the input to $f_s$ is $n + log_2(t)$ bytes long.
 
 \begin{lemma}
-    Above $\H$ is computational AU if $F_s$ is a PRF.
+    Above $\H$ is computational \textsc{AU}.
 \end{lemma}
 
 \begin{proof} The proof is left as exercise.
 
-    (Hint: The pseudorandom functions can be defined as $F_s = F_k'(0, \dots)$ and $F_k = F_k'(1 \dots)$).
+    (Hint: The pseudorandom functions can be defined as $f_s = f_k'(0, \dots)$ and $f_k = f_k'(1 \dots)$).
     
     Possible proof: we have to show that
     \[
-        \P [ h_{s}(m)=h_{s}(m') ] \in \negl{\lambda}   
+        \forall m \neq m' \implies \Pr[h_s(m) = h_s(m')] \in \negl(\lambda)   
     \]
-    with $m \neq m'$. This means that 
+    This means that:
     \begin{align*}
-        &\Pr\left[\left(\bigxor_{i = 1}^{t} F_s(m_i, i)\right) = \left(\bigxor_{i = 1}^{t} F_s(m_i', i)\right)\right] \\
-        = &\Pr[\forall i \quad F_s(m_i, i) \xor F_s(m'_i, i) = \bigxor_{j = 1, j \neq i}^{t} F_s(m_j, j) \xor F_s(m'_j, j) = \alpha]
+        & \Pr\left[\left(\bigxor_{i = 1}^{t} f_s(m_i, i)\right) = \left(\bigxor_{i = 1}^{t} f_s(m_i', i)\right)\right] \\
+        =& \Pr[\forall i \quad f_s(m_i, i) \xor f_s(m'_i, i) = \bigxor_{j = 1, j \neq i}^{t} f_s(m_j, j) \xor f_s(m'_j, j) = \alpha]
     \end{align*}
     for each $i \in [1,t]$. But $\alpha$ is one unique random number chosen over $2^{n}$ possible candidates, so the collision probability is negligible.
     
 \end{proof}
 
 \subsection{\textsc{cbc}-mode \mac{} scheme}
-This is part of the standard, used in TLS. It's used with a \prf{} $F_{s}$, setting the starting vector as $\textsc{iv} = 0^n = c_0$ and running this \prf{} as part of \textsc{cbc}. The last block otained by the whole process is the message's signature:
+This mode is used in practice by the \textsc{tls} standard. It's used with a \prf{} $f_s$, setting the starting vector as $\textsc{iv} = 0^n = c_0$ and running this \prf{} as part of \textsc{cbc}. The last block otained by the whole process is the message's signature:
 \[
-    h_s(m) = F_s(m_t \xor F_s(m_{t-1} \xor F_s(\dots F_s(m_2 \xor F_s(m_1 \xor \textsc{iv})) \dots)))
+    h_s(m) = f_s(m_t \xor f_s(m_{t-1} \xor f_s(\dots f_s(m_2 \xor f_s(m_1 \xor \textsc{iv})) \dots)))
 \]
 \begin{lemma}
-    CBC MAC defines completely an AU family.
+    \textsc{cbc} \mac{} defines completely an \textsc{au} family.
 \end{lemma}
 
 \begin{proof}
     (not proven)
 \end{proof}
 
-We can use this function to create an \textbf{encrypted CBC}, or \textbf{E-CBC}:
+We can use this function to create an \emph{encrypted \textsc{cbc}}, or \textsc{e-cbc}:
 \[
-    E-CBC_{K, S}(m)=F_{k}(h_{s}^{CBC}(m))
+    \textsc{e-cbc}_{K, S}(m) = f_{k}(h_s^{\textsc{cbc}}(m))
 \]
 
 \begin{theorem}
-    Actually if $F_k$ is a \prf, CBC-MAC is already a MAC with domain $n\cdot t$ for arbitrarily fixed $t \in \mathbb{N}$.
+    Actually if $f_k$ is a \prf, \textsc{cbc} \mac{} is already a \mac{} scheme with domain $n \cdot t$ for arbitrarily fixed $t \in \nonneg$.
 \end{theorem}
 
 \begin{proof}
     (not proven)
 \end{proof}
 
-\subsection{XOR MAC}
-Instead of $\F(\H)$ now the $Tag()$ function outputs $\phi = (\eta , F_{k}(\eta) \xor h_{s}(m))$ where $\eta \pickUAR \{0,1\}^{n}$ is random and it's called \textit{nonce}.
-
-Authentication is done as:
+\subsection{\textsc{xor} \mac}
+Instead of $\H \circ \F$, now the $\Tag$ routine outputs $\phi = (\eta , f_k(\eta) \xor h_s(m))$ where $\eta \pickUAR \binary^n$ is random and it's called \textit{nonce}. Authentication is done as:
 \[
-    (m,( \eta, F_{k}(\eta)\xor h_{s}(m)))
+    (m, (\eta, f_k(\eta) \xor h_s(m)))
 \]
 
-When I want to verify a message and I get the couple $(m, (\eta, v))$, I just check that $v=F_{k}(\eta) \xor h_{s}(m)$. It should be hard to find a value called $a$ such that, given $m \not= m'$, 
+When I want to verify a message and I get the couple $(m, (\eta, v))$, I just check that $v = f_k(\eta) \xor h_s(m)$. It should be hard to find a value called $a$ such that, given $m \neq m'$, 
 \[
-    h_{s}(m) \xor a= h_{s}(m')
+    h_s(m) \xor a = h_s(m')
 \]
 
-In fact, since an adversary who wants to break this scheme has to send a valid couple $(m^{*}, \phi^{*})$ after some queries, he could:
+In fact, since an adversary who wants to break this scheme has to send a valid couple $(m^*, \phi^*)$ after some queries, he could:
 \begin{itemize}
-    \item ask for message $m$ and store the tag $( \eta, F_{k}(\eta)\xor h_{s}(m))$
-    \item try to find $a=h_{s}(m) \xor h_{s}(m')$ and modify the previous stored tag adding $v \xor a$, 
+    \item ask for message $m$ and store the tag $(\eta, f_k(\eta) \xor h_s(m))$
+    \item try to find $a = h_s(m) \xor h_s(m')$ and modify the previous stored tag adding $v \xor a$, 
 \end{itemize}
 so now he could send the authenticated message
 \[
-    (m', (\eta, F_{k}(\eta) \xor h_{s}(m'))) 
+    (m', (\eta, f_k(\eta) \xor h_s(m'))) 
 \]
 which is a valid message.
 
-\todo{AXU property definition is missing}
+\todo{AXU property definition is missing, rest of the section is left as-is}
 
 \begin{lemma}
     XOR mode gives computational AXU (Almost Xor Universal)
@@ -101,7 +98,7 @@ which is a valid message.
 \end{proof}
 
 \begin{theorem}
-    If $\F$ is a PRF and $\H$ is computational AXU, then XOR-MAC is a MAC.
+    If $\F$ is a \prf{} and $\H$ is computational AXU, then XOR-MAC is a MAC.
 \end{theorem}
 
 \begin{proof}
@@ -129,7 +126,7 @@ Going back to the encryption realm, a new definition of attack to a \ske{} schem
 
 \footnotetext{Different versions of the \cca{} notion exist. The one defined here is also called \cca2, or \emph{adaptive Chosen Ciphertext Attack}}
 
-% AP190112: An important rule is forgotten here: the adversary cannot query the decryption oracle on the challenge ciphertext; otherwise the game becomes useless
+% AP190910: CAUTION - The encryption routine is intrisically rnadomized: the returned ciphertexts are composed of a nonce, and the actual encrypted message
 
 \begin{cryptogame}
     {cca}
@@ -141,10 +138,7 @@ Going back to the encryption realm, a new definition of attack to a \ske{} schem
     %cpa
     \cseqbeginloop
     \send{}{$m$}{}
-    \receive{\shortstack[l]{
-        $r \text{ chosen \uar}$ \\
-        $c = Enc_k(m, r)$
-    }}{$c$}{}
+    \receive{$c \pickUAR \Enc(k, m)$}{$c$}{}
     \cseqendloop
 
     \cseqdelay
@@ -152,7 +146,7 @@ Going back to the encryption realm, a new definition of attack to a \ske{} schem
     %cca
     \cseqbeginloop
     \send{}{$c$}{}
-    \receive{$m = Dec_k(c)$}{$m$}{}
+    \receive{$m = \Dec_k(c)$}{$m$}{}
     \cseqendloop
 
     \cseqdelay
@@ -162,7 +156,7 @@ Going back to the encryption realm, a new definition of attack to a \ske{} schem
     \receive{\shortstack[l]{
         $r^* \text{ chosen \uar}$ \\
         $b \pickUAR \binary$ \\
-        $c^* = Enc_k(m_b^*, r^*)$
+        $c^* \pickUAR \Enc(k, m_b^*)$
     }}{$c_b^*$}{}
 
     \cseqdelay
@@ -170,18 +164,15 @@ Going back to the encryption realm, a new definition of attack to a \ske{} schem
     %cpa
     \cseqbeginloop
     \send{}{$m$}{}
-    \receive{\shortstack[l]{
-        $r \text{ chosen \uar}$ \\
-        $c = Enc_k(m, r)$
-    }}{$c$}{}
+    \receive{$c \pickUAR \Enc(k, m)$}{$c$}{}
     \cseqendloop
 
     \cseqdelay
 
     %cca
     \cseqbeginloop
-    \send{}{$c$}{}
-    \receive{$m = Dec_k(c)$}{$m$}{}
+    \send{$c \neq c^*$}{$c$}{}
+    \receive{$m = \Dec_k(c)$}{$m$}{}
     \cseqendloop
 
     \cseqdelay
@@ -196,16 +187,16 @@ Going back to the encryption realm, a new definition of attack to a \ske{} schem
 
 \begin{proof}
 
-    Let $m_0$ and $m_1$ be the messages the adversary sends to the challenger as the challenge plaintexts; on receiving the ciphertext $c_b = (r, F_k(r \xor m_b) : b \pickUAR \binary$, the adversary crafts another ciphertext with an arbitrary value $\alpha$:
+    Let $m_0$ and $m_1$ be the messages the adversary sends to the challenger as the challenge plaintexts; on receiving the ciphertext $c_b = (r, f_k(r \xor m_b) : b \pickUAR \binary$, the adversary crafts another ciphertext with an arbitrary value $\alpha$:
     \[
-        \widehat{c_b} = (r, F_k(r) \xor m_b \xor \alpha)
+        \widehat{c_b} = (r, f_k(r) \xor m_b \xor \alpha)
     \]
     and queries the decryption oracle on it. The latter will decrypt the new ciphertext and return a plaintext, which can be easily manipulated by the adversary to reveal exactly which message was encrypted during the challenge:
 
     \begin{align*}
-        Dec_k(\widehat{c_b}) &= Dec_k(r, F_k(r) \xor m_b \xor \alpha) \\
-        &= F_k(r) \xor F_k(r) \xor m_b \xor \alpha \\
-        &= m_b \xor \alpha
+        \Dec(k, (\widehat{c_b}) &= \Dec(k, (r, f_k(r) \xor m_b \xor \alpha))    \\
+                                &= f_k(r) \xor f_k(r) \xor m_b \xor \alpha      \\
+                                &= m_b \xor \alpha                              \\
     \end{align*}
 
     Therefore, the adversary certainly wins after just one decryption query, proving the scheme's vulnerability to \cca{} attacks.
@@ -214,9 +205,9 @@ Going back to the encryption realm, a new definition of attack to a \ske{} schem
 
 \section{Authenticated encryption}
 
-Instead of tackling the \cca-security problem upfront, it might be useful to consider a construction that achieves both secrecy and authentication: that is, a scheme that encrypts messages and authenticates their respective senders at the same time. In the encryption setting, such a scheme is defined as being \cpa-secure with an additional \textsc{auth} property denoting the scheme's resistance to forgeries, much like its \mac{} cousins. The game shown in figure \ref{cryptogame:authske} models this \textsc{auth} property of a scheme $\Pi = (Enc, Dec)$, with an additional quirk to the decryption routine:
+Instead of tackling the \cca-security problem upfront, it might be useful to consider a construction that achieves both secrecy and authentication: that is, a scheme that encrypts messages and authenticates their respective senders at the same time. In the encryption setting, such a scheme is defined as being \cpa-secure with an additional \textsc{auth} property denoting the scheme's resistance to forgeries, much like its \mac{} cousins. The game shown in figure \ref{cryptogame:authske} models this \textsc{auth} property of a scheme $\Pi = (\Enc, \Dec)$, with an additional quirk to the decryption routine:
 \[
-    Dec:\K*\C \to M \cup \{\perp\}
+    \Dec \in \K \times \C \to M \cup \{\perp\}
 \]
 where the $\perp$ value is returned whenever the decryption algorithm is supplied an invalid or malformed ciphertext.
 
@@ -229,15 +220,12 @@ where the $\perp$ value is returned whenever the decryption algorithm is supplie
 
     \cseqbeginloop
     \send{}{$m$}{}
-    \receive{\shortstack[l]{
-        $r \text{ chosen \uar}$ \\
-        $c = Enc_k(m, r)$
-    }}{$c$}{$c \in C$}
+    \receive{$c \pickUAR \Enc(k, m)$}{$c$}{$c \in C$}
     \cseqendloop
 
     \cseqdelay
 
-    \send{$c' \notin C$}{$c'$}{\textsc{Output 1 iff} $Dec_k(c') \neq \perp$}
+    \send{$c' \notin C$}{$c'$}{\textsc{Output 1 iff} $\Dec(k, c') \neq \perp$}
 
 \end{cryptogame} 
 
@@ -247,49 +235,49 @@ where the $\perp$ value is returned whenever the decryption algorithm is supplie
 
 \begin{proof} The proof is left as an exercise.
 
-    \emph{Hint}: consider the experiment where $Dec(k, c)$:
+    \emph{Hint}: consider the experiment where $\Dec(k, c)$:
 
     \begin{itemize}
         \item if $c$ not fresh ( i.e. output of previous encryption query $m$, output $m$)
         \item else output $\perp$
     \end{itemize}
     
-    The approach would be to reduce cca to cpa; given $D^{cca}$, we can build $D^{cpa}$. $D^{cca}$ will ask decryption queries, but $D^{cpa}$ can answer just with these two properties shown above, so it can reply just if he asked these $(c, m)$ before to its challenger $\C$.
+    The approach would be to reduce cca to cpa; given $\distinguisher^{\cca}$, we can build $\distinguisher^{\cpa}$. $\distinguisher^{\cca}$ will ask decryption queries, but $\distinguisher^{\cpa}$ can answer just with these two properties shown above, so it can reply just if he asked these $(c, m)$ before to its challenger $\challenger$.
 
 \end{proof}
 
 \subsection{Combining \ske{} \& \mac{} schemes}
 
-Let $\Pi_1 = (Enc, Dec)$ be a \ske{} scheme, and $\Pi_2 = (\textit{Tag}, \textit{Verify})$ be a \mac{} scheme; there are 3 ways to combine them into an authenticated encryption scheme:
+Let $\Pi_1 = (\Enc, \Dec)$ be a \ske{} scheme, and $\Pi_2 = (\Tag, \Ver)$ be a \mac{} scheme; there are 3 ways to combine them into an authenticated encryption scheme:
 % AP190112: A note should be made about notation, for what it means to "pick at random" from an encryption/tagging function (random nonce in the encryption, seeded AU hash function in the tagging)
 % Plus, keys aren't curried, but subsubscripting may turn ugly...
 \begin{itemize}
     \item \emph{Encrypt-and-Tag}:
     \begin{enumerate}
-        \item $c \pickUAR Enc(k_1, m)$
-        \item $\phi \pickUAR Tag(k_2, m)$
+        \item $c \pickUAR \Enc(k_1, m)$
+        \item $\phi \pickUAR \Tag(k_2, m)$
         \item $c^* = (c, \phi)$
     \end{enumerate}
         
     \item \emph{Tag-then-encrypt}:
     \begin{enumerate}
-        \item $\phi \pickUAR Tag(k_2, m)$
-        \item $c \pickUAR Enc(k_1, (\phi, m))$
+        \item $\phi \pickUAR \Tag(k_2, m)$
+        \item $c \pickUAR \Enc(k_1, (\phi, m))$
         \item $c^* = c$
     \end{enumerate}
 
     \item \emph{Encrypt-then-Tag}:
     \begin{enumerate}
-        \item $c \pickUAR Enc(k_1, m)$
-        \item $\phi \pickUAR Tag(k_2, c)$
+        \item $c \pickUAR \Enc(k_1, m)$
+        \item $\phi \pickUAR \Tag(k_2, c)$
         \item $c^* = (c, \phi)$
     \end{enumerate}
 \end{itemize}
 
-Of the three options, only the last one is proven to be \cca-secure for arbitrary scheme choices; the other approaches are not secure ``a-priori'', with some couples proven to be secure by themselves. Notable examples are the \emph{Transport Layer Security} (\textsc{tls}) protocol, which employs the second strategy, and has been proven to be secure because of the chosen ecnryption scheme; \emph{Secure SHell} (\textsc{ssh}) instead uses the first strategy.
+Of the three options, only the last one is proven to be \cca-secure for arbitrary scheme choices; the other approaches are not secure ``a-priori'', with some couples proven to be secure by themselves. Notable examples are the \emph{Transport Layer Security} (\textsc{tls}) protocol, which employs the second strategy, and has been proven to be secure because of the chosen ecnryption scheme; \emph{Secure shell} (\textsc{ssh}) instead uses the first strategy.
 
 \begin{theorem}
-    If an authenticated encryption scheme $\Pi$ is made by combining a \cpa-secure \ske{} scheme $\Pi_1$ with a \emph{strongly unforgeable} \mac{} scheme $\Pi_{2}$ in the \emph{Encrypt-then-tag} method. Then $\Pi$ is \cpa-secure and \textit{auth}-secure. 
+    If an authenticated encryption scheme $\Pi$ is made by combining a \cpa-secure \ske{} scheme $\Pi_1$ with a \emph{strongly unforgeable} \mac{} scheme $\Pi_2$ in the \emph{Encrypt-then-tag} method. Then $\Pi$ is \cpa-secure and \textit{auth}-secure. 
 \end{theorem}
 
 % AP190113: Key-related notation issues, again
@@ -343,7 +331,7 @@ Of the three options, only the last one is proven to be \cca-secure for arbitrar
 
 \end{proof}
 
-Proved for the cpa-security property, now we have to prove, in a similar way, that the auth property must be holded by $\Pi$ if $\Pi_{2}$ is an auth-secure scheme.
+Proved for the cpa-security property, now we have to prove, in a similar way, that the auth property must hold by $\Pi$ if $\Pi_2$ is an auth-secure scheme.
 \begin{exercise}
     Prove it!
 

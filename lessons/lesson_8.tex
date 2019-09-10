@@ -26,10 +26,10 @@ Decryption is trivially implemented by \textsc{xor}-ing the ciphered blocks with
         \node (rd) [right of = r2, node distance = 2cm] {$\dots$};
         \node (rt) [right of = rd, node distance = 2cm] {$r$};
 
-        \node (f1) [box, below of = r1] {$F_k$};
-        \node (f2) [box, below of = r2] {$F_k$};
+        \node (f1) [box, below of = r1] {$f_k$};
+        \node (f2) [box, below of = r2] {$f_k$};
         \node (fd) [below of = rd] {$\dots$};
-        \node (ft) [box, below of = rt] {$F_k$};
+        \node (ft) [box, below of = rt] {$f_k$};
         
         \node (x1) [below of = f1, pin={[init]left:$m_1$}] {$\xor$};
         \node (x2) [below of = f2, pin={[init]left:$m_2$}] {$\xor$};
@@ -129,7 +129,7 @@ This time, a \emph{pseudorandom permutation}(\prp) is used instead of a \prf; th
 
 \subsection{Counter mode}
 
-This mode closely resembles \textsc{ecb}-mode but uses a ``rolling'' nonce instead of a static one, as shown in figure \ref{fig:ctr}. At each successive block, the nonce is incremented by 1 and then used in a single block encryption. Since the nonce is in $\{0,1\}^n$, the increment is done modulo $2^{n}$ so that the value will wrap around to 0 it it ever overflows. Decryption is analogous.
+Also denoted as \textsc{ctr} in short, this mode closely resembles \textsc{ecb}-mode but uses a ``rolling'' nonce instead of a static one, as shown in figure \ref{fig:ctr}. At each successive block, the nonce is incremented by 1 and then used in a single block encryption. Since the nonce is in $\binary^n$, the increment is done modulo $2^n$ so that the value will wrap around to 0 it it ever overflows. Decryption is analogous.
 
 \begin{figure}[ht]
     \centering
@@ -144,10 +144,10 @@ This mode closely resembles \textsc{ecb}-mode but uses a ``rolling'' nonce inste
         \node (rd) [right of = r2, node distance = 2cm] {$\dots$};
         \node (rt) [right of = rd, node distance = 2cm] {$r + t - 1$};
 
-        \node (f1) [box, below of = r1] {$F_k$};
-        \node (f2) [box, below of = r2] {$F_k$};
+        \node (f1) [box, below of = r1] {$f_k$};
+        \node (f2) [box, below of = r2] {$f_k$};
         \node (fd) [below of = rd] {$\dots$};
-        \node (ft) [box, below of = rt] {$F_k$};
+        \node (ft) [box, below of = rt] {$f_k$};
         
         \node (x1) [below of = f1, pin={[init]left:$m_1$}] {$\xor$};
         \node (x2) [below of = f2, pin={[init]left:$m_2$}] {$\xor$};
@@ -187,7 +187,7 @@ This mode closely resembles \textsc{ecb}-mode but uses a ``rolling'' nonce inste
 This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-security, at the cost of perfect parallelization.
 
 \begin{theorem}
-    Assume $F_k$ is a \prf, then the counter-mode block cipher (\textsc{ctr}) is \cpa-secure for variable length messages\footnotemark.
+    Assume $f_k$ is a \prf, then the counter-mode block cipher is \cpa-secure for variable length messages\footnotemark.
 \end{theorem}
 \footnotetext{\emph{Variable length messages} exactly means every message $m = (m_1, \dots, m_t)$ is made of $t$ blocks, and $t$ can change from any message to a different one.}
 
@@ -204,7 +204,7 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
         \send{}{$m = (m_1, \dots, m_t)$}{}
         \receive{\shortstack[l]{
             $r = c_0 \pickUAR \binary^n$ \\
-            $c_i = F_k(r + i - 1) \xor m_i \quad \forall i$
+            $c_i = f_k(r + i - 1) \xor m_i \quad \forall i$
         }}
         {$c = (c_0, c_1, \dots, c_t)$}{}
 
@@ -216,7 +216,7 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
         \receive{\shortstack[l]{
             $\rho = \gamma_0 \pickUAR \binary^n$ \\
             $b \pickUAR \binary$ \\
-            $(\gamma_b)_i = F_k(\rho + i - 1) \xor (\mu_b)_i \quad \forall i$
+            $(\gamma_b)_i = f_k(\rho + i - 1) \xor (\mu_b)_i \quad \forall i$
         }}
         {$\gamma_b = (\gamma_0, \gamma_1, \dots, \gamma_t)$}{}
 
@@ -227,7 +227,7 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
         \send{}{$m = (m_1, \dots, m_t)$}{}
         \receive{\shortstack[l]{
             $r = c_0 \pickUAR \binary^n$ \\
-            $c_i = F_k(r + i - 1) \xor m_i \quad \forall i$
+            $c_i = f_k(r + i - 1) \xor m_i \quad \forall i$
         }}
         {$c = (c_0, c_1, \dots, c_t)$}{}
 
@@ -235,7 +235,7 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
 
         \cseqdelay
         
-        \send{}{$b'$}{\textsc{Output 1 iff} $b'=b$}
+        \send{}{$b'$}{\textsc{Output 1 iff} $b' = b$}
 
     \end{cryptogame}
 

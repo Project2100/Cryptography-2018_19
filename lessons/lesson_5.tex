@@ -76,8 +76,8 @@ In essence, the hybrid argument proves that computational indistinguishability i
         \item $H_{\lambda}^{0} := G^{l(\lambda)}(U_{\lambda})$, which is the original construct
         \item $H_{\lambda}^{i} :=
             \begin{cases}
-                b_1 , ..., b_{i} \pickUAR \{0,1\} \\
-                s_{i} \leftarrow \{0,1\}^{\lambda+i} \\
+                b_1 , ..., b_{i} \pickUAR \binary \\
+                s_{i} \leftarrow \binary^{\lambda+i} \\
                 (b_{i+1}, ..., b_{l(\lambda)}, s_{l(\lambda)}) := G^{l(\lambda)-i}(s_{i})
             \end{cases}$
         \item $H_{\lambda}^{l(\lambda)} := U_{\lambda + l}$
