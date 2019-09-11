@@ -4,7 +4,7 @@
 
 \subsection{Hash function families from \prf{}s}
 
-Another way to obtain domain extension for a \mac{} scheme, using the $\H \circ \F$ approach, is to construct the hash function family from another \prf{}. We expect to have:
+Another way to obtain domain extension for a \mac{} scheme, using the $H \circ F$ approach, is to construct the hash function family from another \prf{}. We expect to have:
 \begin{itemize}
     \item $\forall \adversary \in \ppt, S \sim \unifdist(\binary^\lambda) \implies \Pr[h_S(m) = h_S(m')] \in \negl(\lambda)$;
     \item We need two \prf{}s: one is $f_k$, and the other is $f_s$
@@ -19,7 +19,7 @@ Let $f_s$ be a \prf, and assume that we have this function
 so that the input to $f_s$ is $n + log_2(t)$ bytes long.
 
 \begin{lemma}
-    Above $\H$ is computational \textsc{AU}.
+    Above $H$ is computational \textsc{AU}.
 \end{lemma}
 
 \begin{proof} The proof is left as exercise.
@@ -66,7 +66,7 @@ We can use this function to create an \emph{encrypted \textsc{cbc}}, or \textsc{
 \end{proof}
 
 \subsection{\textsc{xor} \mac}
-Instead of $\H \circ \F$, now the $\Tag$ routine outputs $\phi = (\eta , f_k(\eta) \xor h_s(m))$ where $\eta \pickUAR \binary^n$ is random and it's called \textit{nonce}. Authentication is done as:
+Instead of $H \circ F$, now the $\Tag$ routine outputs $\phi = (\eta , f_k(\eta) \xor h_s(m))$ where $\eta \pickUAR \binary^n$ is random and it's called \textit{nonce}. Authentication is done as:
 \[
     (m, (\eta, f_k(\eta) \xor h_s(m)))
 \]
@@ -98,7 +98,7 @@ which is a valid message.
 \end{proof}
 
 \begin{theorem}
-    If $\F$ is a \prf{} and $\H$ is computational AXU, then XOR-MAC is a MAC.
+    If $F$ is a \prf{} and $H$ is computational AXU, then XOR-MAC is a MAC.
 \end{theorem}
 
 \begin{proof}
@@ -112,7 +112,7 @@ which is a valid message.
 With variable input lenght:
 \begin{itemize}
     \item AXU based XOR mode is secure;
-    \item $\F(\H)$ is insecure with polynomial construction $h_{s}(m)=q_{m}(s)$, but can be fixed;
+    \item $H \circ F$ is insecure with polynomial construction $h_s(m) = q_m(s)$, but can be fixed;
     \item CBC-MAC is not secure, left as exercise;
     \item E-CBC is secure.
 \end{itemize}
@@ -182,7 +182,7 @@ Going back to the encryption realm, a new definition of attack to a \ske{} schem
 \end{cryptogame}
 
 \begin{exercise}
-    Show that the scheme $\Pi_{\F}$ defined in theorem \ref{thm:prfcpa}, while \cpa-secure, is not \cca-secure.
+    Show that the scheme $\Pi_{F}$ defined in theorem \ref{thm:prfcpa}, while \cpa-secure, is not \cca-secure.
 \end{exercise}
 
 \begin{proof}

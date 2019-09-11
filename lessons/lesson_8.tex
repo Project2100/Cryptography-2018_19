@@ -242,7 +242,7 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
     Define the two hybrid games from the original \cpa{} game as follows:
 
     \begin{itemize}
-        \item $\hybridg{1}[\textsc{ctr}](\lambda, b)$: A random function $R$ is chosen \uar{} from $\R(\lambda, n, n)$ at the beginning of the game, and is used in place of $F_k$ in all block encryptions;
+        \item $\hybridg{1}[\textsc{ctr}](\lambda, b)$: A random function $R$ is chosen \uar{} from $\mathfrak{R}(n, n)$ at the beginning of the game, and is used in place of $F_k$ in all block encryptions;
         \item $\hybridg{2}[\textsc{ctr}](\lambda, b)$: The challenger will pick random values from $\binary^n$ as ciphered blocks, disregarding any encryption routine.
     \end{itemize}
 

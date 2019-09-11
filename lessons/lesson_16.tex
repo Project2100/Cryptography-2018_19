@@ -83,7 +83,7 @@ Correctness of this scheme follows from some algebric steps:
     
 
     % The reasoning was a bit cloudy, hope now it is clearer
-    \textbf{Note:} it is important to note that we can measure the advantage of $\A$, so fixed its output $Adv_{\A}(\lambda) = |\underbrace{Pr[\overbrace{\A\rightarrow 1}^{b'=1}|b=0}_{"\A\ loses"}]-\underbrace{Pr[\overbrace{\A\rightarrow 1}^{b'=1}|b=1]}_{"\A\ wins"}|$. Since $b$ is fixed the above formula will give a value $\lambda \ in negl$, generally the advantage of an adversary is: $\frac{1}{2}+\lambda$ (random guessing + a negligible factor). %maybe this is a repetition but I think I never wrote it anywhere else
+    \textbf{Note:} it is important to note that we can measure the advantage of $\adversary$, so fixed its output $Adv_{\adversary}(\lambda) = |\underbrace{Pr[\overbrace{\adversary\rightarrow 1}^{b'=1}|b=0}_{"\adversary\ loses"}]-\underbrace{Pr[\overbrace{\adversary\rightarrow 1}^{b'=1}|b=1]}_{"\adversary\ wins"}|$. Since $b$ is fixed the above formula will give a value $\lambda \ in negl$, generally the advantage of an adversary is: $\frac{1}{2}+\lambda$ (random guessing + a negligible factor). %maybe this is a repetition but I think I never wrote it anywhere else
 
     % \todo{Here the 1/2 value may refer to how the Katz-Lindell book exposes their proofs by leaving arbitrary choice of $b$ to the challengers, thus limiting the probability of the adversaries' success by 1/2.
     

@@ -296,7 +296,7 @@ Some additional notes (may be incorrect):
     \item \footnote{when decryption oracle doesn't output the challenge} otherwise $(y^{(i)}, l^{(i)})\not= (y,l)$ if $y^{(i)}\not\in L$ we want that $\Pi^{(i)}_{2}$ doesn't output exactly $Ver_{2}(\tau, (y^{(i)}, l^{(i)}))$, but it should output $\perp$.
 \end{enumerate}
 
-\textbf{EVENT BAD:} If we look at the view of $\A$, the only information he
+\textbf{EVENT BAD:} If we look at the view of $\adversary$, the only information he
 knows is 
 \[
     (\omega_{2}, \tilde{\Pi}_{2}=Ver_{2}(\tau_{2}, y))
@@ -322,7 +322,7 @@ So,
 \end{lemma}
 
 \begin{proof}
-    If we look at the view of $\A$, the only information known about $\tau_{1}$
+    If we look at the view of $\adversary$, the only information known about $\tau_{1}$
     is $\omega_{1}$, since the decryption oracle only computes for $y^{(i)} \in
     L$
     \[
@@ -415,7 +415,7 @@ Now we can define our U-HPS $\Pi:=$(Setup, Prove, Verify)
     \item $Setup(1^\lambda)$: \begin{itemize}
         \item Pick $x_3,x_4,x_5,x_6 \pickUAR \integer_q$ and define:
         \begin{itemize}
-            \item $\omega=(h_2,h_3,s)=(g_1^{x_3},g_2^{x_4},g_1^{x_5},g_2^{x_6},s)$ where $s$ is a \textbf{seed} for a CRH$\rightarrow \H=\{H_s\}$ %\item $\tau=(x_3,x_4,x_5,x_6)$
+            \item $\omega=(h_2,h_3,s)=(g_1^{x_3},g_2^{x_4},g_1^{x_5},g_2^{x_6},s)$ where $s$ is a \textbf{seed} for a CRH$\rightarrow H=\{H_s\}$ %\item $\tau=(x_3,x_4,x_5,x_6)$
         \end{itemize}
     \end{itemize}
     \item $Prove(\omega, (c_1,c_2,l), r)$ \begin{itemize}

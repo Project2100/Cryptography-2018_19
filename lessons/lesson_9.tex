@@ -146,15 +146,15 @@ Assume the message $m = (m_1, \dots, m_t) \in \binary^{n \cdot t}$ for some $t \
 
 \subsection{Universal hash functions}
 
-A devised solution which has been proven to be secure relies on the following definition: a function family $\H$ which can be used to ``shrink'' variable length messages and then composed with a \prf{} $f_k$:
+A devised solution which has been proven to be secure relies on the following definition: a function family $H$ which can be used to ``shrink'' variable length messages and then composed with a \prf{} $f_k$:
 \[
-   \H \in \binary^\lambda \to (\binary^{n \cdot t} \to \binary^n) : s \mapsto h_s
+   H \in \binary^\lambda \to (\binary^{n \cdot t} \to \binary^n) : s \mapsto h_s
 \]
 \[
     \Tag((k, s), m) = f_k(h_s(m))
 \]
 
-So what are the properties of the such a function family $\H \circ \F$? The main problem are \emph{collisions}, since for each $m \in \binary^{n \cdot t}$ it should be hard to find $m' \neq m$ such that $h_s(m) = h_s(m')$. But collisions do exist for functions in $\H \circ \F$, because they map elements from $\binary^{n \cdot t} $ to $\binary^t$, and since the codomain is smaller than the domain, the functions cannot be injective in any way.
+So what are the properties of the such a function family $H \circ F$? The main problem are \emph{collisions}, since for each $m \in \binary^{n \cdot t}$ it should be hard to find $m' \neq m$ such that $h_s(m) = h_s(m')$. But collisions do exist for functions in $H \circ F$, because they map elements from $\binary^{n \cdot t} $ to $\binary^t$, and since the codomain is smaller than the domain, the functions cannot be injective in any way.
 
 To overcome this problem, we can consider two options:
 \begin{itemize}
@@ -192,7 +192,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
 \end{proof}
 
 \begin{theorem}
-    Assuming $f_k$ is a \prf{} with $n$-bit domain and $h_s$ is an \textsc{au} hash function family, then $\H \circ \F$ is a \prf{} on $(n \cdot t)$-bit domain, for $t \geq 1$.
+    Assuming $f_k$ is a \prf{} with $n$-bit domain and $h_s$ is an \textsc{au} hash function family, then $H \circ F$ is a \prf{} on $(n \cdot t)$-bit domain, for $t \geq 1$.
 \end{theorem}
 
 \begin{proof}
@@ -201,7 +201,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
 
     \begin{cryptogame}
         {prfaureal}
-        {$Real_{\F, \A}(\lambda)$}
+        {$Real_{F, \adversary}(\lambda)$}
         {}
 
         \cseqchallenger{\shortstack[l]{
@@ -218,7 +218,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
 
     \begin{cryptogame}
         {prfauhyb}
-        {$\hybridg{}[\R](\lambda)$}
+        {$\hybridg{}[R](\lambda)$}
         {}
 
         \cseqchallenger{\shortstack[l]{
@@ -235,7 +235,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
 
     \begin{cryptogame}
         {prfaurand}
-        {$Rand_{\R', \A}(\lambda)$}
+        {$Rand_{R', \adversary}(\lambda)$}
         {}
 
         \cseqchallenger{$R \pickUAR \mathfrak{R}(n, l)$}
@@ -250,7 +250,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
 
     \begin{lemma}
         \[
-            Real_{\F, \A}(\lambda) \compindist \hybridg{}[\R](\lambda)
+            Real_{F, \adversary}(\lambda) \compindist \hybridg{}[R](\lambda)
         \]
     \end{lemma}
 
@@ -260,7 +260,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
 
     \begin{lemma}
         \[
-            \hybridg{}[\R](\lambda) \compindist Rand_{\R', \A}(\lambda)
+            \hybridg{}[R](\lambda) \compindist Rand_{R', \adversary}(\lambda)
         \]
     \end{lemma}
 
@@ -350,7 +350,7 @@ A generic $2^n$-order finite field has very useful properties: adding two of its
 \end{proof}
 
 % AP190111: Leaving this section as-is; will come back to it at a later time
-\subsubsection{$\H$ with Galois fields elements and polynomials}
+\subsubsection{$H$ with Galois fields elements and polynomials}
 
 \begin{exercise}
     Let $\mathbb{F} = GF(2^n)$ be a finite field of $2^n$ elements, and let $m = (m_1, \dots, m_t) \in \mathbb{F}^t$ and $s \pickUAR \mathbb{F}^t$. Construct the following hash function family:

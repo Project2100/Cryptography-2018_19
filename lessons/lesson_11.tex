@@ -153,25 +153,37 @@ While this construct is invertible and uses a \prf{}, it is not pseudorandom its
 However, this example with additional restrictions will be useful very soon, so it is reworded as the following lemma:
 
 \begin{lemma}
-    For any unbounded adversary making $q \in \poly(\lambda)$ queries, the following games in figure \ref{fig:feisteltwins} are statistically close as long as $y_1, \ldots, y_q$ are mutually distinct.
+    For any unbounded adversary making $q \in \poly(\lambda)$ queries, he is unable to consistently win the game depicted in \ref{cryptogame:randfeis}:
+    \[
+        \cryptog{r-feis}(\lambda, 0) \statindist \cryptog{r-feis}(\lambda, 1)
+    \]
+    as long as $y_1, \ldots, y_q$ are mutually distinct.
 \end{lemma}
 
-% AP190122: Prefer a single, b-oriented game, but for the sake of compliance to the original lessons the sequences are drawn with the old environment
-% AP190902: Now they are sideways in the new environment, what did I mean back then?!
-\begin{figure}[ht]
-    \centering
-    \begin{cryptogame}{}{}{}[0.5]
-        \send{}{$x, y$}{}
-        \receive{\small{$F, F' \pickUAR \mathfrak{R}(\lambda, n, n)$}}{$\psi^2_{F, F'}(x, y)$}{}
-    \end{cryptogame}
-    \begin{cryptogame}{}{}{}[0.5]
-        \send{}{$x, y$}{}
-        \receive{\small{$R \pickUAR \mathfrak{R}(\lambda, 2n, 2n)$}}{$R(x, y)$}{}
-    \end{cryptogame}
+\begin{cryptogame}
+    {randfeis}
+    {The randomic-Feistel distinguishing game: $\cryptog{r-feis}s$}
+    {r-feis}
 
-    \caption{The two Feistel games}
-    \label{fig:feisteltwins}
-\end{figure}
+    \cseqchallenger{\shortstack[l]{
+        $\overline{R}, \overline{R'} \pickUAR \mathfrak{R}(n, n)$ \\
+        $R \pickUAR \mathfrak{R}(2n, 2n)$ \\
+        $b \pickUAR \binary$
+    }}
+
+    \cseqdelay
+    \cseqbeginloop
+    \send{}{$(x, y)$}{}
+    \receive{\shortstack[l]{
+        $z_0 = \psi^2_{\overline{R}, \overline{R'}}(x, y)$ \\
+        $z_1 = R(x, y)$
+    }}{$z_b$}{}
+    \cseqendloop
+    \cseqdelay
+
+    \send{}{$b'$}{\textsc{Output 1 iff} $b' = b$}
+
+\end{cryptogame}
 
 \begin{proof}
     \todo{Idea: Hybridize over the queries before the challenge, from PR to random; prove that the stat distance between i and i+1 is negligible}
