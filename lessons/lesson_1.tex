@@ -2,19 +2,19 @@
 
 Talking cryptography is usually done in the ``confidentiality'' realm, where two characteristics in a communication channel are desirable: it must be \emph{secret}, and \emph{authentic}.
 
+Modern confidentiality/authentication systems are forged under \emph{Kerckhoffs's principle}, which states that a secure system shall only rely on the encryption keys, and not on the underlying algorithm's secrecy; in short, \emph{``No security by obscurity''}. However sharing the key between two parties without the risk of eavesdropping is a costly operation.
+
 \section{Secret communication}
 
 \todo{Image of Alice,Bob, Eve in ske}
 
-Modern confidentiality/authentication systems are forged under \emph{Kerckhoffs's principle}, which states that a secure system shall only rely on the encryption keys, and not on the underlying algorithm's secrecy; in short, \emph{``No security by obscurity''}. However sharing the key between two parties without the risk of eavesdropping is a costly operation.
-
-The typical objects defined and used troughout cryptography discourse are:
+The typical objects defined and used in secret communication topics are:
 \begin{itemize}
-    \item $\K = $ Key space
-    \item $\M = $ Message space
-    \item $\C = $ Ciphertext space
-    \item $\Enc: \K \times \M \to \C$
-    \item $\Dec: \K \times \C \to \M$
+    \item $\K$: Key space
+    \item $\M$: Message space
+    \item $\C$: Ciphertext space
+    \item $\Enc \in \K \times \M \to \C$: Encryption routine
+    \item $\Dec \in \K \times \C \to \M$: Decryption routine
 \end{itemize}
 
 \Enc{} and \Dec{} form a \emph{cryptographic secrecy scheme}, or just \emph{secrecy scheme} for brevity, and as such, it must abide by the rule:

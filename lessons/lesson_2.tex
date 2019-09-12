@@ -9,11 +9,12 @@
 \textbf{Syntax:}
 
 \begin{itemize}
-    \item $\K = $ Key space
-    \item $\M = $ Message space
-    \item $\Phi = $ Tag (or signature) space
-    \item $\Tag: \K \times \M \to \Phi$
-    \item $\Ver: \K \times \M \times \Phi \to \binary$
+    \item $\K$: Key space
+    \item $\M$: Message space
+    \item $\C$: Ciphertext space
+    \item $\Phi$: Tag (or signature) space
+    \item $\Tag \in \K \times \M \to \Phi$: Tagging (or signing) function
+    \item $\Ver \in \K \times \M \times \Phi \to \binary$: Verifying (or validating) function
 \end{itemize}
 
 \Tag{} and \Ver{} form a \emph{cryptographic authentication scheme}, or just \emph{authentication scheme}, and it must abide by the rule:

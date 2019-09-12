@@ -2,7 +2,7 @@
 
 \section{Number theory}
 
-\begin{theorem} \emph{Fermat's last theorem}
+\begin{theorem}[Fermat's last theorem]
     \[
         \forall x, y, z \in \integer, n > 2 \implies x^n + y^n \neq z^n
     \]
@@ -15,12 +15,12 @@
 \end{lemma}
 
 \begin{proof}
-    Assume there exists $b$ in group such that $ab \equiv_n 1$. Then, there exisits a quotient for the division between a and b with remainder 1. Observe that $\gcd(a, n)$ divides $ab + qn$, which is equal to 1. It entails that $\gcd(a, n) = 1$, which is a contradiction.
+    Assume there exists $b \in \integer_n$ such that $ab \equiv_n 1$. Then, there exists a quotient for the division $by$ nbetween a and b with remainder 1. Observe that $\gcd(a, n)$ divides $ab + qn$, which is equal to 1. It entails that $\gcd(a, n) = 1$, which is a contradiction.
 \end{proof}
 
 \begin{lemma}
     \[
-        \forall a, b \in \integer : a \geq b > 0 \implies \gcd(a, b) = \gcd(b, \textsc{rem}_b(a))
+        \forall a, b \in \integer : a \geq b > 0  \implies \gcd(a, b) = \gcd(b, a \mathrel{\textup{\textsf{\%}}} b)
     \]
 \end{lemma}
 
