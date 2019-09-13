@@ -84,67 +84,63 @@ To obtain the blue check, Alice needs an universally-trusted third party, called
 
 The scheme works as follows:
 
-\begin{figure}
-    \centering
-    \sdinit{}
-    \begin{tikzpicture}
-        \sdbegin{}
-        \newinst{A}{Cert. Auth. $pk_{CA}, sk_{CA}$}
-        \newinst[2]{B}{Alice}
+\begin{cryptosequence}
+    {caissue}
+    {}
 
-        \postlevel
-        \mess{B}{"Alice", $pk_{A}$}{A}
-        \node[anchor=west] at (mess from) {\shortstack[l]{
-            $pk_{A}, sk_{A}$ \\
-            $pk_{CA}$}};
+    \cseqentity{CA}{CA $pk_{CA}, sk_{CA}$}
+    \cseqentity[2.2]{A}{Alice}
 
-        \postlevel
+    \cseqdelay
 
-        \mess{A}{$cert_{A}$}{B}
-        \node[anchor=west] at (mess to) {\shortstack[l]{
-            where $cert_{A}$ is \\
-            $\sigma \pickUAR Sign(sk_{CA}, "Alice"\|pk_{A})$}};
-        
-        \sdend{}
-    \end{tikzpicture}
-\end{figure}
+    \cseqmessagel{A}{\shortstack[l]{
+        $pk_{A}, sk_{A}$ \\
+        $pk_{CA}$
+    }}{"Alice", $pk_{A}$}{CA}{}
+    
+    \cseqdelay
+
+    \cseqmessager{CA}{}{$cert_A$}{A}{\shortstack[l]{
+        where $cert_{A}$ is \\
+        $\sigma \pickUAR Sign(sk_{CA}, "Alice"\|pk_{A})$
+    }}
+    
+\end{cryptosequence}
 
 The CA message $pk'$ is also called as $cert_{A}$, the signature of the CA for Alice.
 
 Now, when Bob wants to check the validity of the Alice's public key:
 
-\begin{figure}
-   \centering
-   \sdinit{}
-   \begin{tikzpicture}
-      \sdbegin{}
-      \newinst{A}{$ CA $}
-      \newinst[2]{B}{ Alice }
-      \newinst[4]{C}{Bob}
+\begin{cryptosequence}
+    {certcheck}
+    {}
 
-            \postlevel
-            \mess{B}{"Alice", $pk_{A}$}{A}
-            \node[anchor=west] at (mess from) {\shortstack[l]{
-            		$  pk_{A}, sk_{A}  $ 
-                  \\
-                  $  pk_{CA}  $ }};
-            \postlevel
-            \mess{A}{$cert_{A}$}{B}
-            \node[anchor=west] at (mess to) {\shortstack[l]{where $cert_{A}$  is\\
-                        $\sigma \pickUAR Sign (sk_{CA}, "Alice"\|pk_{A})$  } };
+    \cseqentity{CA}{CA $pk_{CA}, sk_{CA}$}
+    \cseqentity[2.2]{A}{Alice}
+    \cseqentity[2.2]{B}{Bob}
+
+    \cseqdelay
+
+    \cseqmessagel{A}{\shortstack[l]{
+        $pk_{A}, sk_A$ \\
+        $pk_{CA}$
+    }}{"Alice", $pk_{A}$}{CA}{}
+
+    \cseqdelay
+
+    \cseqmessager{CA}{}{$cert_{A}$}{A}{\shortstack[l]{
+        where $cert_{A}$ is \\
+        $\sigma \pickUAR Sign (sk_{CA}, "Alice"\|pk_{A})$
+    }}
     
-                  \postlevel
-                  \mess{B}{}{C}
-                  \node[anchor=west] at (mess to) {\shortstack[l]{
-                  		$  pk_{BOB}, pk_{CA} $ 
-                        \\
-                $  Vrfy(pk_{CA}, "Alice"\|pk_{A}, certa_{A})  $ }};
-            
+    \cseqdelay
 
-      \sdend{}
-      \sdend{}
-   \end{tikzpicture}
-\end{figure}
+    \cseqmessager{A}{}{}{B}{\shortstack[l]{
+        $pk_{BOB}, pk_{CA}$ \\
+        $Vrfy(pk_{CA}, "Alice"\|pk_{A}, cert_{A})$
+    }}
+
+\end{cryptosequence}
 
 How can Bob recognize a valid certificate from an expired/invalid one?
 

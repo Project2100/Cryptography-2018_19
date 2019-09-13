@@ -126,74 +126,8 @@
 \newtheorem{cons}{Construction}
 
 
-
 %----------------------IMAGES-----------------------------------
-\usepackage[underline=false]{pgf-umlsd}
-\usepackage{tikz}
 \usetikzlibrary{tikzmark,decorations.pathreplacing,positioning,shapes,fit,arrows}
-
-% From http://tex.stackexchange.com/questions/164707/how-to-use-greek-letters-in-pgf-umlsd-or-generally-terms-starting-with
-\renewcommand{\mess}[4][0]{
-    \stepcounter{seqlevel}
-    \path
-    (#2)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (mess from) {};
-    \addtocounter{seqlevel}{#1}
-    \path
-    (#4)+(0,-\theseqlevel*\unitfactor-0.7*\unitfactor) node (mess to) {};
-    \draw[->,>=angle 60] (mess from) -- (mess to) node[midway, above]
-    {#3};
-    \node (\detokenize{#3} from) at (mess from) {};
-    \node (\detokenize{#3} to) at (mess to) {};
-}
-% From http://tex.stackexchange.com/questions/98525/pgf-umlsd-and-externalize
-\newcommand{\sdinit}{%
-    \pgfdeclarelayer{umlsd@background}%
-    \pgfdeclarelayer{umlsd@threadlayer}%
-    \pgfsetlayers{umlsd@background,umlsd@threadlayer,main}%
-}
-\newcommand{\sdbegin}{%
-    \setlength{\unitlength}{1cm}%
-    \tikzstyle{sequence}=[coordinate]%
-    \tikzstyle{inststyle}=[rectangle, draw, anchor=west, minimum
-    height=0.8cm, minimum width=1.6cm, fill=white, 
-    drop shadow={opacity=1,fill=black}]%
-    \ifpgfumlsdroundedcorners%
-        \tikzstyle{inststyle}+=[rounded corners=3mm]%
-    \fi%
-    \tikzstyle{blockstyle}=[anchor=north west]%
-    \tikzstyle{blockcommentstyle}=[anchor=north west, font=\small]%
-    \tikzstyle{dot}=[inner sep=0pt,fill=black,circle,minimum size=0.2pt]%
-    \global\def\unitfactor{0.6}%
-    \global\def\threadbias{center}%
-    % reset counters
-    \setcounter{preinst}{0}%
-    \setcounter{instnum}{0}%
-    \setcounter{threadnum}{0}%
-    \setcounter{seqlevel}{0}%
-    \setcounter{callevel}{0}%
-    \setcounter{callselflevel}{0}%
-    \setcounter{blocklevel}{0}%
-    % origin
-    \node[coordinate] (inst0) {};%
-}
-\newcommand{\sdend}{%
-    \begin{pgfonlayer}{umlsd@background}%
-        \ifnum\value{instnum}>0%
-            \foreach \t [evaluate=\t] in {1,...,\theinstnum}{%
-                \draw[dotted] (inst\t) -- ++(0,-\theseqlevel*\unitfactor-2.2*\unitfactor);%
-            }%
-        \fi%
-        \ifnum\value{threadnum}>0%
-            \foreach \t [evaluate=\t] in {1,...,\thethreadnum}{%
-                \path (thread\t)+(0,-\theseqlevel*\unitfactor-0.1*\unitfactor) node (threadend) {};%
-                \tikzstyle{threadstyle}+=[threadcolor\t]%
-                \drawthread{thread\t}{threadend}%
-            }%
-        \fi%
-    \end{pgfonlayer}%
-}
-
-
 
 \newcounter{listcount} \newcounter{totcount}
 \newcommand{\printarray}[2][1em]{% \printarray[<width>]{<array list>}
@@ -208,37 +142,3 @@
     }
     \docsvlist{#2}% Process list a second time to typeset each element
 }
-
-
-% \newcommand{\thmsymbol}{\( \diamond \)}
-% \newenvironment{definition}{\begin{defn}%
-% \renewcommand{\qedsymbol}{\thmsymbol}\pushQED{\qed}}%
-% {\popQED\end{defn}}
-% \newenvironment{construction}{\begin{cons}%
-% \renewcommand{\qedsymbol}{\thmsymbol}\pushQED{\qed}}%
-% {\popQED\end{cons}}
-% \newenvironment{theorem}{\begin{thm}%
-% \renewcommand{\qedsymbol}{\thmsymbol}\pushQED{\qed}}%
-% {\popQED\end{thm}}
-% \newenvironment{lemma}{\begin{lem}%
-% \renewcommand{\qedsymbol}{\thmsymbol}\pushQED{\qed}}%
-% {\popQED\end{lem}}
-% \newenvironment{corollary}{\begin{cor}%
-% \renewcommand{\qedsymbol}{\thmsymbol}\pushQED{\qed}}%
-% {\popQED\end{cor}}
-% \newenvironment{fact}{\begin{fct}%
-% \renewcommand{\qedsymbol}{\thmsymbol}\pushQED{\qed}}%
-% {\popQED\end{fct}}
-% \newenvironment{claim}{\begin{clm}%
-% \renewcommand{\qedsymbol}{\thmsymbol}\pushQED{\qed}}%
-% {\popQED\end{clm}}
-% \newenvironment{observation}{\begin{obs}%
-% \renewcommand{\qedsymbol}{\thmsymbol}\pushQED{\qed}}%
-% {\popQED\end{obs}}
-% \newenvironment{proposition}{\begin{prop}%
-% \renewcommand{\qedsymbol}{\thmsymbol}\pushQED{\qed}}%
-% {\popQED\end{prop}}
-
-
-% \renewcommand{\thmtformatoptarg}[1]{ #1}
-% \setcounter{chapter}{4}

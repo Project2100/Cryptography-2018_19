@@ -62,48 +62,39 @@ We can say that we are moving the exponents from the "private domain" to the "pu
 
     \todo{Sequence is incomplete/incorrect, have to study it more...}
 
-    \begin{figure}[ht]
-        \centering
-        \sdinit{}
-        \begin{tikzpicture}
-            
-            \sdbegin{}
-            \newinst{A}{A}
-            \newinst[2.5]{B}{C$^\textsc{wds}$}
-            \newinst[2.5]{C}{C$^\cdh$}
-           
-            \postlevel
 
-            % Instantiate game
-            \mess{C}{$(\text{``params''}, g^a, g^b)$}{B}
-            \node[anchor=west] at (mess from) {\shortstack[l]{
-                ``params''$ = $ \\
-                $ \quad =(\G, \G_t, g, q, \hat{e})$ \\
-                $ \quad \pickUAR BilGen(1^\lambda)$ \\
-                $a, b \pickUAR \mathbb{Z}_q$}};
-           
-           % Send pk to adversary
-           \postlevel
-           \mess{B}{$(\text{``params''}, g^a, g^b, u)$}{A}
-           \node[anchor=west] at (mess from) {Construct $u$ string};
+    % Original subjects: A, C_WDS, C_CDH
+    \begin{cryptoredux}
+        {reduxwaters}
+        {Reducing Waters' scheme to \cdh}
+        {cdh}
+        {wds}
 
-           % Adversary can query for signatures
-           \postlevel
-           \mess{A}{$m$}{B}
-           \node[anchor=east] at (mess from) {$m \in M$};
-           \mess{B}{$\sigma$}{A};
-           \node[anchor=west] at (mess from) {$\sigma = \textit{Sign}()$};
+        \cseqdelay
 
-           % Adversary forges
-           \postlevel
-           \mess{A}{$(m^*, \sigma^*)$}{B}
-           \node[anchor=east] at (mess from) {$m^* \notin M$};
-           
-           \sdend{}
-        \end{tikzpicture}
-        \caption{Reducing Waters' scheme to \cdh}
-        \label{fig:reduxwaters}
-    \end{figure}
+        % Instantiate game
+        \receive{\shortstack[l]{
+            ``params''$ = $ \\
+            $ \quad =(\G, \G_t, g, q, \hat{e})$ \\
+            $ \quad \pickUAR BilGen(1^\lambda)$ \\
+            $a, b \pickUAR \mathbb{Z}_q$
+        }}{$(\text{``params''}, g^a, g^b)$}{}
+
+        \cseqdelay
+
+        % Send pk to adversary
+        \invoke{Construct $u$ string}{$(\text{``params''}, g^a, g^b, u)$}{}
+        
+        % Adversary can query for signatures
+        \cseqdelay
+        \return{$m \in M$}{$m$}{}
+        \invoke{$\sigma = \textit{Sign}()$}{$\sigma$}{}
+        \cseqdelay
+
+        % Adversary forges
+        \return{$m^* \notin M$}{$(m^*, \sigma^*)$}{}
+        
+    \end{cryptoredux}
 
     \todo{The following explanation is roundabout, will rectify later}
 
