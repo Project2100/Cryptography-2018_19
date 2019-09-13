@@ -32,24 +32,37 @@
     \addcontentsline{toc}{chapter}{#2}
 }
 
+% Range ligature
+\newcommand{\upto}{\text{---}}
 
+% Remainder operator, redefined in a sane way
+\renewcommand{\mod}{\mathrel{\textup{mod}}}
+
+% Group generators ofr standard assumptions
+\newcommand{\groupgen}{\mathcal{GG}}
+
+% Discrete logarithm assumption
+
+% Grouped or
 \newcommand{\biglor}{\bigvee}
+
+% XORs
 \newcommand{\bigxor}{\bigoplus}
-
-\newcommand{\C}{\mathcal{C}} %cipherspace
-\newcommand{\G}{\mathcal{G}}
-\newcommand{\K}{\mathcal{K}} %keyspace
-\newcommand{\M}{\mathcal{M}} %messagespace
-\newcommand{\X}{\mathcal{X}}
-
-\newcommand{\RO}{\mathrm{RO}}
-
-\newcommand{\QR}[1][p]{\mathbb{QR}_{#1}}
-
-\newcommand{\Gen}{\mathrm{Gen}}
-\newcommand{\Group}{\mathbb{G}}
-
 \newcommand{\xor}{\oplus}
+
+\newcommand{\C}{\mathcal{C}} % Cipherspace
+\newcommand{\G}{\mathcal{G}} % Generally used for generators or groups
+\newcommand{\K}{\mathcal{K}} % Keyspace
+\newcommand{\M}{\mathcal{M}} % Messagespace
+\newcommand{\X}{\mathcal{X}} % May be a RV X's domain, will soon change to the more common \Omega
+
+\newcommand{\RO}{\mathrm{RO}} % Random oracle
+
+\newcommand{\QR}[1][p]{\mathbb{QR}_{#1}} % Quadratic residue group
+
+\newcommand{\Gen}{\mathrm{Gen}} % Generic generator
+\newcommand{\Group}{\mathbb{G}} % Generic group
+
 
 %========================================================================================================
 

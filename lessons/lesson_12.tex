@@ -29,7 +29,7 @@ A note: before, we were dealing with unbounded adversaries, and the key was hidd
 
 \subsection{Merkle-Damg\r{a}rd construction}
 
-A construct for starters has been defined by Ralph Merkle and Ivan Damg\r{a}rd, which revolves around the use of a \crh{} function $h_s \in \binary^{n + 1} \to \binary^n$. For now, consider the messages to be of an arbitrarily fixed length $l$. The steps to follow are:
+A construct for starters has been defined by Ralph Merkle and Ivan Damg\r{a}rd, which revolves around the use of a \crh{} function $h_s \in \binary^{n + c} \to \binary^n$, where $c$ is the size of one ``block'' of a message. For now, consider the messages to be of an arbitrarily fixed length $l$, and let $c$ be 1.  The steps to follow are:
 
 \begin{enumerate}
     \item Let $\textsc{iv} \in \binary^b$ be an \emph{initialization vector}
@@ -140,9 +140,11 @@ This is an example of padding which encodes the message length in itself.
 
 \subsubsection{Merkle trees}
 
----
+This is an alternative construction to the ``linear'' approach used beforehand: it starts from the message's blocks acting as leaves of a complete binary tree, and using a halving compression function on each node from the bottom up, and outputting the final tag as the image of the root invocation. It also has nice properties, such as easy verification of the presence of a single specific block in the message.
 
 \subsection{Compression functions}
+
+The compression functions are the central point of these kinds of ``fingerprinting'' tag schemes. They are, essentially, hash functions with a smaller codomain than its domain, thereby forcing the existence of collisions.
 
 Let ($\textsf{Gen} : 0 \mapsto (\pk, \sk), f, g)$ be a \pke{} scheme, where the functions $f$ and $g$ are keyed \prp{}s. A \emph{claw} is a couple of values $(x, x')$ such that:
 \[

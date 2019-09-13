@@ -20,69 +20,87 @@
 
 \begin{lemma}
     \[
-        \forall a, b \in \integer : a \geq b > 0  \implies \gcd(a, b) = \gcd(b, a \mathrel{\textup{\textsf{\%}}} b)
+        \forall a, b \in \nonneg : a \geq b \neq 0 \implies \gcd(a, b) = \gcd(b, a \mod b)
     \]
 \end{lemma}
 
 \begin{proof}
-    
+    Not given.
 \end{proof}
 
 \begin{theorem}
-    Given $a, b$ integers, their greatest common divisor can be computed efficiently wrt a and b's lengths. Additionally, two other numbers u and v can be computed in order to satisfy bezout's identity: $\gcd(a, b) = au + bv$
+    Given two integers $a$ and $b$, their greatest common divisor can be computed efficiently with respect to their lengths. Additionally, two other numbers u and v can be efficiently computed in order to satisfy B\'ezout's identity: $\gcd(a, b) = au + bv$
 \end{theorem}
 
 \begin{proof}
-    Hint: Use previous lemma recursively...
+    Hint: Use previous lemma recursively; we stop at $r_{t + 1} = 0$ for some $t$, thus:
+    \[
+        \gcd(a, b) = \dots = \gcd(r_t, r_{t + 1}) = r_t
+    \]
 \end{proof}
 
-Claim: $r_{i+2} \leq r_i/2 \forall o \leq i \leq t-2 \implies \#steps = \lambda - 1 \text{ if } |b| \in \binary^\lambda$
+\begin{claim}
+    $r_{i + 2} \leq r_i/2 \forall 0 \leq i \leq t - 2 \implies \#steps = \lambda - 1 \text{ if } |b| \in \binary^\lambda$
+\end{claim}
 
-Proof: ...
+The hypohesis is a natural consequence of the repeated modulo operations.
 
+\begin{observation}[Exponentiation mod n: Square and multiply]
+    Let $b \in \binary^l$, where by writing $b_i$ we denote b's i-th bit. Then:
+    \[
+        a^b \equiv_n a^{\sum_{i = 0}^l 2^ib_i} \equiv_n \prod_{i = 0}^l a^{2^ib_i} 
+    \]
+\end{observation}
+
+%AP190913 - Unproven, can't find it anywhere
+\begin{theorem}
+    The number of primes lesser than or equal to $x$ is a number greater than or equal to $\frac{x}{3\log_2 x}$
+\end{theorem}
+
+There exist many algorithms that solve the problem of primality testing, with time complexity polynomial in the length of their numerical representation; of most relevance are those of Miller-Rabin, which is probabilistic, but consistently used in practice, and the completely deterministic Agrawal-Kayal-Saxena (\textsc{aks}), which has a much greater polynomial rank, and has been deemed impractical for most uses.
+
+What remained as a conjecture is the intractability of determining the factors of a $\lambda$-bit composite number, which is widely known as the \emph{factorization hardness}; this in turn would imply that integer multiplication of two $\lambda$-bit primes is a \owf.
 
 \begin{definition}
-    Exponentiation mod n: Square and multiply
-
-    Let $b in \binary^l$, where by writing $b_i$ we denote b's i-th bit. Then:
-    \[
-        a^b \equiv_n a^{\sum_{i=0}^l 2^ib_i} \equiv_n \prod_{i=0}^l a^{2^ib_i} 
-    \]
+    Given a group $G$, its order is the least $i$ such that $a^i \equiv_n 1$ 
 \end{definition}
 
-\begin{theorem}
-    The number of primes lesser than or equal to x is a number greater than or equal to $x/3\log_2x$
-\end{theorem}
+\begin{corollary}
+    \[
+        \forall a \in \integer_m^\times \implies a^{\phi(n)} \equiv_n 1 \wedge a^b \equiv_n a^{b \mod \phi(n)} \wedge a^{p - 1} \equiv_p 1
+    \]
+\end{corollary}
 
-\begin{theorem} (Milner-Rabin - AKS)
-    We can est in polytime if a random $\lambda$-bit number is prime
-\end{theorem}
+\begin{proof}
+    $(\integer_n^\times, \cdot)$ is a group with $\phi(n)$ elements. Take $\left< a \right> = \{a^0, \dots, a^{d + 1}\}$, where $d$ is the order. We must have $\phi(n) = kd$ for some $k$. Therefore, $a^{\phi(n)} = a^{dk} \equiv_n 1$.
 
-Conjecture: Integer multiplication of two lambda-bit primes is a \owf. (is this the factorization assumption?)
-
-\section{Standard model assumptions}
-
-Given a group G, its order is the least i such that $a^i \equiv_n 1$ 
-
-Corollary: $\forall a \in \integer_m^\times \implies a^{\phi(n)} \equiv_n 1 \wedge a^b \equiv_n a^{rem_{\phi(n)}(b)}$
+    Also, $a^b \equiv_n a^{b\phi(n) + b \mod \phi(n)} \equiv_n 1 \cdot 2^{b \mod \phi(n)}$
+\end{proof}
 
 \begin{theorem}
     Let G, H be two groups such that $H < G$, meaning the order of H divides the order of G
 \end{theorem}
 
+\section{Standard model assumptions}
+
+We now turn our attention to some conjectures that form the basis for most of the cryptographic schemes that will follow. We will start from the weakest, and go up to the strongest. For all our purposes, let $\groupgen(1^\lambda)$ be a ``group generator'' with security parameter $\lambda$, and let a random sample $(G, g, q) \pickUAR \groupgen(1^\lambda)$ be a triplet composed of the group itself $G$, one of its generators $g$, and its order $q$.
 
 % CDH -> DDH -> DL
 \subsubsection{Discrete logarithm}
 
-Given $g$ and $g^x$ in a n-bit group, there is no efficient algorithm for computing $y$ such that $g^y = g^x$ withouut knowing $x$ beforehand.
+Given $g$ and $g^x$ in a $\lambda$-bit group, there is no efficient algorithm for computing $y$ such that $g^y = g^x$ withouut knowing $x$ beforehand:
+\[
+    \forall \adversary \in \ppt \implies \Pr[\cryptog{dl}(\lambda) = 1] \in \negl(\lambda)
+\]
 
 \begin{cryptogame}
     {dlass}
-    {}
+    {$\cryptog{dl}(\lambda)$}
     {dl}
 
     \receive{\shortstack[l]{
-        $(G, g, q) \pickUAR \Group\Gen(1^\lambda)$ \\
+        %AP190913: Actually, the adversary knows this!
+        $(G, g, q) \pickUAR \groupgen(1^\lambda)$ \\
         $x \pickUAR \integer_q$
     }}{$y = g^x$}{}
 
@@ -90,19 +108,21 @@ Given $g$ and $g^x$ in a n-bit group, there is no efficient algorithm for comput
     
 \end{cryptogame}
 
-Meaning, DL for a generic group G is a \owf, whereas in a multiplicative group $\integer_p^\times$, DL is a \owp.
+This means that the \dl{} for a generic group G yields a \owf, whereas in a multiplicative group $\integer_p^\times$, we obtain a \owp.
 
 \subsubsection{Computational Diffie-Hellman}
 
-Statement: given a group, and two elements of it $g^x$, $g^y$, it is impractical to compute $g^{xy}$ without knowing both $x$ and $y$.
+%AP190913: Probably it is not necessary to compute it directly, we may only need a congruent value
+Given a group $G$ and two elements in it $g^x$, $g^y$, it is impractical to compute $g^{xy}$ without knowing $x$ or $y$.
 
 \begin{cryptogame}
     {cdhass}
-    {}
+    {$\cryptog{cdh}(\lambda)$}
     {cdh}
 
     \receive{\shortstack[l]{
-        $(G, g, q) \pickUAR \Group\Gen(1^\lambda)$ \\
+        %AP190913: Actually, the adversary knows this!
+        $(G, g, q) \pickUAR \groupgen(1^\lambda)$ \\
         $x, y \pickUAR \integer_q$
     }}{$(g^x, g^y)$}{}
 
@@ -112,20 +132,20 @@ Statement: given a group, and two elements of it $g^x$, $g^y$, it is impractical
 
 \subsubsection{Decisional Diffie-Hellman}
 
-Statement: see game
+Given a group $G$ and three elements in it $g^x$, $g^y$, $g^z$, it is impractical to distinguish $g^{xy}$ from $g^z$ by only knowing $g^x$ and $g^y$, along with the originating triad $(G, g, q))$.
 
 \begin{cryptogame}
     {ddhass}
-    {}
+    {$\cryptog{ddh}(\lambda)$}
     {ddh}
 
     \cseqdelay
 
     \receive{\shortstack[l]{
-        $(G, g, q) \pickUAR \Group\Gen(1^\lambda)$ \\
-        $x, y \pickUAR \integer_q$ \\
+        %AP190913: Actually, the adversary knows this!
+        $(G, g, q) \pickUAR \groupgen(1^\lambda)$ \\
+        $x, y, z_1 \pickUAR \integer_q$ \\
         $z_0 = xy$ \\
-        $z_1 \pickUAR G$ \\
         $b \pickUAR \binary$
     }}{$(g^x, g^y, g^{z_b})$}{}
 
@@ -135,26 +155,27 @@ Statement: see game
     
 \end{cryptogame}
 
-All these assumptions arose in definining what is the Diffie Hellman key exchange, which is a way to establish a \ske{} channel from an unsafe channel, with any adversary unable to efficiently break the channel's secrecy. Party authentication is not considered here.
+All these assumptions helped in constructind the \emph{Diffie-Hellman key exchange} protocol, which is a way to establish a \ske{} channel from an unsafe channel, with any adversary unable to efficiently break the channel's secrecy. Do note that authentication is left out of the picture here.
 
-% AP190208: This is not a game (Magritte ahoy)
-\begin{cryptogame}
+\begin{cryptosequence}
     {dhkex}
     {The Diffie-Hellman Key Exchange protocol}
-    {}
+    
+    \cseqentity{A}{Alice}
+    \cseqentity[2.2]{B}{Bob}
 
-    \receive{\shortstack[l]{
+    \cseqmessagel{B}{\shortstack[l]{
         $(G, g, q) \pickUAR \Group\Gen(1^\lambda)$ \\
         $x \pickUAR G$ 
-    }}{$(G, g, q, g^x)$}{}
+    }}{$(G, g, q, g^x)$}{A}{}
 
     \cseqdelay
 
-    \send{\shortstack[l]{
+    \cseqmessager{A}{\shortstack[l]{
         $y \pickUAR G$ \\
         $k = (g^x)^y$
-    }}{$g^y$}{$k = (g^y)^x$}
-    
-\end{cryptogame}
+    }}{$g^y$}{B}{$k = (g^y)^x$}
 
-Some relationships have been established between these assumptions: it is known that $\ddh \implies \cdh \implies \dl$. Also, $\cdh \notimplies \ddh$.
+\end{cryptosequence}
+
+Some relationships have been established between these assumptions: it is known that $\ddh \implies \cdh \implies \dl$; and that $\cdh \notimplies \ddh$.
