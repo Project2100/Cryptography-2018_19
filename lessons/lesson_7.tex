@@ -42,10 +42,10 @@ As stated in the previous lesson, given a \prg{} $G \in \binary^\lambda \to \bin
 
         \cseqdelay
         \cseqbeginloop
-        \send{}{$r = (r_0, r_{1 \text{---} n})$}{}
+        \send{}{$r = (r_0, r_{1 \upto n})$}{}
         \receive{\shortstack[l]{
-            $y_0 = G_{r_0}(f'_k(r_{1 \text{---} n})) = f_k(r)$ \\
-            $y_1 = G_{r_0}(\overline{R}(r_{1 \text{---} n}))$
+            $y_0 = G_{r_0}(f'_k(r_{1 \upto n})) = f_k(r)$ \\
+            $y_1 = G_{r_0}(\overline{R}(r_{1 \upto n}))$
         }}{$y_b$}{}
         \cseqendloop
         \cseqdelay
@@ -67,9 +67,9 @@ As stated in the previous lesson, given a \prg{} $G \in \binary^\lambda \to \bin
 
         \cseqdelay
         \cseqbeginloop
-        \send{}{$r = (r_0, r_{1 \text{---} n})$}{}
+        \send{}{$r = (r_0, r_{1 \upto n})$}{}
         \receive{\shortstack[l]{
-            $y_0 = G_{r_0}(\overline{R}(r_{1 \text{---} n}))$ \\
+            $y_0 = G_{r_0}(\overline{R}(r_{1 \upto n}))$ \\
             $y_1 = R(r)$
         }}{$y_b$}{}
         \cseqendloop

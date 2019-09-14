@@ -1,20 +1,20 @@
 \mychapter{15}{Lesson 15} %181116
-\section{Public key encryption recap} 
+\section{Public key encryption (cont'd)} 
 
-$\cryptog{pke-cca}{}$:
+\subsubsection{\textsc{Cca}-security, revisited}
 
 \begin{cryptogame}
     {pkecca}
-    {\cca{} on a \pke{} scheme}
-    {pke-cca}
+    {Chosen ciphertext attacks, revisited for \pke{} schemes}
+    {cca2}
     
-    \receive{\small{$(pk, sk) \pickUAR \mathcal{KG}en(1^\lambda)$}}{$pk$}{}
+    \receive{$(\pk, \sk) \pickUAR \keygen(1^\lambda)$}{$pk$}{}
 
     \cseqdelay
     \cseqbeginloop
 
     \send{}{$c'$}{}
-    \receive{}{$m'$}{}
+    \receive{$m' = \Dec(\sk, c)$}{$m'$}{}
 
     \cseqendloop
     \cseqdelay
@@ -22,15 +22,15 @@ $\cryptog{pke-cca}{}$:
     \send{}{$m_0, m_1$}{}
 
     \receive{\shortstack[l]{
-        $ b \pickUAR \binary $ \\
-        $ c \pickUAR \Enc(pk, m_b) $
+        $b \pickUAR \binary$ \\
+        $c \pickUAR \Enc(\pk, m_b)$
     }}{$c$}{}
 
     \cseqdelay
     \cseqbeginloop
 
     \send{}{$c'$}{}
-    \receive{}{$m'$}{}
+    \receive{$m' = \Dec(\sk, c)$}{$m'$}{}
 
     \cseqendloop
     \cseqdelay
@@ -38,93 +38,84 @@ $\cryptog{pke-cca}{}$:
     \send{}{$b'$}{\textsc{Output 1 iff} $b' = b$}
 \end{cryptogame}
 
+\subsection{Trapdoor permutations}
 
-(Reminder): Encryptions are made like this: $Enc(k, m) = (r, F_k(r) \oplus m), r \simeq \mathcal{U}nif(\binary^\lambda)$.
+Let us cnsider the following scheme $\Pi$, which is an adaption of the old \cpa-secure \ske{} to public keys:
+\begin{itemize}
+    \item $\Enc(\pk, m) = (r, f_\pk(m \xor r))$, where $r \sim \unifdist(\binary^\lambda)$
+    \item $\Dec(\sk, (c_0, c_1)) = g_\sk(c_1) \xor c_0$
+    \item Correctness: $g_\sk(c_1) \xor c_0 = g_\sk(f_\pk (m \xor r)) \xor r = m \xor r \xor r = m$
+\end{itemize}
 
-Every time an encryption is made, a fresh value $r$ is picked UAR.
-
-\pagebreak
-\subsection{Trapdoor permutation}
-
-A \emph{trapdoor permutation} (or \tdp) is a \owp{} family structured has these features:
+A \emph{trapdoor permutation} (or \tdp) is a \owp{} having the following features:
 
 \begin{itemize}
     \item A key pair is chosen \uar{} by a key generator algorithm:
     \[
-        (pk, sk) \pickUAR \mathcal{KG}en(1^\lambda)
+        (\pk, \sk) \pickUAR \keygen(1^\lambda)
     \]
-    \item There is a function family $f_{pk} \subseteq (V_{pk} \to V_{pk})$ such that:
+    \item There is a function family $F \in \Xi_\pk \to (V_{\pk} \to V_{\pk})$ such that:
     \begin{itemize}
-        \item Computing $f_{pk}$ is efficient
-        \item Domain sampling ($x \pickUAR V_{pk}$) is efficient
+        \item Computing $f_{\pk}$ is efficient
+        \item Domain sampling ($x \pickUAR V_{\pk}$) is efficient
     \end{itemize}
-    \item There is an efficient function $g_{sk}$ that ``inverts'' $f_{pk}$ ($sk$ is the ``trapdoor''): 
-    \begin{equation*}
-        g(sk, f(pk, x)) = x
-    \end{equation*}
-    \item No efficient adversary is able to invert $f_{pk}$ wihout knowing $sk$
+    \item There is an efficient function $g_{\sk}$ that efficiently \emph{inverts} $f_{\pk}$, where $sk$ is the ``trapdoor'': 
+    \[
+        g(\sk, f(\pk, x)) = x
+    \]
+    \item No efficient adversary is able to invert $f_{\pk}$ wihout knowing $\sk$
 \end{itemize}
 
-Note: Since $pk$ is public, any adversary gets the capability of encrypting messages for free, without requiring an external challenger/oracle!
+Note that because $\pk$ is public, an adversary can perform any polynomial number of encryptions with $\pk$, aand see the corresponding ciphertext. This is the same characteristic of \pke{} schemes we described just a while ago. It entails that, if left deterministic, a \tdp{} is not \cpa-secure.
 
-Therefore, if left deterministic, a \tdp{} is not \cpa-secure.
+Also, the scheme described above is not \cpa-secure form the start: the adversary, by choosing two messages for the challenge, and receiving the ciphertext $(c_0 = r, c_1)$, along with the public key, has everything needed to reconstruct the encryption and chec whichever message was encrypted, much like the problem of \ufcma against a deterministic \mac scheme.
 
 %The idea is to reuse the message as part of the randomness, or more in detail, use its hardcore predicate. The resulting scheme would the look like this:
-Here, in this scheme, we combine randomness and the notion of hardcore predicate $\mathfrak{hc}$:
+Here, in this scheme, we combine randomness and the notion of hardcore predicate $\hc$:
 
 % AP190123 - IMPORTANT NOTE: This scheme is intended to work for single-bit messages
 \begin{itemize}
-    \item $(pk, sk) \pickUAR \mathcal{KG}en(1^\lambda)$
+    \item $(pk, sk) \pickUAR \keygen(1^\lambda)$
     \item $r \pickUAR \Xi_{pk}$
-    \item $c := Enc(pk, m) = (f_{pk}(r), \mathfrak{hc}(r) \oplus m)$
-    \item Correctness: $Dec(sk, c) = \mathfrak{hc}(g_{sk}(c_1)) \oplus c_2$
+    \item $c := \Enc(\pk, m) = (f_{\pk}(r), \hc(r) \oplus m)$
+    \item Correctness: $\Dec(\sk, c) = \hc(g_{\sk}(c_1)) \oplus c_2$
     % Exercise: If obscure, do the petty algebra on paper
 \end{itemize}
 
 \begin{theorem}
-    If $(\mathcal{KG}en, f, g)$ is a TDP, and $\mathfrak{hc}$ is hardcore for $f$, then the above scheme is \cpa-secure.    
+    If $F$ is a \tdp{} and $\hc$ is hardcore for $f$, then the above scheme is \cpa-secure.    
 \end{theorem}
 
 \begin{proof} The proof is left as exercise
-
     \todo{Apparently, the reduction here is not easy at all, some hints are needed.}
 \end{proof}
 
 \subsection{\textsc{Tdp} examples}
 
-One example stems form the factoring problem: let's look again at $\mathbb{Z}_n^\times$, where $n = pq$, $p, q \in \mathbb{P}$:
+One example stems form the factoring problem: let's look again at $\integer_n^\times$, where $n$is the product of two prime numbers $p$, and $q$:
 
-\begin{theorem}
-    (Chinese remainder, or CRT): The following isomorphisms to $\mathbb{Z}_n^\times$ are true:
+\begin{theorem}[Chinese remainder theorem]
+    The following isomorphisms to $\integer_n^\times$ are true:
 
-\begin{itemize}
-    \item $\mathbb{Z}_n \simeq \mathbb{Z}_p \times \mathbb{Z}_q$
-    \item $\mathbb{Z}_n^\times \simeq \mathbb{Z}_p^\times \times \mathbb{Z}_q^\times$
-\end{itemize}
+    \begin{itemize}
+        \item $\integer_n \simeq \integer_p \times \integer_q$
+        \item $\integer_n^\times \simeq \integer_p^\times \times \integer_q^\times$
+    \end{itemize}
 
-Note that the theorem is more general, and holds for any $p, q$ that are coprime.
+    Note that the theorem is more general, and holds for any two numbers $p$ and $q$ that are coprime.
 \end{theorem}
 
 How to use this theorem for constructing a \pke{} scheme:
 
-Reminder (Euler's theorem):\todo{ $\forall x \in \mathbb{Z}_n \implies
-x^{\varphi(n)} = x \mod n$ \\
-maybe the correct one is \\
-$\forall x \in \mathbb{Z}_n \implies
-x^{\varphi(n)} = 1 \mod n$
-}
+\begin{theorem}[Euler's totient theorem]
+    Let $x$, $n$ be two coprime numbers. Then $x^{\varphi(n)} \equiv_n 1$
+\end{theorem}
 
-Reminder: $\forall p, q \in \mathbb{P} \implies \varphi(pq) = (p-1)(q-1)$
+Also, remember that $\forall p, q \in \primenum \implies \varphi(pq) = (p - 1)(q - 1)$
 
-So let $a$ be the public key such that $\gcd(a, \varphi(n))=1$, then $\exists! b
-\in \mathbb{Z}_n : ab = 1 \mod \varphi(n)$, $b$ will be our private key.
-
-Define encryption as $f(a, m) = m^a \mod n$, and then decryption as $g(b, c) =
-c^b \mod n$.
-
-Observe that 
+So let $a$ be the public key such that $\gcd(a, \varphi(n)) = 1$, then $\exists! b \in \integer_n : ab \equiv_{\varphi(n)} 1$; $b$ will be our private key. Define encryption as $f(a, m) = m^a \mod n$, and then decryption as $g(b, c) = c^b \mod n$. Observe that 
 \[
-    g(b, f(a, m)) = (m^a)^b =m^{ab}=m^{k\varphi(n)+1}=(m^{\varphi(n)})^{k}m = m \mod n
+    g(b, f(a, m)) = (m^a)^b = m^{ab} = m^{k \varphi(n) + 1} = (m^{\varphi(n)})^k m \equiv_n m
 \]
 because $ab = 1 \mod \varphi(n)$.
 
@@ -149,176 +140,167 @@ So we conjecture that the above is a valid \tdp-based \pke{} scheme. This is act
 
 Relation to the factoring problem: $\rsa \implies \textsc{fact}$
 
-Proof: Given $p, q$, an adversary can compute $\varphi(n) = (p-1)(q-1)$, and then find the inverse of the public key in $\mathbb{Z}_{pq}^\times$.
+Proof: Given $p, q$, an adversary can compute $\varphi(n) = (p - 1)(q - 1)$, and then find the inverse of the public key in $\integer_{pq}^\times$.
 
 It hasn't been proven that $\textsc{fact} \implies \rsa$
 
-
 \section{Textbook \rsa}
+
 This is an \underline{insecure} toy example of the more complex \rsa{} (Rivest Shamir Adleman) scheme.
 
 \begin{itemize}
-    \item Setup: $pk \pickUAR \integer_n^\times, sk \equiv_{\varphi(n)} pk^{-1}$
-    \item Encrypt: $Enc_{pk}(m) = m^{pk} \mod{n}$
-    \item Decrypt: $Dec_{sk}(c) = c^{sk} \mod{n}$
-    \item Correctness: $Enc_{pk}(Dec_{sk}(m)) = m^{pk \cdot sk} \equiv_n m$
+    \item Setup: $(\pk, \sk) \pickUAR \keygen(\integer_n^\times) : \sk \equiv_{\varphi(n)} \pk^{-1}$
+    \item Encryption: $\Enc(\pk, m) = m^{\pk} \mod n$
+    \item Decryption: $\Dec(\sk, c) = c^{\sk} \mod n$
+    \item Correctness: $\Enc(\pk, \Dec(\sk, m)) = m^{\pk \cdot \sk} \equiv_n m$
 \end{itemize}
 
 Again, since the encryption routine is deterministic, the scheme is not \cpa-secure. However, a hardcore predicate can be inserted to the routine: $\hat{m} = r||m$, where $r \pickUAR \binary^l$. Now the encryption is pseudorandom.
 
-\textbf{Facts:}
+Some interesting facts:
 \begin{enumerate}
-    \item $l \in \omega(log(\lambda))$ otherwise it is possible to eficiently bruteforce it.
-        \todo{\item If $m \in \binary$ then I can prove it CPA secure under RSA
-        (just use standard TDP)}
-    \item If $m$ is "in the middle" ($\binary \leq m \leq \binary^l$) RSA is believed to be secure and is \underline{standardized} (PKCS\#1,5)
-        \todo{ \item Still not CCA secure! counterexample?}
+    \item $l \in \omega(log(\lambda))$ otherwise a brute-force attack becomes viable.
+    \item If $m \in \binary$, then the scheme is \cpa-secure under \rsa{} assumption, just use the standard \tdp{}
+    \item If $m$ is ``in the middle'': $\binary \leq m \leq \binary^l$; then \rsa{} is believed to be secure (standard PKCS\#1, 5)
+    \item However, this construct is not \cca-secure.
+    \todo{Counterexample?}
 \end{enumerate}
 
-
 \subsection{Trapdoor Permutation from Factoring}
-Let's look at $f(x) = x^2\mod{n}$ where $f: \integer_n^\times \to \QR[n] (\subset \integer_n^\times)$, this is not a permutation in general.
 
-Now let's consider the Chinese Reminder Theorem (CRT) representation:
+Here is an attempt to build a \tdp{} over the group $\quadres(n)$: let's look at $f(x) \equiv_n x^2$ where $f \in \integer_n^\times \to \quadres_n (\subset \integer_n^\times)$. Notice that this is not a permutation in general, so let's consider their \textsc{crt}'s representation\footnotemark, in order to restrict $f$'s domain:
+
+\footnotetext{Those well-versed in number representation in computers may know this representation as the \emph{residue number system}}
+
+\[
+    x = (x_p \equiv_p x, x_q \equiv_q x), f(x) \equiv_p x^2, x \in \integer_p^\times
+\]
+
+Since $\integer_p^\times$ is cyclic:
+
+\begin{align*}
+    \integer_p^\times   &= \{g^0, g^1, g^2, \ldots  &&, g^{\frac{p - 1}{2} - 1}              &&, g^{\frac{(p-1)}{2}}                    &&, \ldots, g^{p-2}         &&\} \\
+    \quadres_p          &= \{g^0, g^2, g^4, \ldots  &&, g^{2(\frac{p - 1}{2} - 1) = p - 3}   &&, g^{2(\frac{p-1}{2}) = p - 1 \equiv 0}  &&, \ldots, g^{2(p - 2)}    &&\} \\
+\end{align*}
+
+Because of this, $|\quadres_p| = \frac{p - 1}{2}$. Moreover, since $g^{2\frac{p-1}{2}} \equiv_p 1$ and $g^{\frac{p-1}{2}}$ cannot be 1 (since $g^0 \neq g^{\frac{p - 1}{2}} \neq g^{p - 1}$ ) but must be one of the $p-1$ elements of $\integer_p^\times$, then $g^{\frac{p-1}{2}} \equiv_p -1$.
+    
+Now it's possible to show that $f: \quadres_p \to \quadres_p$ is a permutation, and we are going to show how to find $f^{-1}$.
+
+Assume $p \equiv_4 3$, meaning $\exists t : p = 4t + 3 \implies t = \frac{p - 3}{4}$); then squaring modulo $p$ becomes a permutation. Given $y \equiv_p x^2$, observe the following:
 
 \begin{gather*}
-    x=(x_p,x_q) \rightarrow x_p\equiv x\mod{p} , x_q\equiv x\mod{q}\\
-    f(x)=x^2\mod{p}; x \pickUAR \integer_p^\times
+    (y^{t + 1})^2 = y^{2t + 2} = y^{2\frac{p - 3}{4} + 2} = y^{\frac{p - 1}{2} + 1} = (x^2)^{\frac{p - 1}{2} + 1} = x^{p - 1} x^2 \equiv_p x^2 \\
+    \Downarrow \\
+    x = \pm y^{t + 1}
 \end{gather*}
 
-Since $\integer_p^\times$ is cyclic I can always write:
-
-\begin{gather*}
-    \integer_p^\times = \{g^0,g^1,g^2,\ldots,g^{\frac{p-1}{2}-1},g^{\frac{(p-1)}{2}},\ldots,g^{p-2} \} \\
-    \QR[p]=\{g^0,g^2,g^4,\ldots,\overbrace{g^{p-3}}^{g^{\frac{p-1}{2}-1} \in \integer_p^\times},\underbrace{g^0}_{g^{\frac{p-1}{2}} \in \integer_p^\times},\ldots\} \\
-    |\QR[p]|=\frac{p-1}{2}
-\end{gather*}
-
-Moreover, since $(g^{\frac{p-1}{2}})^2 \equiv 1 \mod{p} $ and $g^{\frac{p-1}{2}}$ cannot be 1 (since $g^{0}\not=g^{\frac{p-1}{2}}\not=g^{p-1}$ ) but must be one of the $p-1$ elements of $\integer_p^\times$, then $g^{\frac{p-1}{2}} \equiv -1 \mod{p}$.
-
-Now it's possible to show that $f: \QR[p]\to \QR[p] $ is a permutation, and we are going to show a method to invert it, aka $f^{-1}$.
-
-Assume $p\equiv 3 \mod{4}$ ([*]$p=4t+3\Rightarrow t=\frac{p-3}{4}$), then squaring modulo $p$ is a permutation because, given
-\underline{$y=x^2 \mod{p}$} if I compute:
-\begin{gather*}
-    (y^{t+1})^2=\underbrace{y^{2t+2}}_{\text{[*]
-    }2t+2=\frac{p-3}{2}+2=\frac{p+1}{2}=\frac{p-1}{2}+1}=(x^2)^{\frac{p-1}{2}+1}=1x^2=x^2\\
-    \implies x=\pm y^{t+1}
-\end{gather*}
-
-But only 1 among the above $\pm y^{t+1}$ is a square, in particular only the positive one. Since we have that:
+But only one among $\pm y^{t + 1}$ is a square: the positive one. Therefore:
 \[ 
-    p=k4+3 \Rightarrow \frac{p-1}{2}=\frac{4k+2}{2}=2k+1
+    p = 4t + 3 \implies \frac{p - 1}{2} = \frac{4t + 2}{2} = 2t + 1
 \]
-so $\frac{p-1}{2}$ is odd.
+so $\frac{p - 1}{2}$ is odd.
 
-Now, since we are considering just $\QR[p]=\{y \in \mathbb{Z}_{p}^{*} : \exists x \in \mathbb{Z}_{p}^{*} x^{2}=y\}$ and we can write each $x \in \mathbb{Z}_{p}^{*} $ as $g^{z}$ for a $z \in \mathbb{Z}_{p}$, 
+Now, since we are considering just the elements of $\quadres_p$, and we can write each $x \in \integer_p^\times$ as $g^{z}$ for a $z \in \integer_p$:
 \[
-    y=x^{2} \Leftrightarrow y=(g^{z})^{2}=g^{2z}
+    y = x^2  = (g^z)^2
 \]
 
-So, $y = g^{z'} \in \QR[p] \Leftrightarrow z'$ is even. If $z'$ is odd, then $y \notin \QR[p]$.
+So, $y = g^{z'} \in \quadres_p \Leftrightarrow z'$ is even. If $z'$ is odd, then $y \notin \quadres_p$.
 
-Since $\frac{p-1}{2}$ is odd, then $g^{\frac{p-1}{2}} \not\in \QR[p]$, and since it is possible to generate all of the other numbers with odd exponents 
+Since $\frac{p - 1}{2}$ is odd, then $g^{\frac{p - 1}{2}} \notin \quadres_p$, and since it is possible to generate all of the other numbers with odd exponents 
 \[
-    g^{odd}=g^{\frac{p-1}{2} \pm even} = g^{\frac{p-1}{2}}g^{ \pm even} \Rightarrow -1(g^{\pm even})
+    g^{odd}=g^{\frac{p-1}{2} \pm even} = g^{\frac{p-1}{2}}g^{ \pm even} \implies -1(g^{\pm even})
 \]
-and $g$ powered to odd exponents will have this form.
+and $g$ powered to odd exponents will have this form. From here, it's possible to state the following:
 
-From that, it's possible to state the following:
 \begin{lemma}
-    $\forall z, z\in \QR[p] \implies -z \notin \QR[p]$
+    $\forall z \in \quadres_p \implies -z \notin \quadres_p$
 \end{lemma}
 
 \subsection{Rabin's Trapdoor permutation}
 
-Now we study a one way function built on previous deductions about number theory and modular arithmetic.
-
-The \textit{Rabin trapdoor permutation} is defined as 
+Now we study a one way function built on previous deductions about number theory and modular arithmetic. The \emph{Rabin trapdoor permutation} is defined as: 
 \[
-    f(x)=x^{2} \text{ mod } n
+    f(x) = x^2 \mod n
 \]
-where $n=p*q$ for primes $p, q = 3 \text{mod} 4$.
+where $n = pq$ for primes $p, q \equiv_4 3$.
 
-We can observe that the image of this function is $\QR[n]$, a subset of $\integer_n^\times$.
+We can observe that the image of this function is $\quadres_n$, a subset of $\integer_n^\times$.
 
-For \textbf{Chinese remainder theorem} it is possible to state that $f$ maps as follows
+Because of \textsc{crt}, it is possible to state that $f$ maps as follows:
 \[
-    x = (x_p, x_q) \mapsto (x^2_p, x^2_q)
+    x = (x_p, x_q) \implies x^2 = (x^2_p, x^2_q)
 \]
-since each element of $\integer_n$ has always two different forms, in $\integer_p$ and in $\integer_q$.
-
-So
+since each element of $\integer_n$ has always two different forms, in $\integer_p$ and in $\integer_q$. So
 \[
-    y \in  \mathbb{QR}_{n} \Leftrightarrow y_{p} \in \mathbb{QR}_{p} \wedge y_{q} \in \mathbb{QR}_{q} 
+    y \in  \quadres_n \Leftrightarrow y_p \in \quadres_p \wedge y_q \in \quadres_q
 \]
 
 As before, the image of $f$ is exactly
 \[
-    \mathbb{QR}_{n} = \{ y: \exists x : y=x^{2} \text{ mod } n\}
+    \quadres_n = \{ y : \exists x : y \equiv_n x^2\}
 \]
 
 If we try to invert the function $f$, even without applying the previous inversion algorithm, we easily note that among the 4 possible values:
 
 \[
-    f^{-1}(y)=\{ (x_{p}, x_{q}),(-x_{p}, x_{q}),(x_{p},- x_{q})(-x_{p},- x_{q})\}
-\]\label{les15:outoffour}
+    f^{-1}(y) = \{(x_p, x_q),(-x_p, x_q),(x_p, -x_q)(-x_p, -x_q)\}
+\]
 
-only 1 is a quadratic residue since we said, in the last lemma, that only one out of $-x_{k}, x_{k}$ is a quadratic residue for $k=q,p$.
+only 1 is a quadratic residue since we said, in the last lemma, that only one out of $-x_k, x_k$ is a quadratic residue for $k = q,p$.
 
-Therefore, we have that the Rabin's TDP is a permutation in $\QR[n]$, and that the cardinality of $ \mathbb{QR}_{n} $ is $\frac{|\integer_n^\times|}{4}$.
-
-Furthermore, with the following claim we can state that the Rabin cryptosystem is OWF thanks to the hardness of factoring.
+Therefore, we have that the Rabin's \tdp{} is a permutation in $\quadres_n$, and that the cardinality of $\quadres_n$ is $\frac{|\integer_n^\times|}{4}$. Furthermore, with the following claim we can state that the Rabin cryptosystem is a \owf{} thanks to the \textsc{fact} assumption.
 
 \begin{claim}
-    Given $x, z$ such that $x^{2}\text{ mod} n \equiv z^{2} \text{ mod } n
-    \equiv y$ mod $n$,
+    Given $x$ and $z$ such that $x^2 \equiv_n z^2 \equiv_n y$:
     \[
-        x \neq \pm z \Rightarrow \text{ we can factor } n
+        x \neq \pm z \implies n \text{\textup{ is factorizable}}
     \]
 \end{claim}
 
 \begin{proof}
-    Since $f^{-1}(y)$ has only one value out of four, $x\neq \pm z$ and $z\in \{(x_{p},x_{q}),(-x_{p},-x_{q})\}$ , then $x \in \{(x_{p},-x_{q}),(-x_{p},x_{q})\}$ and 
+    Since $f^{-1}(y)$ has only one value out of four, $x \neq \pm z$ and $z$ is either $\{(x_p, x_q), (-x_p, -x_q)\}$, then:
     \[
-        x + z \in \{(0,2x_{q}), (2x_{p}, 0)\}
+        x \in \{(x_p, -x_q), (-x_p, x_q)\} \implies x + z \in \{(0, 2x_q), (2x_p, 0)\}
     \]
-
-    Now assume $x + z = (2x_{p}, 0)$ without loss of generality, since the proof for the other case is the same. We have that $x+z \equiv 0$ mod $q$ and $x+z \not\equiv 0 $ mod $p$. But then $gcd( x+z , n)=q$, and we obtain $q$.
+    Now assume $x + z = (2x_p, 0)$ without loss of generality, since the proof for the other case is the same. We have that $x + z \equiv_q 0$ and $x + z \not\equiv_p 0$. But then $\gcd(x + z, n) = q$, and we obtain $q$.
 \end{proof}
 
 \begin{theorem}
     Squaring mod $n$, where $n$ is a \emph{Blum integer}\footnotemark is a trapdoor permutation under the factoring assumption.
 \end{theorem}
 
-\footnotetext{a Blum integer $n$ is the product of two numbers $p$ and $q$ such that $p, q = 3 \mod 4$, as the definition of Rabin's \tdp}
+\footnotetext{a Blum integer $n$ is the product of two numbers $p$ and $q$ such that $p, q \equiv_4 3$, as the definition of Rabin's \tdp}
 
-Since we have already shown tha Rabin's function is a permutation since it is invertible, we have to show that Rabin's function is also \owf.
+Since we have already shown that Rabin's function is a permutation since it is invertible, we have to show that Rabin's function is also \owf:
 
-In other words
+\begin{proposition}
 \[
-    \text{Factoring is hard } \Rightarrow \text{ $f(x)$ is OWF , aka inverting
-    it is hard}
+    \textsc{fact} \implies f(x) \in \owf \qedhere
 \]
-The following proof is by contraddiction.
-\begin{proof}
-    Assume that exists an adversary PPT who, given $y=x^{2} \text{ mod } n$, can find a $z \in \mathbb{Z}_{n} $ such that $z^{2} \text{ mod } n=y$ but $z\neq \pm x$ .
+\end{proposition}
 
-    We can build the following reduction to show that $\adversary$ choses $x$, here $\mathcal{BG}en$ is a sampler for Blum integers:
+\begin{proof}
+    The proof is by contradiction. Assume there is an adversary \adversary{} who, given $y \equiv_n x^2$, can find an integer $z \in \integer_n$ such that $z^2 \mod n = y$ while $z \neq \pm x$. We can build a reduction as the one in figure \ref{cryptoredux:blumtdp} to show that \adversary{} chooses $x$, here $\mathcal{B}lum$ is a sampler for Blum integers:
 
     % AP190902: The adversary had a "fact" subscript, is it important?
     \begin{cryptoredux}
         {blumtdp}
         {---}
-        {$(p, q, n) \pickUAR \mathcal{BG}en \wedge p,q \equiv 3 \mod 4$}
-        {rabin}[1]
+        {fact}
+        {rabin}[1.8]
 
-        \receive{}{$n = pq$}{}
+        \receive{$(p, q, n) \pickUAR \mathcal{B}lum$}{$n = pq$}{}
+
+        \cseqdelay
 
         \invoke{\shortstack[l]{
-            $x \pickUAR \integer^{*}_n$ \\
-            $y = x^2 \mod n$
+            $x \pickUAR \integer_n^\times$ \\
+            $y \equiv_n x^2$
         }}{$n, y$}{}
+
+        \cseqdelay
 
         \return{}{$z$}{$f(z) = f(x)$}
         

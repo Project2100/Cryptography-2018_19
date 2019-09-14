@@ -77,7 +77,7 @@ We can say that we are moving the exponents from the "private domain" to the "pu
             ``params''$ = $ \\
             $ \quad =(\G, \G_t, g, q, \hat{e})$ \\
             $ \quad \pickUAR BilGen(1^\lambda)$ \\
-            $a, b \pickUAR \mathbb{Z}_q$
+            $a, b \pickUAR \integer_q$
         }}{$(\text{``params''}, g^a, g^b)$}{}
 
         \cseqdelay
@@ -104,7 +104,7 @@ We can say that we are moving the exponents from the "private domain" to the "pu
         \alpha(m) = g_2^{\beta(m)}g^{\gamma(m)},\quad \beta(m) = x_0 + \sum_{i=1}^{k}m_ix_i,\quad \gamma(m) = y_0 + \sum_{i=1}^{k}m_iy_i
     \end{equation*}
 
-    where $x_0 \pickUAR \{-kl, \dots, 0\}, x_{1\text{---}k} \pickUAR \{0, \dots, l\}, y_{0\text{---}k} \pickUAR \mathbb{Z}_q$
+    where $x_0 \pickUAR \{-kl, \dots, 0\}, x_{1\upto k} \pickUAR \{0, \dots, l\}, y_{0\upto k} \pickUAR \integer_q$
 
     In particular: $l = 2q_s$, where $q_s$ is the number of sign queries made by the adversary.
 
@@ -116,7 +116,7 @@ We can say that we are moving the exponents from the "private domain" to the "pu
 
     \todo{Partizioni, doppi if.... qui non ci ho capito 'na mazza}
 
-    \textbf{Step 1}: $\sigma = (\sigma_1, \sigma_2) = (g_2^a \alpha(m)^{\bar{r}}, g^{\bar{r}})$, for $\bar{r} \pickUAR \mathbb{Z}_q \quad \bar{r} = r - a\beta^{-1}$
+    \textbf{Step 1}: $\sigma = (\sigma_1, \sigma_2) = (g_2^a \alpha(m)^{\bar{r}}, g^{\bar{r}})$, for $\bar{r} \pickUAR \integer_q \quad \bar{r} = r - a\beta^{-1}$
 
     \begin{align*}
         \sigma_1 &= g_2^a\alpha(m)^{\bar{r}} \\

@@ -196,7 +196,7 @@ Going back to the Feistel networks in general, it should be easy to see that the
 \]
 where $\Phi$ is the sequence of \prf{}s used at each single step. It can be shown that the rounds neeed to obtain a network that is indeed pseudorandom is just 3; also, the same \prf{} can be used, it is sufficient to change the seed on each iteration\footnotemark:
 
-\begin{theorem}
+\begin{theorem}[Michael Luby - Charles Rackoff]
     Let $F_i, F_j, F_k$ be a \prf{} over three seeds. Then $\psi^3_{i, j, k}$ is a \prp.
 \end{theorem}
 

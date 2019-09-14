@@ -1,40 +1,196 @@
 \mychapter{14}{Lesson 14} %181114
 
-\subsubsection{Decisional Diffie-Hellman assumption (cont'd)}
+\subsubsection{Decisional Diffie-Hellman (cont'd)}
 
-Claim: \ddh is not hard for groups $\integer_p^\times$
+%AP190913: Is p supposed to be prime?
+\begin{claim}
+    \ddh{} is not hard for groups $\integer_p^\times$
+\end{claim}
 
-Proof: Let $Quad_p$ be the group of quadratic residues modulo $p$, group operation is multiplication.
+\begin{proof}
+    Let $\quadres_p$ be the group of quadratic residues modulo $p$, where the group operation is multiplication:
+    \[
+        \quadres(p) = \{y : \exists x \in \integer_p \implies y \equiv_p x^2\} = \{g^z : \forall z\}
+    \]
+    where $g$ generates $\integer_p^\times$.Then, we can test if a give number $y$ is in $\quadres_p$ by checking if $y^{(p-1)/2} \equiv_p 1$, because:
+    \[
+        \exists z : y = g^{2z} \implies y^{(p-1)/2} = g^{\frac{2z(p-1)}{2}} = g^{z(p-1)} \equiv_p 1
+    \]
+    Otherwise: % AP190208: Not sure at all that this is correct
+    \[
+        \nexists z : y = g^{2z} \implies y^{(p-1)/2} \equiv_p g^{z(p-1)} \cdot g^{(p-1)/2} \not\equiv_p 1
+    \]
 
-We can test if a give number $y$ is in Quad by checking if $y^{(p-1)/2} \equiv_p 1$, because:
+    Furthermore: $g^{xy} \in \quadres_p \implies x \equiv_2 0 \vee y \equiv_2 0$. With this in mind, given a random choice of $x$ and $y$, the probability that $g^{xy}$ falls in $\quadres(p)$ is $\frac{3}{4}$, and the probability of it being outside the group is $\frac{1}{4}$. This is an advantage available to a polynomial adversary.
+\end{proof}
+
+Nevertheless, some otehr groups are believed to harden quadratic residue membership; examples of such groups are $\quadres_p$ itself for $p = 2q + 1$, where $q$ is prime, or the elliptic curve groups.
+
+\subsubsection{Extended \ddh}
+
+This is a construction that takes the \ddh{} assumption to an extreme using groups. The \ddh{} assumption is reported here:
 \[
-    y = g^{2z} \implies y^{(p-1)/2} = g^{2z(p-1)/2} = g^{z(p-1)} \equiv_p 1
+    (G, g, q) \pickUAR \groupgen(1^\lambda), \forall i\: X_i, Y_i, Z_i \sim \unifdist(G) \implies (g^X, g^Y, g^{XY}) \compindist (g^X, g^Y, g^Z)
 \]
-Otherwise: % AP190208: Not sure at all that this is correct
+where $X$, $Y$ and $Z$ are distribution ensembles.
+
+The construction extends this concept of hardness in detecting $xy$ by replicating it $n$-times:
+\begin{theorem}
+    Let $X$, $Y_{1\upto n}$ and $Z_{1 \upto n}$ be distribution ensembles over a group $(G, g, q)$ Then:
+    \[
+        (g^X, g^{Y_1}, g^{XY_1}, \dots, g^{Y_n}, g^{XY_n}) \compindist (g^X, g^{Y_1}, g^{Z_1}, \dots, g^{Y_n}, g^{Z_n})
+    \]
+\end{theorem}
+
+\begin{proof}
+    \todo{The game is modified a bit to ease analysis of the reduction, must take care...
+    
+    Also, this kind of proof is ``tight''; the hybridization would have introduced a negligible difference instead}
+
+    The proof can be structured by progressive hybridization over the sequences, and breaking the \ddh{} assumption at any step $i$. Here instead, we will simulate the \textsc{ext} sequence directly in the distinguishing game, and assume there is $\distinguisher^{\textsc{ext}}$ capable of telling them apart; figure \ref{cryptoredux:extddh} shows the steps to take.
+
+    \begin{cryptoredux}
+        {extddh}
+        {Breaking \ddh{} by distinguishing the \ddh{} sequence}
+        {ddh}
+        {ext}
+        
+        \cseqdelay
+        \receive{\shortstack[l]{
+            %AP190913: Actually, the adversary knows this!
+            $(G, g, q) \pickUAR \groupgen(1^\lambda)$ \\
+            $x, y \pickUAR \integer_q$ \\
+            $b \pickUAR \binary$ \\
+            $\beta_b \pickUAR \{0, \integer_q\setminus\{0\}\}$ \\
+            $z_b = xy + \beta_b$
+        }}{$(g^x, g^y, g^{z_b})$}{}
+
+        \cseqbeginloop
+        \cseqdelay
+        \cseqadversary{\shortstack[r]{
+            $u_i, v_i \pickUAR \integer_p$ \\
+            $g^{y_i} = (g^y)^{u_j}g^{v_j}$ \\
+            $g^{z_i} = (g^z)^{u_j}(g^x)^{v_j}$
+        }}
+        \cseqdelay
+        \cseqendloop
+        \cseqdelay
+        
+        \invoke{}{$(g^x, g^{y_1}, g^{z_1}, \dots)$}{}
+
+        \return{}{$b'$}{}
+
+        \send{}{$b'$}{\textsc{Output 1 iff} $b' = b$}
+
+    \end{cryptoredux}
+
+\end{proof}
+
+Notice that $(g^y)^{u_j}g^{v_j}= g^{yu_j + v_j}$, and $(g^z)^{u_j}(g^x)^{v_j} = g^{zu_j + xv_j}$, which depending on what $z$ is, becomes either $g^{x(yu_j + v_j)}$, matching perfectly the $y_i$ case, or remains as a random linear combination, matching the $z_i$ case.
+
+\subsubsection{Naor-Reingold \prf}
+
+This is an alternative to the extended \ddh{} seen above, designed by Moni Naor and Omer Reingold. It constructs a \prf{} as follows:
 \[
-    y \neq g^{2z} \implies y^{(p-1)/2} \equiv_p g^{z'(p-1)} \cdot g^{(p-1)/2} \not\equiv_p 1
+    F^{\textsc{nr}} \in \integer_q^{(n+1)} \times \binary^n \to (G, g, q) : f^{\textsc{nr}}_k(x_{1\upto n}) \mapsto g^{k_0\prod_{i = 1}^{n}k_i^{x_i}}
 \]
 
-Claim: $g^{xy} \in Quad_p \implies 2 | x \vee 2 | y$
+\todo{Transcribing notes directly:
+\{
+This is \ggm{} with $G^{g, q, a}(g^b) = G_0(g^b) \mathrel{||} G_1(g^b) = (g^b, g^{ab})$
 
-???
+E.g.: $011 \mapsto g^{a_0a_1^0a_2^1a_3^1}$
 
-Can have a distinguisher; end of Proof
+\}
 
-Nevertheless, some otehr groups are believed to harden quadratic residue membership; such groups are $Quad_p$ itself, or the elliptic curve groups.
+Notes about claw-free permutations follow; also, hash functions make an appearance
 
-%-------------------------
-
-Recall: DL is hard
-
-Extend: $g^x, g^{y_1}, g^{xy_1}, g^{y_2}, g^{xy_2}, g^{y_3}, g^{xy_3}, \dots$
-
-prove this is hard by hybrid arg
-
-\subsubsection{Naor-Reingold encryption scheme}
+}
 
 
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[
+        level 1/.style={sibling distance=16em},
+        level 2/.style={sibling distance=8em},
+        level 3/.style={sibling distance=4em}]
+
+        \node{$g^{a_0}$}
+            child{ node {}
+                child { node {}
+                    child { node (a) {$g^{a_0}$} node [below of = a] {$\vdots$}}
+                    child { node (a) {} node [below of = a] {$\vdots$}}
+                }
+                child { node {}
+                    child { node (a) {} node [below of = a] {$\vdots$}}
+                    child { node (a) {} node [below of = a] {$\vdots$}}
+                }
+            }
+            child { node {}
+                child { node {}
+                    child { node (a) {} node [below of = a] {$\vdots$}}
+                    child { node (a) {} node [below of = a] {$\vdots$}}
+                }
+                child { node {}
+                    child { node (a) {} node [below of = a] {$\vdots$}}
+                    child { node (a) {$g^{a_0a_1a_2a_3}$} node [below of = a] {$\vdots$}}
+                }
+            };
+    \end{tikzpicture}
+    \caption{Depicting Naor-Reingold method as a tree-like structure}
+    \label{fig:nrtree}
+\end{figure}
 
 \section{Public key encryption schemes}
 
-% CPA2 (for PKE schemes) - encryption queries are free, the game collapses into a receive(+1 for pk)-send sequence
+Now we discuss a substantially different way of encrypting messages, which involves two separate keys per party instead of a single, shared key; hence the names \emph{Public key scheme}, or \pke{}, or \emph{Asymmetric key scheme}.
+
+
+\subsubsection{\textsc{Cpa}-security, revisited}
+
+In a \pke{} setting, the adversary knows the public key by design, which in turn is all that he needs to preform encryptions; therefore, the queries in a hypotetical \cpa{} game are moot, because \adversary{} can make the encryptions on its own; figure \ref{cryptogame:pkecpa} shows the changed game for a \pke{}.
+
+
+\begin{cryptogame}
+    {pkecpa}
+    {Chosen plaintext attacks, revisited for \pke{} schemes}
+    {cpa2}
+
+    \receive{$(\pk, \sk) \pickUAR \keygen(1^\lambda)$}{$\pk$}{}
+
+    \cseqbeginloop
+    \cseqadversary{$c = \Enc(\pk, m)$}
+    \cseqendloop
+
+    \send{}{$m_0, m_1$}{}
+
+    \receive{\shortstack[l]{
+        $b \pickUAR \binary$ \\
+        $c_b = \Enc(\pk, m_b)$
+    }}{$m_b$}{}
+
+    \cseqbeginloop
+    \cseqadversary{$c = \Enc(\pk, m)$}
+    \cseqendloop
+
+    \send{}{$b'$}{\textsc{Output 1 iff} $b' = b$}
+
+\end{cryptogame}
+
+\todo{Another verbatim transcription:
+
+Abstract construction (inefficient) for trapdoor permutation
+
+$(Gen, f, f')$, where $gen= \keygen : \singleton \to \Xi_\pk, f(\pk, \cdot) \in \Xi_\pk \to \Xi_\pk, f' = f^{-1}(\sk, \cdot) \in \Xi_\pk \to \Xi_\pk$
+
+Correctness: $f^{-1}(\sk, f(\pk, m)) = m$
+
+$TDP \implies PKE$, Easy but not trivial
+
+$\cryptog{tdp}$... same as \cpa2?
+
+Why $f, f'$ is not cpa-secure? Because they are deterministic
+
+Use $f$'s hardcore predicate
+
+}

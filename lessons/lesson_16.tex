@@ -1,7 +1,7 @@
 \mychapter{16}{Lesson 16} %181121
 \section{\textsc{Pke} schemes over \textsc{ddh} assumption}
 \subsection{El Gamal scheme}
-Let's define a new $\Pi=$ (KGen, Enc, Dec). Generate the needed (\textbf{public}) parameters $(G,g,q)\pickUAR GroupGen(1^{\lambda})$\footnote{G could be any "valid" group such as $\QR[p]$ or an Elliptic Curve}.
+Let's define a new $\Pi=$ (KGen, Enc, Dec). Generate the needed (\textbf{public}) parameters $(G,g,q)\pickUAR \groupgen(1^{\lambda})$\footnote{G could be any "valid" group such as $\quadres_p$ or an Elliptic Curve}.
 
 The KeyGen algorithm is defined as follows:
 \begin{itemize}
@@ -39,7 +39,7 @@ Correctness of this scheme follows from some algebric steps:
         {pke}
 
         \receive{\shortstack[l]{
-            $x \pickUAR \mathbb{Z}_q$ \\
+            $x \pickUAR \integer_q$ \\
             $pk = g^x$
         }}{$pk$}{}
 
@@ -47,7 +47,7 @@ Correctness of this scheme follows from some algebric steps:
         \send{}{$(m_0,m_1)\in \G$}{}
         \cseqdelay
         \receive{\shortstack[l]{
-            $r \pickUAR \mathbb{Z}_q$ \\
+            $r \pickUAR \integer_q$ \\
             $b \pickUAR \binary$ \\
             $(c_1,c_2)=(g^r,(g^x)^r m_b)$
         }}{$ c = (c_1, c_2)$}{}
@@ -63,7 +63,7 @@ Correctness of this scheme follows from some algebric steps:
         {pke}
 
         \receive{\shortstack[l]{
-            $x \pickUAR \mathbb{Z}_q$ \\
+            $x \pickUAR \integer_q$ \\
             $pk = g^x$
         }}{$pk$}{}
 
@@ -71,8 +71,8 @@ Correctness of this scheme follows from some algebric steps:
         \send{}{$(m_0,m_1)\in \G$}{}
         \cseqdelay
         \receive{\shortstack[l]{
-            $r \pickUAR \mathbb{Z}_q$ \\
-            $z \pickUAR \mathbb{Z}_q$ \\
+            $r \pickUAR \integer_q$ \\
+            $z \pickUAR \integer_q$ \\
             $(c_1,c_2)=(g^r,g^z m_b)$
         }}{$ c = (c_1, c_2)$}{}
         \cseqdelay
@@ -155,7 +155,7 @@ Some useful observations can be made about this scheme:
     \end{align*}
     thus, decrypting $c\cdot c'$, gives $m\cdot m'$.
     
-    \item It is \textbf{re-randomizable}: Given a ciphertext $(c_1, c_2)$, and $r' \pickUAR \mathbb{Z}_q$, then computing $(g^{r'}\cdot c_1, h^{r'}\cdot c_2)$ results in a ``fresh'' encryption for the same message: the random value used at the encryption step will change from the original $r$ to $r+r'$
+    \item It is \textbf{re-randomizable}: Given a ciphertext $(c_1, c_2)$, and $r' \pickUAR \integer_q$, then computing $(g^{r'}\cdot c_1, h^{r'}\cdot c_2)$ results in a ``fresh'' encryption for the same message: the random value used at the encryption step will change from the original $r$ to $r+r'$
 \end{itemize}
 \textbf{So this is not CCA-Secure!}
 

@@ -14,7 +14,7 @@ From the above two proof systems we can construct a \textsc{pke} scheme, which i
     \end{itemize}
     \item Encryption procedure:
     \begin{itemize}
-        \item $r \pickUAR \mathbb{Z}_q$
+        \item $r \pickUAR \integer_q$
         \item $\beta = H_s(c_1, c_2, c_3) = (g_1^r, g_2^r, h_1^r m)$
         \item $Enc(pk, m) = (c_1, c_2, c_3, (h_2 h_3^\beta)^r)$
     \end{itemize}

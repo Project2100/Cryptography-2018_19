@@ -145,7 +145,7 @@ Given a group $G$ and three elements in it $g^x$, $g^y$, $g^z$, it is impractica
         %AP190913: Actually, the adversary knows this!
         $(G, g, q) \pickUAR \groupgen(1^\lambda)$ \\
         $x, y, z_1 \pickUAR \integer_q$ \\
-        $z_0 = xy$ \\
+        $z_0 = xy \mod q$ \\
         $b \pickUAR \binary$
     }}{$(g^x, g^y, g^{z_b})$}{}
 
@@ -165,7 +165,7 @@ All these assumptions helped in constructind the \emph{Diffie-Hellman key exchan
     \cseqentity[2.2]{B}{Bob}
 
     \cseqmessagel{B}{\shortstack[l]{
-        $(G, g, q) \pickUAR \Group\Gen(1^\lambda)$ \\
+        $(G, g, q) \pickUAR \groupgen(1^\lambda)$ \\
         $x \pickUAR G$ 
     }}{$(G, g, q, g^x)$}{A}{}
 
