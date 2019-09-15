@@ -27,7 +27,7 @@ As stated in the previous lesson, given a \prg{} $G \in \binary^\lambda \to \bin
     \[
         f_k : \binary^n \to \binary^\lambda : (b, x) \in \binary \times \binary^{n - 1} \mapsto G_b(f'_k(x))
     \]
-    It must be proven that if $f_k'$ is a \prf, then so is $f_k$. To help ourselves, we'll define some hybrid games as usual. We will proceed by hybrid games, depicted in figures \ref{cryptogame:ggmhyb1} and \ref{cryptogame:ggmhyb2}:
+    It must be proven that if $f_k'$ is a \prf, then so is $f_k$. To help ourselves, we'll define some hybrid games as usual. These are depicted in figures \ref{cryptogame:ggmhyb1} and \ref{cryptogame:ggmhyb2}.
 
     \begin{cryptogame}
         {ggmhyb1}
@@ -79,7 +79,7 @@ As stated in the previous lesson, given a \prg{} $G \in \binary^\lambda \to \bin
 
     \end{cryptogame}
     
-    %AP190103: Actually, we're going to be inductive twice, one time for each hybrid couple
+    We are going to prove, in the scope of a single induction step, that these hybrids bridge indistinguishability for the original game. It is all that's needed to complete the proof.
 
     \begin{lemma}
         $\hybridg{1}[f_k](\lambda, 0) \compindist \hybridg{1}[f_k](\lambda, 1)$       
@@ -133,7 +133,7 @@ As stated in the previous lesson, given a \prg{} $G \in \binary^\lambda \to \bin
     \begin{lemma}
         If $G : \binary^\lambda \to \binary^{2 \lambda}$ is a \prg, then:
         \[
-            \forall K_i \sim \unifdist(\lambda) \iid \implies (G(K_1), \dots , G(K_t)) \compindist (U_{2 \lambda}, \dots , U_{2\lambda})
+            \forall K_i \sim \unifdist(\lambda) \iid \implies (G(K_1), \dots , G(K_t)) \compindist (U_{2 \lambda}, \dots , U_{2\lambda}) \qedhere
         \]
     \end{lemma}
 
@@ -150,6 +150,8 @@ As stated in the previous lesson, given a \prg{} $G \in \binary^\lambda \to \bin
     
     %AP190912: May need to flesh out some images here, especially a cryptoredux drawing...
     \begin{proof}
+
+        \todo{Need figures here}
 
         This proof is trickier: the problem lies in the inherent difference between the task of detecting a \prg{} from that of detecting a \prf{}. The aforemenioned lemma helps us with the aspect of polynomial queries on a \prg{}, bringing it in line with the \prf{} game; yet, we're far from done.
 

@@ -165,9 +165,9 @@ Combined with the fact that keys must be preemptively shared in a secure fashion
         \caption{Where the messages stand}
     \end{figure}
 
-    Fix this message $m$, and remember that by $M$'s definition, $\Pr[M = m] = |\M|^{-1}$. Since $m \notin D$, there can be no key in $\K$ such that $\Dec(k, c) = m$. By observing that $C$ strictly distributes over $D$, where $m$ is not present, $\Pr[M = m \knowing C \evaluatesto c] = 0$. Summarizing up:
+    Fix this message $m$, and remember that by $M$'s definition, $\Pr[M = m] = |\M|^{-1}$. Since $m \notin D$, there can be no key in $\K$ such that $\Dec(k, c) = m$. By observing that $C$ strictly distributes over $D$, where $m$ is not present, $\Pr[M = m \knowing C \evaluatesto c] = 0$. Putting everything together:
     \[
-        0 = \Pr[M = m \knowing C \evaluatesto c] \neq \Pr[M =o m] = |\M|^{-1}
+        0 = \Pr[M = m \knowing C \evaluatesto c] \neq \Pr[M = m] = |\M|^{-1}
     \]
     This clearly violates the first definition of perfect secrecy.
 \end{proof}

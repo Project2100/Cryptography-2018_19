@@ -161,4 +161,16 @@ Getting back to our hash function families, we see that they too use an argument
 
 \subsubsection{Leftover hash lemma}
 
-\todo{---}
+This lemma has been proven by Russell Impagliazzo, Leonid Levin and Michael Luby:
+
+\begin{lemma}[Leftover hash]
+    Let $h_s$ be a pairwise-independent hash function, and define $\ext \in \binary^d \times \binary^n \to \binary^l$ to be a seeded randomness extractor. Then if $\ext(s, x) = h_s(x)$, and $x$ follows a distribution $X$ such that:
+    \[
+        H_\infty(X) = k \geq l + 2\log_2\oneover{\varepsilon} - 2
+    \]
+    then $\ext$ is a ($k$, $\varepsilon$)-seeded randomness extractor.
+\end{lemma}
+
+\begin{proof}
+    \todo{---}
+\end{proof}

@@ -115,6 +115,8 @@ where $\mathcal{S} = \integer_p^2$, and $\M = \Phi = \integer_p$.
 \end{theorem}
 
 \begin{proof}
+    For all our purposes, let $K \sim \unifdist(\K)$; then:
+
     \begin{align*}
         \forall m \in \M, \phi \in \Phi &\implies \Pr[\Tag(K, m) = \phi] = \Pr[h_K(m) = \phi] = \oneover{|\Phi|} \\
         \forall m \neq m' \in \M, \phi, \phi' \in \Phi &\implies \Pr[\Tag(K, m) = \phi \wedge \Tag(K, m') = \phi'] = \oneover{|\Phi|^2} \\
@@ -128,11 +130,11 @@ where $\mathcal{S} = \integer_p^2$, and $\M = \Phi = \integer_p$.
 \end{proof}
 
 \begin{theorem}
-    Any ($2^{-\lambda}$)-statistical $t$-time secure authentication scheme has a key of size $(t + 1) \lambda$ for any $\lambda > 0$.
+    Any $(2^{-\lambda})$-statistical $t$-time secure authentication scheme has a key of size $(t + 1) \lambda$ for any $\lambda > 0$.
 \end{theorem}
 
 \begin{proof}
-    \underline{None given.}
+    None given.
 
-    % IDEA: For each "time", use one "subkey"
+    Idea: For each ``time'', use one ``subkey''
 \end{proof}

@@ -165,7 +165,7 @@ To overcome this problem, we can consider two options:
 \begin{definition}
     A family of hash functions $h_s$ is deemed \emph{$\varepsilon$-universal} iff:
     \[
-        \forall x \neq x' \in \binary^{n \cdot t}, S \sim \unifdist(\binary^\lambda) \implies \Pr[h_S(x) = h_S(x')] \leq \varepsilon  
+        \forall x \neq x' \in \binary^{n \cdot t}, S \sim \unifdist(\binary^\lambda) \implies \Pr[h_S(x) = h_S(x')] \leq \varepsilon \qedhere
     \]
 \end{definition}
 
@@ -175,7 +175,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
 \]
 
 \begin{lemma}
-    Show that any pairwise independent hash function is perfectly universal.
+    Any pairwise independent hash function is perfectly universal.
 \end{lemma}
 
 \begin{proof} The proof is left as exercise.

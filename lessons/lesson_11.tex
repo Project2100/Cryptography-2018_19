@@ -66,16 +66,14 @@ Since $\distinguisher^{\textsc{auth}}$ is able to break the \textsc{auth} proper
     \Dec(k_1, c^*) = \widehat{m^*} \wedge \Ver(k_2, c^*, \phi^*) = 1
 \]
 
-Note that it is not important that the ciphertext decodes to the original plaintext; the mater at hand is that \adversary{} can now use the same couple to break $\Pi_2$'s \ufcma{} property, which is a contradiction.
+Note that it is not important that the ciphertext decodes to the original plaintext; the matter at hand is that \adversary{} can now use the same couple to break $\Pi_2$'s \ufcma{} property, which is a contradiction.
 
-It could happen that, for $c^* = c$ previously seen, $\phi^*$ is a new fresh tag, never seen before. Just in this case the $auth$ game would be valid because $(c^{*}, \phi^{*})$ would have never been seen before, but \textbf{not } the eufcma game, because $c^{*}$ was previously sent to the challenger.
+It could happen that, for $c^* = c$ previously seen, $\phi^*$ is a fresh tag instead. Just in this case the \textsc{auth} game would be valid because $(c^*, \phi^*)$ would have never been seen before, but not the \sefcma{} game, because $c^*$ was previously sent to the challenger.
 \end{proof}
     
-Now we want an ufcma secure scheme able to resist against message-tag challenge couples where the tag is fresh but the message has been already requested to the challenger.
+Now we want an ufcma secure scheme that is able to resist against message-tag challenge couples, where the tag is fresh but the message has been already requested to the challenger.
 
 \section{Pseudorandom permutations}
-
-\todo{Luby-Rackoff is cited here, but it's related to both \prf{}s-\prp{}s and the Feistel network analysis} 
 
 Nothing prevents a \prf{} $g_k$ to be bijective; in this case, it is referred to as a \emph{pseudorandom permutation}, or \prp{} in short. Their definition is analogous to a generic \prf, as shown in figure \ref{cryptogame:prp}: \prp{}s are computationally indistinguishable from a random permutation.
 
@@ -187,7 +185,6 @@ However, this example with additional restrictions will be useful very soon, so 
 \begin{proof}
     \todo{Idea: Hybridize over the queries before the challenge, from PR to random; prove that the stat distance between i and i+1 is negligible}
 \end{proof}
-
 
 Going back to the Feistel networks in general, it should be easy to see that they can be made of an arbitrary number of rounds, by simply chaining output with input. The $l$-th iteration is denoted as: 
 \[

@@ -58,7 +58,7 @@ We can use this function to create an \emph{encrypted \textsc{cbc}}, or \textsc{
 \]
 
 \begin{theorem}
-    Actually if $f_k$ is a \prf, \textsc{cbc} \mac{} is already a \mac{} scheme with domain $n \cdot t$ for arbitrarily fixed $t \in \nonneg$.
+    If $f_k$ is a \prf, \textsc{cbc} \mac{} is already a \mac{} scheme with domain $n \cdot t$ for arbitrarily fixed $t \in \nonneg$.
 \end{theorem}
 
 \begin{proof}
@@ -278,7 +278,7 @@ Let $\Pi_1 = (\Enc, \Dec)$ be a \ske{} scheme, and $\Pi_2 = (\Tag, \Ver)$ be a \
 Of the three options, only the last one is proven to be \cca-secure for arbitrary scheme choices; the other approaches are not secure ``a-priori'', with some couples proven to be secure by themselves. Notable examples are the \emph{Transport Layer Security} (\textsc{tls}) protocol, which employs the second strategy, and has been proven to be secure because of the chosen ecnryption scheme; \emph{Secure shell} (\textsc{ssh}) instead uses the first strategy.
 
 \begin{theorem}
-    If an authenticated encryption scheme $\Pi$ is made by combining a \cpa-secure \ske{} scheme $\Pi_1$ with a \emph{strongly unforgeable} \mac{} scheme $\Pi_2$ in the \emph{Encrypt-then-tag} method. Then $\Pi$ is \cpa-secure and \textit{auth}-secure. 
+    If an authenticated encryption scheme $\Pi$ is made by combining a \cpa-secure \ske{} scheme $\Pi_1$ with a \emph{strongly unforgeable} \mac{} scheme $\Pi_2$ in the \emph{Encrypt-then-tag} method. Then $\Pi$ is \cpa-secure and \textsc{auth}-secure. 
 \end{theorem}
 
 % AP190113: Key-related notation issues, again
@@ -332,10 +332,7 @@ Of the three options, only the last one is proven to be \cca-secure for arbitrar
 
 \end{proof}
 
-Proved for the cpa-security property, now we have to prove, in a similar way, that the auth property must hold by $\Pi$ if $\Pi_2$ is an auth-secure scheme.
+Proved for the \cpa-security property, now we have to prove, in a similar way, that the \textsc{auth} property must hold by $\Pi$ if $\Pi_2$ is an \textsc{auth}-secure scheme.
 \begin{exercise}
-    Prove it!
-
-    Similar to the cpa-security proof.
+    Prove it! Solution is in next lesson.
 \end{exercise}
-

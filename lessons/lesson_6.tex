@@ -43,17 +43,15 @@ To start visualizing these concepts, let $\Pi = (\Enc, \Dec)$ be a secrecy schem
     \]  
     or, rephrased in probability terms:
     \[
-        \forall \adversary \in \ppt \implies \lvert\Pr[\cryptog{ind}(\lambda, 0) = 1] - \Pr[\cryptog{ind}(\lambda, 1) = 1]\rvert \in \negl(\lambda)
+        \forall \adversary \in \ppt \implies \lvert\Pr[\cryptog{ind}(\lambda, 0) = 1] - \Pr[\cryptog{ind}(\lambda, 1) = 1]\rvert \in \negl(\lambda) \qedhere
     \]
 \end{definition}
 \footnotetext{$\cryptog{ind}$ refers to the indistinguishability of the messages sent by \adversary{} during the game}
 
 This last definition shows how such a scheme is compliant with the three properties exposed beforehand. In particular:
 
-\todo{TO BE REVIEWED}
-
 \begin{enumerate}
-    \item \emph{It is hard to recover the key}. If not, then an adversary \adversary can efficiently recover the key and use it to decrypt the ciphertext, which in turn enables him to perfectly distinguish $m_{0}$ from $m_{1}$ on any instance;
+    \item \emph{It is hard to recover the key}. If not, then an adversary \adversary{} can efficiently recover the key and use it to decrypt the ciphertext, which in turn enables him to perfectly distinguish $m_{0}$ from $m_{1}$ on any instance;
     \item \emph{It is hard to recover the message}. This is analogous, and even more obvious than the preceding point. Nevertheless, this is a necessary condition for a secrecy scheme to be ``good'', and it mustn't be forgotten;
     \item \emph{No information about the message whatsoever may leak from the ciphertext}. This may seem subtler than the previous point, but it warrants caution. Observe how an adversary \adversary{}, if it has the ability to extract even a tiny bit of information of the original message from the ciphertext, then it is actually able to make an educated guess on which message was encrypted in the first place, putting him at an advantage. This leads the probabilities described in the definition to be sensibly more unbalanced than negligible, forfeiting the desired secrecy.
 \end{enumerate}
@@ -129,7 +127,7 @@ so now, for any second ciphertext \adversary{} receives, he can ``mimick'' the d
     
     \begin{claim}
         \[
-            \forall \adversary \in \ppt,\, \forall b \in \binary \implies \hybridg{}[\Pi_\xor](\lambda, b) \compindist \cryptog{ind}[\Pi_\xor](\lambda, b)
+            \forall \adversary \in \ppt,\, \forall b \in \binary \implies \hybridg{}[\Pi_\xor](\lambda, b) \compindist \cryptog{ind}[\Pi_\xor](\lambda, b) \qedhere
         \]
     \end{claim}
 
@@ -263,7 +261,7 @@ In this game, \adversary{} is allowed to make multiple queries to $\challenger^\
 \begin{definition}
     A function family $F = f_k$ is a \prf{} iff: 
     \[
-        \cryptog{prf}[f_k](\lambda, 0) \compindist \cryptog{prf}[f_k](\lambda, 1)
+        \cryptog{prf}[f_k](\lambda, 0) \compindist \cryptog{prf}[f_k](\lambda, 1) \qedhere
     \]
 \end{definition}
 
@@ -279,7 +277,7 @@ In this game, \adversary{} is allowed to make multiple queries to $\challenger^\
 
 \subsection{\textsc{Ggm}-tree}
 
-This section is dedicated to a concrete example of a \prf{} which is built from the ground up using a \prg. This construct has been designed from Oded Goldreich, Shafi Goldwasser and Silvio Micali, and its tstructure is akin to a binary tree, hence its name: \emph{\ggm-tree}.
+This section is dedicated to a concrete example of a \prf{} which is built from the ground up using a \prg. This construct has been designed from Oded Goldreich, Shafi Goldwasser and Silvio Micali, and its structure is akin to a binary tree, hence its name: \emph{\ggm-tree}.
 
 \begin{construction}
     Let $G \in \binary^\lambda \to \binary^{2\lambda}$ be a \prg{} such that it doubles the length of its argument, and denote the images' first and second halves as $G_0(k)$ and $G_1(k)$ respectively, so that: 

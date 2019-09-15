@@ -45,7 +45,7 @@ To prove that this construct is a valid \prg, we will make use of a known techni
 \begin{lemma}[\emph{Hybrid argument}] \label{lem:hybrid}
     Let $X$, $Y$ and $Z$ be three any distribution ensembles of the same length. The following is true:
     \[
-        X \compindist Y \wedge Y \compindist Z \implies X \compindist Z
+        X \compindist Y \wedge Y \compindist Z \implies X \compindist Z \qedhere
     \] 
 \end{lemma}
 \begin{proof}
@@ -83,9 +83,9 @@ In essence, the hybrid argument proves that computational indistinguishability i
         \item $H_{\lambda}^{l(\lambda)} := U_{\lambda + l}$
     \end{itemize}
 
-    Focusing on two subsequent generic hybrids, as shown in figures \ref{fig:prgi} and \ref{fig:prgiplusone}, it can be observed that the only difference between the two resides in how $b_{i + 1}$ is generated: in $H^i$ it comes from an instance of $G$, whereas in $H^{i + 1}$ is chosen at random. $H_\lambda^0$ is the starting point where all bits are pseudorandom, which coincides with the $G^{l(\lambda)}$, and $H_\lambda^{l(\lambda)}$ will generate a totally random string.
+    Focusing on two subsequent generic hybrids, as shown in figure \ref{fig:prghyb}, it can be observed that the only difference between the two resides in how $b_{i + 1}$ is generated: in $H^i$ it comes from an instance of $G$, whereas in $H^{i + 1}$ is chosen at random. $H_\lambda^0$ is the starting point where all bits are pseudorandom, which coincides with the $G^{l(\lambda)}$, and $H_\lambda^{l(\lambda)}$ will generate a totally random string.
 
-    \begin{figure}[ht]
+    \begin{figure}[h]
 
         \begin{tikzpicture}[node distance = 1.9cm, auto, >=latex']
 
@@ -105,9 +105,6 @@ In essence, the hybrid argument proves that computational indistinguishability i
             \path[->] (g) edge node {$s_{{l(\lambda)}}$} (h);
 
         \end{tikzpicture}
-
-        \caption{$H_{\lambda}^{i}$}
-        \label{fig:prgi}
 
         \begin{tikzpicture}
             \draw[line width=0.2 mm] (0,0) -- (12,0);
@@ -130,16 +127,14 @@ In essence, the hybrid argument proves that computational indistinguishability i
             \path[->] (g) edge node {$s_{{l(\lambda)}}$} (h);
 
         \end{tikzpicture}
-        \caption{$H_{\lambda}^{i+1}$}
-        \label{fig:prgiplusone}
+        \caption{$H_{\lambda}^{i}$ and $H_{\lambda}^{i+1}$}
+        \label{fig:prghyb}
     \end{figure}
 
     So let's fix a step $i$ in the gradual substitution, and define the following function $f_i$:
-
-    \begin{equation*}
+    \[
         f_i(s_{i+1}, b_{i+1}) = (b_1, \dots, b_i, b_{i+1}, b_{i+2}, \dots, b_{l(\lambda)}, s_{l(\lambda)})
-    \end{equation*}
-
+    \]
     where the first i bits are chosen uniformly at random, and the remaining ones are obtained by subsequent applications of $G$. It can be observed that:
 
     \begin{itemize}
@@ -222,7 +217,7 @@ Now that we've seen how to reuse a one-bit stretch \prg{} in order to obtain an 
 \end{itemize}
 
 \begin{example}
-    Given an OWF $f$, then $f'(x) = x_0 || f(x)$ is a OWF.
+    Given a \owf{} $f$, $f'(x) = x_0 || f(x)$ is a \owf{} too.
 \end{example}
 
 Two definitions for hardcore predicates are given:
@@ -246,9 +241,9 @@ Two definitions for hardcore predicates are given:
 \begin{definition}
     A polynomial time function $\hc : \binary^n \to \binary$ is hard-core for a function $f$ iff:
     \[
-        (f(X), h(X)) \compindist (f(X), U_2)
+        (f(X), h(X)) \compindist (f(X), U_1)
     \]
-    where $X$ is a uniform distribution ensemble over $\binary^n$, and $U_2 \sim \unifdist(\binary)$.
+    where $X$ is a uniform distribution ensemble over $\binary^n$, and $U_1 \sim \unifdist(\binary)$.
 \end{definition}
 
 
@@ -338,7 +333,7 @@ A \emph{one-way permutation}, or \owp{} in short, is defined exactly as the name
 \end{corollary}
 
 \begin{proof}
-    The theorem states that if $f$ is an \owf, then so is $g$. It's trivial to prove the analogue for \owp{}s. Moreover $h$ is hardcore for $g$, tus:
+    The aforementioned theorem states that if $f$ is an \owf, then so is $g$. It's trivial to prove the analogue for \owp{}s. Moreover, $h$ is hardcore for $g$, thus:
     \begin{align*}
         G(U_{2n}) &\equiv (g(U_{2n}), h(U_{2n})) & \\
         &\equiv (f(U_n), U_n, h(U_{2n})) & \\

@@ -55,8 +55,8 @@ In this section we explore the solutions to the problem of authentication using 
 \end{figure}
 
 \begin{itemize}
-    \item In a symmetric setting, a verifier routine could be banally implemented as recomputing the signature using the shared secret key and the message. Here, Bob cannot recompute $\sigma$ as he's missing Alice's secret key (and for good reasons too...). Thus, the verifying routine must be defined otherwise
-    \item In a vaguely similar manner to how an attacker could encrypt messages by itself in the asymmetric scenario, because the public key is known to everyone, any attacker can verify any signed messages, for free
+    \item In a symmetric setting, a verifier routine could be banally implemented as recomputing the signature using the shared secret key and the message. Here, Bob cannot recompute $\sigma$ as he's missing Alice's secret key (and for good reasons too...). Thus, the verifying routine must be defined otherwise;
+    \item In a vaguely similar manner to how an attacker could encrypt messages by itself in the asymmetric scenario, because the public key is known to everyone, any attacker can verify any signed messages, for free.
 \end{itemize}
 
 Nevertheless, proving that a \textsc{ds} scheme is secure is largely defined in the same way as in the symmetric scenario, with the \textsc{uf-cma} property:
@@ -78,11 +78,11 @@ Nevertheless, proving that a \textsc{ds} scheme is secure is largely defined in 
 
 \subsection{Public Key Infrastructure}
 
-The problem now is that Alice has a public key, but she wants "the blue check" over it, so Bob is sure that public key comes only from the true Alice.
+The problem now is that Alice has a public key, but she wants some sort of ``certificate of validity'' for it, so that Bob will be sure that whenever he receives Alice's public key, he can be sure it's the right one by checking such certificate.
 
-To obtain the blue check, Alice needs an universally-trusted third party, called \textit{Certification Authority}, which will provide a special \textit{signature} to Alice for proving her identity to Bob.
+For certificates to be useful, the parties need an universally-trusted third party, called \textit{Certification Authority}. It will provide a special \textit{signature} to Alice for proving her identity to Bob, as exemplified by the sequence in figure \ref{cryptosequence:certissue}.
 
-The scheme works as follows:
+Whenever Bob wants to check the validity of the Alice's public key, he can query the authority for the certificate, and verify the public key he just received, as shown in figure \ref{cryptosequence:certcheck}
 
 \begin{cryptosequence}
     {certissue}
@@ -106,8 +106,6 @@ The scheme works as follows:
     
 \end{cryptosequence}
 
-The CA message $pk'$ is also called as $cert_{A}$, the signature of the CA for Alice. Now, when Bob wants to check the validity of the Alice's public key:
-
 \begin{cryptosequence}
     {certcheck}
     {}
@@ -116,7 +114,10 @@ The CA message $pk'$ is also called as $cert_{A}$, the signature of the CA for A
     \cseqentity[0.8]{A}{Alice}
     \cseqentity[1.4]{B}{Bob}
 
-    \cseqmessager{CA}{\small{$(\pk_C, \sk_C) \pickUAR \keygen$}}{$\pk_C$}{A}{}
+    \cseqmessager{CA}{\shortstack[r]{
+        \small{$(\pk_C, \sk_C) \pickUAR$} \\
+        \small{$\pickUAR \keygen$}
+    }}{$\pk_C$}{A}{}
     \cseqmessager{CA}{}{$\pk_C$}{B}{}
 
     \cseqdelay

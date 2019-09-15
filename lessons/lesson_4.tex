@@ -25,7 +25,7 @@ What is exactly a negligible function? Below here there is a possible interpreta
 \begin{definition}
     Let $f : \nonneg \to \nonneg$ be a function. Then it is deemed \emph{polynomial}, and denoted as $f \in \poly(\lambda)$, iff:
     \[
-        \exists c \in \nonneg : f(\lambda) \in O(\lambda^c)
+        \exists c \in \nonneg : f(\lambda) \in O(\lambda^c) \qedhere
     \]
 \end{definition}
 
@@ -34,7 +34,7 @@ What is exactly a negligible function? Below here there is a possible interpreta
 \begin{definition}
     Let $\nu : \nonneg \to \real$ be a function. Then it is deemed \emph{negligible}, and denoted as $\nu \in \negl(\lambda)$, iff:
     \[
-        \forall f \in \poly(\lambda)  \implies \nu(\lambda) \in O\left(\oneover{f(\lambda)}\right)
+        \forall f \in \poly(\lambda)  \implies \nu(\lambda) \in O\left(\oneover{f(\lambda)}\right) \qedhere
     \]
 \end{definition}
 
@@ -80,7 +80,7 @@ From here, we start defining an object that is fundamental to everyday cryptogra
 \begin{definition}    
     Let $f : \binary^{n(\lambda)} \to \binary^{n(\lambda)}$ be a function. Then it is a \owf{} iff:
     \[
-        \forall \adversary \in \ppt\, \exists \nu(\lambda) \in \negl(\lambda) : \Pr\left[\cryptog{owf}[f](\lambda) = 1 \right] \leq \nu(\lambda)
+        \forall \adversary \in \ppt\, \exists \nu(\lambda) \in \negl(\lambda) : \Pr\left[\cryptog{owf}[f](\lambda) = 1 \right] \leq \nu(\lambda) \qedhere
     \]
 \end{definition}
 
@@ -120,8 +120,6 @@ The structure of the ``game'' appearing in the definition is depicted in figure 
 
 A one-way function can be thought as a function which is very efficient in generating ``puzzles'' that are very hard to solve from scratch. Furthermore, given a candidate solution, one can efficiently verify its validity. In a twist of perspective, for a given couple $(\mathcal{P}_\textsc{gen},\mathcal{P}_\textsc{ver})$ of a puzzle generator and a puzzle verifier, another ``game'' can be drawn as in figure \ref{cryptogame:owpuzzle}.
 
-It can also be said that the one-way puzzle problem is in \textsc{np}, because witness checking is easy, but not in \textsc{p} because finding a solution to begin with is hard.
-
 \begin{cryptogame}
     {owpuzzle}
     {The puzzle game}
@@ -134,6 +132,8 @@ It can also be said that the one-way puzzle problem is in \textsc{np}, because w
     \send{}{$x'$}{\textsc{Output} $\mathcal{P}_\textsc{ver}(x', y)$}
 
 \end{cryptogame}
+
+It can also be said that the one-way puzzle problem is in \textsc{np}, because witness checking is easy, but not in \textsc{p} because finding a solution to begin with is hard.
 
 \subsubsection{Impagliazzo's Worlds}
 
@@ -163,7 +163,7 @@ Distribution ensembles $X = \{X_{\lambda \in \mathbb{N}}\}$ and $Y = \{Y_{\lambd
 \begin{definition}[\emph{Comp. indist.}]
     Let $X$ and $Y$ be two distribution sequences; they are deemed \emph{computationally indistinguishable}, written as ``$X \compindist Y$'' iff:
     \[
-        \forall \adversary \in \ppt \exists \nu(\lambda) \in \negl(\lambda) : \left|\Pr[\adversary(X_\lambda) = 1] - \Pr[\adversary(Y_\lambda) = 1]\right| \leq \nu(\lambda) 
+        \forall \adversary \in \ppt \exists \nu(\lambda) \in \negl(\lambda) : \left|\Pr[\adversary(X_\lambda) = 1] - \Pr[\adversary(Y_\lambda) = 1]\right| \leq \nu(\lambda) \qedhere
     \]
 \end{definition}
 
@@ -179,12 +179,10 @@ If we let $X_\lambda$ and $Y_\lambda$ to be \emph{computationally indistinguisha
 
 So, this means that, when this property is verified by two random variables, there isn't too much \textit{difference} between the two variables in terms of information avaliable to \distinguisher{}, otherwise the distance between the two probabilities should be much more than a negligible quantity.
 
-What's the deep meaning of this formula? This is something to do.
-
 \begin{lemma} \label{lem:compmall}
     Let $f$ be a function that has polynomial time-complexity. Then, for any two ensembles $X$ and $Y$:
     \[
-        X \compindist Y \implies f(x) \compindist f(y)
+        X \compindist Y \implies f(x) \compindist f(y) \qedhere
     \]
 \end{lemma}
 
