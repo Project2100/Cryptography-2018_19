@@ -1,29 +1,26 @@
 \mychapter{16}{Lesson 16} %181121
-\section{\textsc{Pke} schemes over \textsc{ddh} assumption}
-\subsection{El Gamal scheme}
-Let's define a new $\Pi=$ (KGen, Enc, Dec). Generate the needed (\textbf{public}) parameters $(G,g,q)\pickUAR \groupgen(1^{\lambda})$\footnote{G could be any "valid" group such as $\quadres_p$ or an Elliptic Curve}.
 
-The KeyGen algorithm is defined as follows:
+\section{\textsc{Pke} schemes over \ddh assumption}
+
+\subsection{El Gamal scheme}
+
+Let's define a new $\Pi = (\keygen, \Enc, \Dec)$. Generate the needed public parameters $(G,g,q) \pickUAR \groupgen(1^{\lambda})$\footnotemark, then:
+
+\footnotetext{G could be any valid group such as $\quadres_p$, or an elliptic curve group}
+
 \begin{itemize}
-    \item Pick $x \pickUAR \integer_q$
-    \item Output the key pair $(pk, sk)$ as $(g^x, x)$
+    \item Key generation: $(\pk, \sk) = (g^x, x)$, where $x \pickUAR \integer_q$
+    \item Encryption: $\Enc(\pk, m) = (g^r, \pk^r \cdot m)$, where $r \pickUAR \integer_q$\footnote{We need $r$ because we want to re-randomize $c$}
+    \item Decryption: $\Dec(\sk, (c_1, c_2))= c_1^{-\sk} \cdot c_2$
 \end{itemize}
-The encryption routine Enc($pk, m$) will:
-\begin{itemize}
-    \item Pick $r\pickUAR \integer_q$
-    \item Output $c=(c_1, c_2)=(g^r, pk^r \cdot m)$\footnote{We need $r$ because we want to re-randomize $c$}
-\end{itemize}
-The decryption routine Dec($sk, c$) will:
-\begin{itemize}
-    \item Compute $\hat{m} = c_1^{-sk} \cdot c_2$
-\end{itemize}
+
 Correctness of this scheme follows from some algebric steps:
 \begin{align*}
-    \hat{m} &= Dec(sk, Enc(pk, m)) \\
-    &= Dec(x, Enc(g^x, m)) \\
-    &= Dec(x, (g^r, (g^x)^r \cdot m)) \\
-    &= (g^r)^{-x} \cdot (g^x)^r \cdot m \\
-    &= m
+    \hat{m} &= \Dec(\sk, \Enc(\pk, m))          \\
+            &= \Dec(x, \Enc(g^x, m))            \\
+            &= \Dec(x, (g^r, (g^x)^r \cdot m))  \\
+            &= (g^r)^{-x} \cdot (g^x)^r \cdot m \\
+            &= m                                \\
 \end{align*}
 
 \begin{theorem}
@@ -31,116 +28,121 @@ Correctness of this scheme follows from some algebric steps:
 \end{theorem}
 
 \begin{proof}
-    Consider the two following games $H_0(\lambda,b)$ and $H_1(\lambda, b)$ defined as follows. Observe that b can be fixed without loss of generality.
+    Consider the two following games $\hybridg{0}(\lambda, b)$ and $\hybridg{1}(\lambda, b)$ defined as follows. Observe that $b$ can be fixed without loss of generality.
     
     \begin{cryptogame}
         {pke1}
-        {$H_0(\lambda, b)$}
-        {pke}
+        {$\hybridg{0}(\lambda, b) = \cryptog{gamal}(\lambda, b)$}
+        {gamal}
 
         \receive{\shortstack[l]{
             $x \pickUAR \integer_q$ \\
-            $pk = g^x$
-        }}{$pk$}{}
+            $\pk = g^x$
+        }}{$\pk$}{}
 
         \cseqdelay
-        \send{}{$(m_0,m_1)\in \G$}{}
+        \send{}{$m_0, m_1$}{}
         \cseqdelay
         \receive{\shortstack[l]{
             $r \pickUAR \integer_q$ \\
             $b \pickUAR \binary$ \\
-            $(c_1,c_2)=(g^r,(g^x)^r m_b)$
-        }}{$ c = (c_1, c_2)$}{}
+            $c = \Enc(\pk, m_b) = (g^r, (g^x)^r m_b)$
+        }}{$c$}{}
         \cseqdelay
 
-        \send{}{$b'$}{\textsc{Output} 1 iff $b = b'$}
+        \send{}{$b'$}{\textsc{Output 1 iff} $b' = b$}
 
     \end{cryptogame}
 
     \begin{cryptogame}
         {pke2}
-        {$H_1(\lambda, b)$}
-        {pke}
+        {$\hybridg{1}(\lambda, b)$}
+        {$\neg$gamal}
 
         \receive{\shortstack[l]{
             $x \pickUAR \integer_q$ \\
-            $pk = g^x$
-        }}{$pk$}{}
+            $\pk = g^x$
+        }}{$\pk$}{}
 
         \cseqdelay
-        \send{}{$(m_0,m_1)\in \G$}{}
+        \send{}{$m_0, m_1$}{}
         \cseqdelay
         \receive{\shortstack[l]{
-            $r \pickUAR \integer_q$ \\
-            $z \pickUAR \integer_q$ \\
-            $(c_1,c_2)=(g^r,g^z m_b)$
-        }}{$ c = (c_1, c_2)$}{}
+            $r, z \pickUAR \integer_q$ \\
+            $c = (g^r, g^z m_b)$
+        }}{$c$}{}
         \cseqdelay
 
-        \send{}{$b'$}{\textsc{Output} 1 iff $b = b'$}
+        \send{}{$b'$}{\textsc{Output 1 iff} $b' = b$}
 
     \end{cryptogame}
     
 
     % The reasoning was a bit cloudy, hope now it is clearer
-    \textbf{Note:} it is important to note that we can measure the advantage of $\adversary$, so fixed its output $Adv_{\adversary}(\lambda) = |\underbrace{Pr[\overbrace{\adversary\rightarrow 1}^{b'=1}|b=0}_{"\adversary\ loses"}]-\underbrace{Pr[\overbrace{\adversary\rightarrow 1}^{b'=1}|b=1]}_{"\adversary\ wins"}|$. Since $b$ is fixed the above formula will give a value $\lambda \ in negl$, generally the advantage of an adversary is: $\frac{1}{2}+\lambda$ (random guessing + a negligible factor). %maybe this is a repetition but I think I never wrote it anywhere else
+    %AP190915: Not so sure...
+    \textbf{Note:} it is important to note that we can measure the advantage of $\adversary$, so fixed its output $Adv_{\adversary}(\lambda) = |\underbrace{\Pr[\overbrace{\adversary = 1}^{b' = 1} \knowing b = 0}_{\adversary\ loses}] - \underbrace{\Pr[\overbrace{\adversary = 1}^{b' = 1} \knowing b = 1]}_{\adversary\ wins}|$. Since $b$ is fixed the above formula will give a value $\lambda \in negl$, generally the advantage of an adversary is: $\frac{1}{2}+\lambda$ (random guessing + a negligible factor). %maybe this is a repetition but I think I never wrote it anywhere else
 
-    % \todo{Here the 1/2 value may refer to how the Katz-Lindell book exposes their proofs by leaving arbitrary choice of $b$ to the challengers, thus limiting the probability of the adversaries' success by 1/2.
+    \todo{Here the 1/2 value may refer to how the Katz-Lindell book exposes their proofs by leaving arbitrary choice of $b$ to the challengers, thus limiting the probability of the adversaries' success by 1/2.
     
-    % Venturi prefers to fix $b$ beforehand, without loss of generality, meaning the whole proof can be stated by setting b to either 0 or 1, and mantain its validity without changing anything else. In this way, he somehow bounds the probability of success to be $\leq \mathcal{N}egl(\lambda)$}
+    Venturi prefers to fix $b$ beforehand, meaning the whole proof can be stated by setting b to either 0 or 1, and mantain its validity without changing anything else. In this way, he somehow bounds the probability of success to be $\leq \negl(\lambda)$}
 
-    \underline{Proof techinique:}
-    $H_0(\lambda,0) \compindist H_0(\lambda,1)\equiv H_1(\lambda,0) \compindist H_1(\lambda,1)$
-    $$\implies H_0(\lambda,0) \compindist H_1(\lambda,1)$$
+    We will prove that:
+    \[
+        \hybridg{0}(\lambda, 0) \compindist \hybridg{1}(\lambda, 0) \equiv \hybridg{1}(\lambda, 1) \compindist \hybridg{0}(\lambda, 1)
+    \]
 
-    \begin{lemma}
-        $\forall b \in \binary, H_0(\lambda,0) \compindist H_0(\lambda,1)$\\
-        Fix b. (Reduction to DDH)\\
-        Assume $\exists$ PPT D which is able to distinguish $H_0(\lambda,b)$ and $H_1(\lambda,b)$ with non negl. probability.
-    \end{lemma}
+    \begin{claim}
+        $\forall b \in \binary \implies \hybridg{0}(\lambda, b) \compindist \hybridg{1}(\lambda, b)$
+    \end{claim}
 
     \begin{proof}
+        This proof reduces to disproving \ddh. Fix $b$ without loss of generality, and assume there exists a distinguisher $\distinguisher$ able to distinguish $H_0(\lambda,b)$ and $H_1(\lambda,b)$. Consider the game in figure \ref{cryptoredux:gamalddh}:
 
-        Consider the following Game:
-
-        % Adversary was defined as D'_DDH, whereas the distinguisher was just D
         \begin{cryptoredux}
-            {pkerdxddh}
+            {gamalddh}
             {---}
             {ddh}
-            {}
+            {gamal}
 
             \receive{\shortstack[l]{
-                $X=g^x, Y=g^y$\\
-                $Z=g^{xr}$ or $Z=g^z$
-            }}{$(X, Y, Z)$}{}
+                $X = g^x, Y = g^y$ \\
+                $Z_0 = g^{xy}, Z_1 = g^z$ \\
+                $b \pickUAR \binary$
+            }}{$(X, Y, Z_b)$}{}
 
-            \invoke{}{$h = X$}{}
+            \invoke{}{$\pk = X$}{}
+            \cseqdelay
             \return{}{$(m_0, m_1)$}{}
-            \invoke{}{$(Y, Z \cdot m_b)$}{}
-            \return{}{$b'$}{}
+            \invoke{$\boxed{a = 0}$ }{$(Y, Z_b \cdot m_a)$}{}
+            \cseqdelay
+            \return{}{$a'$}{}
 
-            \send{}{$b'$}{}
+            \cseqdelay
+
+            \send{$b' = \begin{cases}
+                    0 & \textsc{iff} \boxed{a' = 0} \\
+                    1 (coin?) & \textsc{else} \\
+                \end{cases}
+            $}{$b'$}{\textsc{Output 1 iff} $b' = b$}
 
         \end{cryptoredux}
 
-        \textbf{Contradiction}: $\distinguisher$ should be able to compute $log_g$ to distinguish the message.
-
+        If $\distinguisher^{\textsc{gamal}}$ is able to break the cipher, then \adversary{} is in turn able to distinguish a \textsc{dh} triple from a random one, falsifying \ddh.
     \end{proof}
 
-    \begin{lemma}
-        $H_1(\lambda,0)\equiv H_1(\lambda,1)$
-    \end{lemma}
+    \begin{claim}
+        $\hybridg{1}(\lambda, 0) \equiv \hybridg{1}(\lambda, 1)$
+    \end{claim}
+
     \begin{proof}
         This follows from the fact that:
-        $(g^x,(g^r,g^z m_0))\equiv (g^x,(g^r,U_{\lambda}) \equiv \\ \equiv (g^x,(g^r,g^z m_1)))$
+        \[
+            (g^x, (g^r, g^z m_0)) \equiv (g^x, (g^r, U_\lambda) \equiv (g^x, (g^r, g^z m_1)))
+        \]
     \end{proof}
     
-    \begin{lemma}
-        $H_1(\lambda,1)\equiv H_0(\lambda,1)$
-    \end{lemma}
-    This is proved in the exact same way as \textbf{Lemma 20.} As a matter of fact it is the second part of the proof (where $b$ is fixed to 1).
-    
+    Composing the two claims, the proof is complete.
+
 \end{proof}
 
 \subsubsection{Properties of of El Gamal \textsc{pke} scheme}
@@ -150,16 +152,14 @@ Some useful observations can be made about this scheme:
     \item It is \textbf{homomorphic}: Given two ciphertexts $(c_1, c_2)$ and $(c_1', c_2')$, then doing the product between them yields another valid ciphertext:
     % I'd like to expand a bit more here, or else it may stay a bit obscure...
     \begin{align*}
-        & (c_1\cdot c_1', c_2\cdot c_2') \\
-        =& (g^{r+r'}, h^{r+r'}(m\cdot m'))
+        & (c_1 \cdot c_1', c_2 \cdot c_2') \\
+        =& (g^{r + r'}, h^{r + r'}(m \cdot m'))
     \end{align*}
-    thus, decrypting $c\cdot c'$, gives $m\cdot m'$.
+    thus, decrypting $c \cdot c'$, gives $m \cdot m'$.
     
-    \item It is \textbf{re-randomizable}: Given a ciphertext $(c_1, c_2)$, and $r' \pickUAR \integer_q$, then computing $(g^{r'}\cdot c_1, h^{r'}\cdot c_2)$ results in a ``fresh'' encryption for the same message: the random value used at the encryption step will change from the original $r$ to $r+r'$
+    \item It is \textbf{re-randomizable}: Given a ciphertext $(c_1, c_2)$, and $r' \pickUAR \integer_q$, then computing $(g^{r'} \cdot c_1, h^{r'} \cdot c_2)$ results in a ``fresh'' encryption for the same message: the random value used at the encryption step will change from the original $r$ to $r + r'$
 \end{itemize}
-\textbf{So this is not CCA-Secure!}
-
-These properties of the El Gamal scheme can be desirable in some use cases, where a message must be kept secret to the second party. In fact, there are some \textsc{pke} schemes which are designed to be \textbf{fully homomorphic}, i.e. they are homomorphic for any kind of function.
+These observations lead to the conclusion that this scheme is not \cca-secure. However, such properties can be desirable in some use cases, where a message must be kept secret to the second party. In fact, there are some \pke{} schemes which are designed to be \textbf{fully homomorphic}, i.e. they are homomorphic for any kind of function.
 
 Consider the following use case: a client $C$ has an object $x$ and wants to apply a function $f$ over it, but it lacks the computational power to execute it. There is another subject $S$, which is able to efficiently compute $f$, so the goal is to let it compute $f(x)$ but the client wishes to keep $x$ secret from him. This can be achieved using a \textsc{fh-pke} scheme as follows:
 
@@ -178,46 +178,59 @@ Consider the following use case: a client $C$ has an object $x$ and wants to app
     \cseqmessager{C}{\shortstack[r]{
         Object: $x$ \\
         Function: $f$ \\
-        $(pk, sk) \pickUAR \mathcal{KG}en$ \\
-        $c \pickUAR Enc(pk, x)$
+        $(\pk, \sk) \pickUAR \mathcal{KG}en$ \\
+        $c \pickUAR \Enc(\pk, x)$
     }}{$f, c$}{S}{}
 
     \cseqdelay
     \cseqdelay
 
-    \cseqmessagel{S}{}{$f(c)$}{C}{$f(x) = Dec(sk, f(c))$}
+    \cseqmessagel{S}{}{$f(c)$}{C}{$f(x) = \Dec(\sk, f(c))$}
 
 \end{cryptosequence}
 
 
 However one important consideration must be made: All these useful characteristics expose an inherent malleability of any fully homomorphic scheme: any attacker can manipulate ciphertexts efficiently, and with some predictable results. This compromises even \textsc{cpa} security of such schemes.
 
-\subsection{Cramer-Shoup \textsc{pke} scheme}
+%\subsection{Cramer-Shoup \textsc{pke} scheme}
+\section{Proof systems}
 
 % Not sure if CS is defined over DDH, or this is the DDH variant of CS, making CS more abstract
-This scheme is based on the standard \textsc{ddh} assumption, and has the advantage of being \textsc{cca} secure. A powerful tool, called \emph{Designated Verifier Non-Interactive Zero-Knowledge} (\textsc{DV-NIZK}), or alternatively \textbf{Hash-Proof System}, is used here.
+This new scheme assumes \ddh{} like its El Gamal cousin, and has the advantage of being \cca-secure. A powerful tool, called \emph{Designated Verifier Non-Interactive Zero-Knowledge} (\textsc{DV-NIZK}), or alternatively \textbf{Hash-Proof System}, is used here.
 
-\subsubsection{Proof systems}
 
-Let $L$ be a Turing-recognizable language in $NP$, and a predicate $\mathcal{R} \in X \times Y \to \binary$ such that:
-\begin{equation*}
-    L := \{y \in Y : \exists x \in X \: \mathcal{R}(x, y) = 1\}
-\end{equation*}
-where $x$ is called a ``witness'' of $y$.
+\todo{the Ali Baba example would be useful here. Also, the coloured balls is a good example too (long live Wikipedia)}
+
+Let $L \subseteq Y$ be a Turing-recognizable language in \textsc{np}, and a predicate $V \in X \times Y \to \binary$ such that:
+\[
+    L := \{y \in Y : \exists x \in X \implies V(x, y) = 1\}
+\]
+where $x$ is called a \emph{witness} of $y$.
+
+\todo{to review and understand/better}
 
 % AP181122-1554: CAUTION FRAGMENTED
-In our instance, let $y = pq, x = (p,q)$
+In our case, let $x = (p, q), y = pq$, and define a scheme $\Pi$ as follows:
 
-$\Pi = (\mathcal{S}etup, \mathcal{P}rove, \mathcal{V}erify)$
+\[
+    \Pi = (\mathcal{S}etup, \mathcal{P}rove, \mathcal{V}erify)
+\]
 
-$(\omega, \tau) \pickUAR \mathcal{S}etup(1^\lambda)$, where $\omega$ is the \textbf{Common Reference String}, and $\tau$ is the \textbf{trapdoor}.
+% AP190914: Is (omega, tau) the (pk, sk) couple?
+\begin{itemize}
+    \item Setting up: $(\omega, \tau) \pickUAR \mathcal{S}etup(1^\lambda)$, where $\omega$ is the \emph{common reference string}, and $\tau$ is the \emph{trapdoor}
+    \item Proving a statement: $\pi = \mathcal{P}rove(\omega, y, x)$
+    \item Verifying: $\widehat{\pi} = \mathcal{V}erify(\tau, y)$
+\end{itemize}
 
-Additional notes:
+Correctness is defined as $\mathcal{P}rove(\omega, y, x) = \mathcal{V}erify(\tau, y)$. Some more observations:
+
 \begin{itemize}
     \item $\omega$ is public ($ = pk$)
     \item $\tau$ is part of the secret key
-    \item $\tau = (x, y) : \mathcal{R}(x, y) = 1$ %May be false
-    \item There is presumably a common third-party, which samples from the setup and publishes $\omega$, while giving $\tau$ to only B. %Why? Can't B do the setup and publish omega directly?
+    \item $\tau = (x, y) : V(x, y) = 1$ %May be false
+    \item There is presumably a common third-party, which samples from the setup and publishes $\omega$, while giving $\tau$ to only B.
+    \todo{Why? Can't the verifier do the setup and publish omega directly? Is honesty an issue here?}
 \end{itemize}
 
 \begin{cryptosequence}
@@ -244,67 +257,48 @@ Additional notes:
     
 \end{cryptosequence}
 
-Proof system - purpose: a way to convince $B$ that $A$ knows something
-
-Can compute the proof in two different ways, this is the core notion of $ZK$
-
-No $\tau \implies ZK$
+Purpose of a proof system is to give a way to convince someone (the ``verifier'') that someone else (the ``prover'') knows something (the ``statement'' $y$), and nothing more, to no one else. The proof can be computed in two different ways, this is the core notion of \emph{zero-knowledge}, $\neg \tau \implies \textsc{zk}$
 
 \subsubsection{Properties}
 
 \begin{itemize}
-    \item \textit{(implicit, against malicious Bob)} \textbf{Zero-knowledge}: Proof for $x$ can be simulated without knowing $x$ itself
-    \item \textit{(stronger, against malicious ALice)} \textbf{Soundness}: It is hard to produce a valid proof for any $y \notin L$
-    \item \textit{honest people} \textbf{Completeness}: $\forall y \in L, \forall (\omega, \tau) \pickUAR \mathcal{S}etup(1^\lambda):$
-    
-    $\mathcal{P}rove(\omega, x, y) = \mathcal{V}erify(\tau, y)$
+    \item \textit{honest people} \textbf{Completeness}:
+    \[
+        \forall y \in L, \forall (\omega, \tau) \pickUAR \mathcal{S}etup(1^\lambda) \implies \mathcal{P}rove(\omega, y, x) = \mathcal{V}erify(\tau, y)
+    \]
+    \item \textit{(stronger, against malicious prover)} \textbf{Soundness}: It is hard to produce a valid proof for any $y \notin L$
+    \item \textit{(characteristic, against malicious verifier)} \textbf{Zero-knowledge}: Proof for $x$ can be simulated without knowing $x$ itself
 \end{itemize}
 
-\todo{to review and understand/better}
 
-\subsubsection{t-universality}
-\begin{definition}
-    Let $\Pi$ be DV-NIKZ\footnote{Designated verifier non-interactive
-    zero-knowledge}.\\
-We say it is \textit{t-universal} if for any distinct 
-\[
-    y_{1}, \ldots, y_{t} \text{ s.t. } y_{i}\not\in L ( \forall i \in [t])
-\]
-we have 
-\[
-    ( \omega, Ver(\tau, y_{1}), \ldots, Ver(\tau, y_{t}))=(\omega, v_{1},
-    \ldots, v_{t})
-\]
-where $(\omega, \tau) \pickUAR Setup(1^{\lambda})$ and $v_{1}, \ldots, v_{t}
-\pickUAR \P$ where $\P$ should be the proofs' space.
+\begin{definition}[$t$-universality, or $t - 1$ simulation soundness]
+    % Designated verifier non interactive zero knowledge
+    Let $\Pi$ be a \textsc{dv-nizk} scheme; it is \textit{t-universal} iff for any distinct $y_{1 \upto t} \notin L$ we have: 
+    \[
+        (\omega, \mathcal{V}erify(\tau, y_1), \ldots, \mathcal{V}erify(\tau, y_{t})) = (\omega, v_1, \ldots, v_t)
+    \]
+    where $(\omega, \tau) \pickUAR \mathcal{S}etup(1^\lambda)$ and $v_{1 \upto t} \pickUAR \mathcal{P}roof$, where $\mathcal{P}roof$ is the proofs' space.
 \end{definition}
 
-\subsubsection{Enriching DV-NIKZ}
-Can we enrich DV-NIKZ with labels $l \in \binary^{*}$?
+\subsubsection{Enriching a proof system}
 
-Suppose to have the following:
+We can ``enrich'' a \textsc{dv-nizk} scheme with labels $l \in \binary^*$. Suppose to have the following:
 \[
-    L'=L \| \binary^{*}=\{(y,l): y \in L \wedge l \in \binary^{*}\}
+    L' = L \| \binary^* = \{(y, l) \in L \times \binary^*\}
 \]
-Then our scheme changes :
-$Prove(\omega, (y,l), x)=\Pi; Ver(\tau, (y, l)) $
-and , for \textit{t-universality} , now we can consider 2 distinct $(y_{i},
-l_{i})$.
-\subsubsection{Membership Hard Language (MH)}
+Then our scheme changes, because the statements are now compositions of a label $l$ along with te actual statement $y$; for the \textit{t-universality} property, we can now consider two distinct $(y_i, l_i)$.
+
+\subsubsection{Membership-hard language}
+
 \begin{definition}
-    Language $L$ is \textit{ \textbf{MH}}if $ \exists  \bar{L}$ such that:
+    Language $L$ is \emph{membership-hard} iff there exists a language $\overline{L}$ such that:
     \begin{enumerate}
-        \item $L \cap \bar{L} = \emptyset$
-        \item $ \exists$ PPT \textit{Samp} outputting $y \pickUAR \mathcal{Y}$
-            together with $x \in \bar{\X}$ such that 
-            \[
-              R(y,x)=1  
-            \]
-            (it's possible
-            to say that $Samp(1^{\lambda}) \pickUAR (y,x)$)
-        \item $ \exists$ PPT $\bar{Samp}$ outputting $y \pickUAR \bar{L}$
-        \item $\{y:(y,x) \pickUAR Samp(1^{\lambda})\} \compindist \{y:y
-            \pickUAR \bar{Samp}(1^{\lambda})\}$
+        \item $L \cap \overline{L} = \emptyset$
+        \item $\exists \textsf{\textup{Sample}} \in \ppt$ outputting $y \pickUAR \mathcal{Y}$ together with $x \in \overline{X}$ such that $R(y, x) = 1$
+        
+        (therefore $(y, x) \pickUAR \textsf{\textup{Sample}}(1^{\lambda})$)
+        \item $\exists \overline{\textsf{\textup{Sample}}} \in \ppt$ outputting $y \pickUAR \overline{L}$
+        \item $\{y : (y, x) \pickUAR \textsf{\textup{Sample}}(1^{\lambda})\} \compindist \{y : y \pickUAR \overline{\textsf{\textup{Sample}}}(1^{\lambda})\}$
     \end{enumerate}
     
 \end{definition}

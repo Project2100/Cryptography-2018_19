@@ -2,7 +2,7 @@
 
 \section{Construction of a \textsc{cca}-secure \textsc{pke}}
 
-This section exposes a construction of a \textsc{cca}-secure \textsc{pke} scheme, using hash-proof systems, membership-hardness, and the $n$-universality property.
+This section exposes a construction of a \textsc{cca}-secure \textsc{pke} scheme, using hash-proof systems, membership-hardness, and the $t$-universality property.
 
 Let $\Pi_1, \Pi_2$ be two distinct hash-proof systems for some \textsc{np} language $L$ and the range of $Prove_2$ supports labels ($L'=L||\binary^\ell$).
 
@@ -47,17 +47,19 @@ Some additional notes (may be incorrect):
 
 
 
-
 \begin{theorem}
-    Assuming $\pi_1$ is 1-universal, $\pi_2$ is 2-universal and $L$ is a membership-hard language; then the above scheme is \textsc{cca}-secure.
+    Assuming $\pi_1$ is 1-universal, $\pi_2$ is 2-universal and $L$ is a mem\-bership-hard language; then the above scheme is \textsc{cca}-secure.
 \end{theorem}
 
 \begin{proof}
     Five different games will be defined, from $\cryptog{0}$ up to $\cryptog{4}$; the first game will be an analogous formalization of how the above \textsc{pke} scheme works. It shall be proven that, for arbitrarily fixed $b$ in $\binary$:
-    \[
-        \cryptog{0}(\lambda, b) \equiv \cryptog{1}(\lambda, b) \compindist \cryptog{2}(\lambda, b) \statindist \cryptog{3}(\lambda, b) \equiv \cryptog{4}(\lambda, b)
-    \]
-    and finally that $\textsc{Game}_{\Pi, A}^4(\lambda, 0) = \textsc{Game}_{\Pi, A}^4(\lambda, 1)$, therefore concluding that $\textsc{Game}_{\Pi, A}^0(\lambda, 0) \compindist \textsc{Game}_{\Pi, A}^0(\lambda, 1)$, and proving this scheme is \textsc{cca}-secure.
+    \begin{align*}
+        \cryptog{0}(\lambda, b) &\equiv \cryptog{1}(\lambda, b)         \\
+                                &\compindist \cryptog{2}(\lambda, b)    \\
+                                &\statindist \cryptog{3}(\lambda, b)    \\
+                                &\equiv \cryptog{4}(\lambda, b)
+    \end{align*}
+    and finally that $\cryptog{4}(\lambda, 0) = \cryptog{4}(\lambda, 1)$, therefore concluding that $\cryptog{0}(\lambda, 0) \compindist \cryptog{0}(\lambda, 1)$, and proving this scheme is \textsc{cca}-secure.
 
     \todo{Non sono per niente sicuro riguardo all'origine di $x$ ed $y$, né tantomeno dove sia definito il sampler per essi}
 
@@ -67,7 +69,7 @@ Some additional notes (may be incorrect):
     \begin{cryptogame}{pkecca0}{Original \textsc{cca} game}{pke-cca}
     
         % Challenger generates key pair and publishes the public key
-        \receive{$((\omega_1, \omega_2), (\tau_1, \tau_2)) \pickUAR \mathcal{KG}en(1^\lambda)$}
+        \receive{$((\omega_1, \omega_2), (\tau_1, \tau_2)) \pickUAR \mathcal{S}etup(1^\lambda)$}
         {$(\omega_1, \omega_2)$}
         {}
     
@@ -245,20 +247,19 @@ Some additional notes (may be incorrect):
 \end{lemma}
 
 \begin{proof}
-    This follows by the correctness of $\Pi_{1}$ and $\Pi_{2}$
-    \begin{gather*}
-        \Pi_{1}=\tau_{1}=Ver_{1}(\tau, y)\\
-         \Pi_{2}= \tilde{\Pi}_{2}=Ver_{2}(\tau, y)
-    \end{gather*}
-    with probability 1 over the choice of $(\omega_{1}, \tau_{1}) \pickUAR
-    Setup_{1}(1^{\lambda})$
+    This follows by the correctness of $\pi_1$ and $\pi_2$
+    \begin{align*}
+        \pi_1 &= \tilde{\pi}_1 = Ver_1(\tau_1, y) \\
+        \pi_2 &= \tilde{\pi}_2 = Ver_2(\tau_2, y)
+    \end{align*}
+
+    with probability 1 over the choice of $((\omega_1, \omega_2), (\tau_1, \tau_2)) \pickUAR \mathcal{S}etup(1^\lambda)$
     
-    \begin{gather*}
-        \Pi_{1} \leftarrow Prove_{1}(\omega, y, x), (\omega_{2},
-        \tau_{1})\pickUAR Setup_{2} (1^{\lambda})\\
-        \Pi_{2} \leftarrow Prove(\omega_{2}, (y, l), x) \forall y \in L , l \in
-        \P_{1}
-    \end{gather*}
+    \begin{align*}
+        \pi_1 &\pickUAR \mathcal{P}rove_1(\omega, y, x) \\
+        (\omega_{2}, \tau_{1}) &\pickUAR \mathcal{S}etup_{2}(1^{\lambda}) \\
+        \pi_2 &\pickUAR \mathcal{P}rove_2(\omega_{2}, (y, l), x) \quad \forall y \in L , L \in \mathcal{P}roof_1
+    \end{align*}
     
 \end{proof}
 
@@ -268,7 +269,9 @@ Some additional notes (may be incorrect):
     \]
 \end{lemma}
 \begin{proof}
-    Straight forward reduction from membership hardness.
+    Straightforward reduction from membership hardness.
+
+    \todo{Transcription: Recall we're using verifiers, so $y$ can be outside $L$: $y \pickUAR \overline{Sample}$}
 \end{proof}
 
 \begin{lemma}
@@ -276,9 +279,9 @@ Some additional notes (may be incorrect):
         \forall b, G_{2}(\lambda , b) \compindist G_{3}(\lambda, b)
     \]
 \end{lemma}
-\todo{I'm not completely sure the next proof is complete}
 \begin{proof}
-    Recall that the difference between $G_{2}$ and $G_{3}$ is that 
+    \todo{I'm not completely sure this proof is complete}
+    Use 2-universality of $\pi_2$. Recall that the difference between $G_{2}$ and $G_{3}$ is that 
     \[
         (g^{(i)}, l^{(i)}, \Pi_{2}^{(i)})\text{ such that }y^{(i)}\not\in L 
     \]
@@ -288,29 +291,24 @@ Some additional notes (may be incorrect):
         \tilde{\Pi}^{(i)}_{2}=Ver(\tau, y^{(i)}\not=\Pi^{(i)}_{2})
     \]
 
-    It's possible to distinguish \textbf{two cases} , looking at $c=(y, l,
-    \Pi_{2})$ :
+    It's possible to distinguish two cases, looking at $c = (y, l, \Pi_2)$:
 \begin{enumerate}
     \item if $(y^{(i)}, l^{(i)})=(y,l)$ and $\tilde{\Pi}^{(i)}_{2}=\Pi^{(i)}_{2}$, it outputs $\perp$ if in the decryption scheme ($\Pi^{(i)}_{2} \not= \tilde{\Pi}^{(i)}_{2}$) it outputs $\perp$.
 
     \item \footnote{when decryption oracle doesn't output the challenge} otherwise $(y^{(i)}, l^{(i)})\not= (y,l)$ if $y^{(i)}\not\in L$ we want that $\Pi^{(i)}_{2}$ doesn't output exactly $Ver_{2}(\tau, (y^{(i)}, l^{(i)}))$, but it should output $\perp$.
 \end{enumerate}
 
-\textbf{EVENT BAD:} If we look at the view of $\adversary$, the only information he
-knows is 
+\textbf{EVENT BAD:} From \adversary{}'s perspective, the only information he knows is:
 \[
     (\omega_{2}, \tilde{\Pi}_{2}=Ver_{2}(\tau_{2}, y))
 \]
-for $y \not\in L$.\\
-The value 
+for $y \not\in L$. The value 
 \[
-Ver_{2}(\tau_{2}, (y^{(i)}, x^{(i)}))
+    Ver_{2}(\tau_{2}, (y^{(i)}, x^{(i)}))
 \]
-for $y^{(i)} \in L$ and
-$(y^{(i)}, l^{(i)})\not=(y, l)$ is random.\\
-So, 
+for $y^{(i)} \in L$ and $(y^{(i)}, l^{(i)}) \neq (y, l)$ is random. Therefore: 
 \[
-\P [ BAD ] =2^{-|\P_{2}|} 
+    \Pr[BAD] = 2^{-|\mathcal{P}_{2}|} 
 \]
 
 \end{proof}
@@ -322,14 +320,12 @@ So,
 \end{lemma}
 
 \begin{proof}
-    If we look at the view of $\adversary$, the only information known about $\tau_{1}$
-    is $\omega_{1}$, since the decryption oracle only computes for $y^{(i)} \in
-    L$
+    If we look at the view of $\adversary$, the only information known about $\tau_{1}$ is $\omega_{1}$, since the decryption oracle only computes for $y^{(i)} \in L$:
     \[
         Ver_{1}(\tau, y^{(i)})=Prove_{1}(\omega_{1}, y^{(i)}, x^{(i)})
     \]
 
-    By 1-universality, $\Pi=Ver_{1}(\tau ,y)$ for any $y \in L$ is random.
+    By 1-universality, $\Pi = Ver_{1}(\tau ,y)$ for any $y \in L$ is random.
 \end{proof}
 
 \begin{lemma}
@@ -348,38 +344,45 @@ So,
 %==================================================
 \todo{referencing something from another part of lesson 17}
 
-\subsection{Instantiation of U-HPS (Universal Hash Proof System)}
-\textbf{MHL(Membership Hard Language) from DDH}
+\subsection{Instantiation of \textsc{u-hps} (Universal Hash Proof System)}
 
-$\exists r$ using a DDH language such that $L_{DDH}=\{(c_1,c_2), \exists r | c_1=g_1^r, c_2=g_2^r\}$
+We will define a membership-hard language using the \ddh{} assumption
 
-% impaginare meglio
-Given a group $\G$ of order $q$ with $(g_1,g_2)$ as generators, we will have $(g_1,g_2,c_1,c_2)$ but if we impose $g_1=g$ and $g_2=g^a$ then the previous construction becomes $(g,g^a,c_1,c_2)$. But for definition $c_1=g_1^{r_1}$ and $c_2=g_2^{r_2}$ then I can write $(g,g^a,g^r,g^{ar})$.
-% Make sense?! no
-%$$g_2=g^x , g_1=g , r=g $$ $(g,g^x,g^y,g^{xy}), $
+\begin{definition}
+    A language $L_\ddh$ is deemed a \emph{\ddh-tuple language} iff:
+    \[
+        L_\ddh = \{(c_1, c_2) :  \exists r \implies c_1 = g_1^r, c_2 = g_2^r\} \qedhere
+    \]
+\end{definition}
 
-% not sure if this is U-HPS or something random
-Now we can define our U-HPS $\Pi:=$(Setup, Prove, Verify)
+Observe that, piven a group $G$ of order $q$ with $(g_1, g_2)$ as generators, we will have $(g_1, g_2, c_1, c_2)$ but if we impose $g_1 = g$ and $g_2=g^a$ then the previous construction becomes $(g, g^a, c_1, c_2)$. By definition, $c_1 = g_1^{r_1}$ and $c_2 = g_2^{r_2}$, thus I can write $(g, g^a, g^r, g^{ar})$.
+
+Now we can define our system $\Pi := (Setup, Prove, Verify)$:
 
 \begin{itemize}
-    \item $Setup(1^\lambda)$: Pick $x_1,x_2 \pickUAR \integer_q$ and define:\\ $\omega=h_1=(g_1^{x_1},g_2^{x_2}$), $\tau=(x_1,x_2)$
-    \item $Prove(\omega, \underbrace{(c_1,c_2)}_{y}, r)$ output $\Pi=\omega^2$
-    \item $Verify(\tau, \underbrace{(c_1,c_2)}_{y})$ output $\widetilde{\Pi}=c_1^{x_1}c_2^{x_2}$ %pretty shitty tilde here, I need a bigger tilde to cover the full length of Pi -> \usepackage{stackengine} \usepackage{scalerel} added in macro
+    \item $Setup(1^\lambda)$: Pick $x_1,x_2 \pickUAR \integer_q$ and define:
+    \begin{align*}
+        \omega  &= h_1 = (g_1^{x_1}, g_2^{x_2}) \\
+        \tau    &= (x_1, x_2)
+    \end{align*}
+    \item $Prove(\omega, \underbrace{(c_1,c_2)}_y, r)$ will output $\pi = \omega^2$
+    \item $Verify(\tau, \underbrace{(c_1,c_2)}_y)$ will output $\widetilde{\pi} = c_1^{x_1} c_2^{x_2}$
 \end{itemize}
 
-\textbf{Correctness:} $\Pi=\omega^2=(g_1^{x_1}g_2^{x_2})^r=g_1^{rx_1}g_2^{rx_2}=c_1^{x_1}c_2^{x_2}=\widetilde{\Pi}$
+\textbf{Correctness:} $\pi = \omega^2 = (g_1^{x_1} g_2^{x_2})^r = g_1^{rx_1} g_2^{rx_2} = c_1^{x_1} c_2^{x_2} = \widetilde{\pi}$
 
 \begin{theorem}
-    Above construction defines a 1-universal DVNIZK for $L_{DDH}$
+    Above construction defines a 1-universal \textsc{dv-nizk} scheme for $L_\ddh$.
 \end{theorem}
 
 \begin{proof}
+    We want to prove that if we take any $(c_1,c_2) \notin L_\ddh$, the distribution $(\omega = h_1, \widetilde{\Pi} = Verify(\tau, (c_1, c_2)))$ is uniform.
 
-    \textit{We want to prove that if we take any $(c_1,c_2)\notin L_DDH$ the distribution $(\omega=h_1, \widetilde{\Pi}=Verify(\tau,(c_1,c_2)))$ uniformly distributed.}
+    Define a map $\mu(x_1, x_2) \mapsto (\omega, \pi) = (g_1^{x_1}, g_2^{x_2}, c_1^{x_1}, c_2^{x_2})$ it suffices to prove that $\mu$ is injective. This can easily be done with some constrains:
 
-    Define a \textbf{MAP} $\mu(\overbrace{x_1,x_2}^{random})=(\omega,\Pi)=(g_1^{x_1},g_2^{x_2},c_1^{x_1},c_2^{x_2})$ it suffices to prove that $\mu$ is injective. This can easily be done with some constrains:
-
-    $\mu'(x_1,x_2)=log_{g_1}(\mu(x_1,x_2))=(log_{g_1}(\omega),log_{g_1}(\Pi)$
+    \[
+        \mu'(x_1, x_2) = \log_{g_1}(\mu(x_1, x_2)) = (log_{g_1}(\omega), log_{g_1}(\pi))
+    \]
 
     For $r_1\neq r_2$ then $c_1=g_1^{r_1},c_2=g_2^{r_2}=g^{\alpha r_2}$. For $\alpha=log_{g_2}g_1$ then $\Pi=c_1^{x_1}c_2^{x_2}=g_1^{r_1x_1}g_2^{r_1x_1+\alpha r_2x_2}$.
     

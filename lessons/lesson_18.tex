@@ -2,44 +2,44 @@
 
 \subsubsection{Cramer-Shoup scheme construction}
 
-From the above two proof systems we can construct a \textsc{pke} scheme, which is attributed to Cramer and Shoup:
+From the above two proof systems we can construct a \pke{} scheme, which is attributed to Cramer and Shoup:
 
 \todo{split definition from correctness}
 
 \begin{itemize}
-    \item $(pk, sk) \pickUAR \mathcal{KG}en$, where:
+    \item $(\pk, \sk) \pickUAR \keygen$, where:
     \begin{itemize}
-        \item $pk := (h_1, h_2, h_3) = (g_1^{x_1} g_2^{x_2}, g_1^{x_3} g_2^{x_4}, g_1^{x_5} g_2^{x_6})$
-        \item $sk := (x_1, x_2, x_3, x_4, x5, x_6)$
+        \item $\pk := (h_1, h_2, h_3) = (g_1^{x_1} g_2^{x_2}, g_1^{x_3} g_2^{x_4}, g_1^{x_5} g_2^{x_6})$
+        \item $\sk := (x_1, x_2, x_3, x_4, x5, x_6)$
     \end{itemize}
     \item Encryption procedure:
     \begin{itemize}
         \item $r \pickUAR \integer_q$
-        \item $\beta = H_s(c_1, c_2, c_3) = (g_1^r, g_2^r, h_1^r m)$
-        \item $Enc(pk, m) = (c_1, c_2, c_3, (h_2 h_3^\beta)^r)$
+        \item $\beta = h_s(c_1, c_2, c_3) = (g_1^r, g_2^r, h_1^r m)$
+        \item $\Enc(\pk, m) = (c_1, c_2, c_3, (h_2 h_3^\beta)^r)$
     \end{itemize}
     \item Decryption procedure:
     \begin{itemize}
-        \item Check that $c_1^{x_3 + \beta x_5} c_2^{x_4 + \beta x_6} = c_4$. If not, output FALSE.
-        \item Else, output $\hat{m} = c_3 c_1^{-x_1} c_2^{-x_2}$
+        \item Check that $c_1^{x_3 + \beta x_5} c_2^{x_4 + \beta x_6} = c_4$. If not, output $\perp$.
+        \item Else, output $\widehat{m} = c_3 c_1^{-x_1} c_2^{-x_2}$
     \end{itemize}
 \end{itemize}
 
+\todo{All the proofs here...}
+
 \section{Digital signatures}
 
-In this section we explore the solutions to the problem of authentication with the use of an asymmetric key scheme. Some observations are in order:
+In this section we explore the solutions to the problem of authentication using an asymmetric key method. Some observations are in order:
 
 \begin{figure}
     \centering
 
-    \tikzstyle{int} = [draw, minimum size = 2em]
-
     \begin{tikzpicture}[node distance = 2cm, auto, >=latex']
 
         \node (s) {};
-        \node (a) [int] [right of = s] {Alice};
+        \node (a) [box] [right of = s] {Alice};
         \node (k) [above of = a, node distance = 1cm] {$sk$};
-        \node (b) [int] [right of = a, node distance = 5cm] {Bob};
+        \node (b) [box] [right of = a, node distance = 5cm] {Bob};
         \node (p) [above of = b, node distance = 1cm] {$pk$};
         \node (e) [right of = b] {};
 
@@ -56,23 +56,23 @@ In this section we explore the solutions to the problem of authentication with t
 
 \begin{itemize}
     \item In a symmetric setting, a verifier routine could be banally implemented as recomputing the signature using the shared secret key and the message. Here, Bob cannot recompute $\sigma$ as he's missing Alice's secret key (and for good reasons too...). Thus, the verifying routine must be defined otherwise
-    \item In a vaguely similar manner to how an attacker could encrypt messages by itself in the asimmetric scenario, because the public key is known to everyone, any attacker can verify any signed messages, for free
+    \item In a vaguely similar manner to how an attacker could encrypt messages by itself in the asymmetric scenario, because the public key is known to everyone, any attacker can verify any signed messages, for free
 \end{itemize}
 
 Nevertheless, proving that a \textsc{ds} scheme is secure is largely defined in the same way as in the symmetric scenario, with the \textsc{uf-cma} property:
 
 \begin{cryptogame}{dsufcma}{Unforgeable digital signatures}{uf-cma}
     
-    \receive{$(pk, sk) \pickUAR \mathcal{KG}en(1^\lambda)$}{$pk$}{}
+    \receive{$(\pk, \sk) \pickUAR \keygen(1^\lambda)$}{$\pk$}{}
 
     \cseqdelay
 
     \send{$m \in M$}{$m$}{}
-    \receive{$\sigma \pickUAR Sign(sk, m)$}{$\sigma$}{}
+    \receive{$\sigma \pickUAR \textsf{\textup{Sign}}(sk, m)$}{$\sigma$}{}
 
     \cseqdelay
 
-    \send{$m^* \notin M$}{$(m^*, \sigma^*)$}{\textsc{Output} $\textit{Verify}(pk, m^*, \sigma^*)$}
+    \send{$m^* \notin M$}{$(m^*, \sigma^*)$}{\textsc{Output} $\textsf{\textup{Verify}}(\pk, m^*, \sigma^*)$}
 
 \end{cryptogame}
 
@@ -85,66 +85,61 @@ To obtain the blue check, Alice needs an universally-trusted third party, called
 The scheme works as follows:
 
 \begin{cryptosequence}
-    {caissue}
+    {certissue}
     {}
 
-    \cseqentity{CA}{CA $pk_{CA}, sk_{CA}$}
+    \cseqentity{CA}{CA}
     \cseqentity[2.2]{A}{Alice}
+
+    \cseqmessager{CA}{$(\pk_C, \sk_C) \pickUAR \keygen$}{$\pk_C$}{A}{}
 
     \cseqdelay
 
     \cseqmessagel{A}{\shortstack[l]{
-        $pk_{A}, sk_{A}$ \\
-        $pk_{CA}$
-    }}{"Alice", $pk_{A}$}{CA}{}
+        $(\pk_A, \sk_A) \pickUAR \keygen$ \\
+        $\textsc{id}_A = \textup{``Alice''} \| \pk_A$
+        }}{$\textsc{id}_A$}{CA}{}
     
     \cseqdelay
 
-    \cseqmessager{CA}{}{$cert_A$}{A}{\shortstack[l]{
-        where $cert_{A}$ is \\
-        $\sigma \pickUAR Sign(sk_{CA}, "Alice"\|pk_{A})$
-    }}
+    \cseqmessager{CA}{$\textsc{cert}_A \pickUAR \textsf{\textup{Sign}}(\sk_C, \textsc{id}_A)$}{$\textsc{cert}_A$}{A}{}
     
 \end{cryptosequence}
 
-The CA message $pk'$ is also called as $cert_{A}$, the signature of the CA for Alice.
-
-Now, when Bob wants to check the validity of the Alice's public key:
+The CA message $pk'$ is also called as $cert_{A}$, the signature of the CA for Alice. Now, when Bob wants to check the validity of the Alice's public key:
 
 \begin{cryptosequence}
     {certcheck}
     {}
 
-    \cseqentity{CA}{CA $pk_{CA}, sk_{CA}$}
-    \cseqentity[2.2]{A}{Alice}
-    \cseqentity[2.2]{B}{Bob}
+    \cseqentity{CA}{CA}
+    \cseqentity[0.8]{A}{Alice}
+    \cseqentity[1.4]{B}{Bob}
+
+    \cseqmessager{CA}{\small{$(\pk_C, \sk_C) \pickUAR \keygen$}}{$\pk_C$}{A}{}
+    \cseqmessager{CA}{}{$\pk_C$}{B}{}
 
     \cseqdelay
 
     \cseqmessagel{A}{\shortstack[l]{
-        $pk_{A}, sk_A$ \\
-        $pk_{CA}$
-    }}{"Alice", $pk_{A}$}{CA}{}
+        $(\pk_A, \sk_A) \pickUAR \keygen$ \\
+        $\textsc{id}_A = \textup{``Alice''} \| \pk_A$
+    }}{$\textsc{id}_A$}{CA}{}
 
     \cseqdelay
 
-    \cseqmessager{CA}{}{$cert_{A}$}{A}{\shortstack[l]{
-        where $cert_{A}$ is \\
-        $\sigma \pickUAR Sign (sk_{CA}, "Alice"\|pk_{A})$
-    }}
+    \cseqmessager{CA}{\shortstack[r]{
+        \small{$\textsc{cert}_A \pickUAR$} \\
+        \small{$\pickUAR \textsf{\textup{Sign}}(\sk_C, \textsc{id}_A)$}
+    }}{$\textsc{cert}_A$}{A}{}
     
     \cseqdelay
 
-    \cseqmessager{A}{}{}{B}{\shortstack[l]{
-        $pk_{BOB}, pk_{CA}$ \\
-        $Vrfy(pk_{CA}, "Alice"\|pk_{A}, cert_{A})$
-    }}
+    \cseqmessager{A}{}{$(\textsc{id}_A, \textsc{cert}_A)$}{B}{\small{$b = \textsf{\textup{Auth}}(\pk_C, \textsc{id}_A, \textsc{cert}_A)$}}
 
 \end{cryptosequence}
 
-How can Bob recognize a valid certificate from an expired/invalid one?
-
-The infrastructure provides some servers which contain the lists of the currently valid certificates.
+How can Bob recognize a valid certificate from an expired/invalid one? The infrastructure provides some servers which contain the lists of the currently valid certificates, such as $\textsc{cert}_A$, in the case of Alice.
 
 \begin{theorem}
     Signatures are in \textit{\textbf{Minicrypt}}.
@@ -153,7 +148,7 @@ The infrastructure provides some servers which contain the lists of the currentl
 This is a counterintuitive result, not proven during the lesson, but very interesting because it implies that we can create valid signatures only with hash functions, without considering at all public key encryption.
 
 
-In the next episodes:
+Up next:
 \begin{itemize}
     \item Digital Signatures from TDP*
     \item Digital Signatures from ID Scheme*
