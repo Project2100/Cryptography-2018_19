@@ -87,10 +87,17 @@ so now he could send the authenticated message
 \]
 which is a valid message.
 
-\todo{AXU property definition is missing, rest of the section is left as-is}
+\begin{definition}
+    Let $S$ be a uniform seed; a hash function $h_s$ is deemed \emph{Almost \textsc{xor}-universal}, or \textsc{axu} in short, iff:
+    \[
+        \forall x_1 \neq x_2, a \implies \Pr[h_S(x_1) \xor h_S(x_2) = a] \leq \varepsilon \qedhere
+    \]
+\end{definition}
+
+Note that, if $a = 0$, the \textsc{axu} property becomes the \textsc{au} property.
 
 \begin{lemma}
-    XOR mode gives computational AXU (Almost Xor Universal)
+    \textsc{xor} mode gives a computational \textsc{axu} hash function.
 \end{lemma}
 
 \begin{proof}
@@ -98,7 +105,7 @@ which is a valid message.
 \end{proof}
 
 \begin{theorem}
-    If $F$ is a \prf{} and $H$ is computational AXU, then XOR-MAC is a MAC.
+    If $F$ is a \prf{} and $H$ is computational \textsc{axu}, then \textsc{xor}-\mac is a \mac.
 \end{theorem}
 
 \begin{proof}
@@ -109,7 +116,7 @@ which is a valid message.
 
 \todo{not sure what to do with this bullet list...}
 
-With variable input lenght:
+With variable input length:
 \begin{itemize}
     \item AXU based XOR mode is secure;
     \item $H \circ F$ is insecure with polynomial construction $h_s(m) = q_m(s)$, but can be fixed;
@@ -154,7 +161,6 @@ Going back to the encryption realm, a new definition of attack to a \ske{} schem
     %challenge
     \send{}{$m_0^*, m_1^*$}{}
     \receive{\shortstack[l]{
-        $r^* \text{ chosen \uar}$ \\
         $b \pickUAR \binary$ \\
         $c^* \pickUAR \Enc(k, m_b^*)$
     }}{$c_b^*$}{}
@@ -205,7 +211,9 @@ Going back to the encryption realm, a new definition of attack to a \ske{} schem
 
 \section{Authenticated encryption}
 
-Instead of tackling the \cca-security problem upfront, it might be useful to consider a construction that achieves both secrecy and authentication: that is, a scheme that encrypts messages and authenticates their respective senders at the same time. In the encryption setting, such a scheme is defined as being \cpa-secure with an additional \textsc{auth} property denoting the scheme's resistance to forgeries, much like its \mac{} cousins. The game shown in figure \ref{cryptogame:authske} models this \textsc{auth} property of a scheme $\Pi = (\Enc, \Dec)$, with an additional quirk to the decryption routine:
+Trying to create a \cca-secure scheme form scratch may seem a daunting task. Instead, we will start looking for a shceme that achieves both secrecy and authentication. As one might expect, such a scheme is usually a combination of a valid secrecy scheme with a valid authentication scheme; the result would be a scheme composed by four primitives $\Pi = (\Enc, \Dec, \Tag, \Ver)$. If this scheme turns out to be \cpa-secure, and has an additional property \textsc{auth} denoting the scheme's resistance to forgeries, much like its \mac{} cousins, then it is proven that the scheme is also \cca-secure.
+
+The game shown in figure \ref{cryptogame:authske} models this \textsc{auth} property of a scheme $\Pi = (\Enc, \Dec)$, with an additional quirk to the decryption routine:
 \[
     \Dec \in \K \times \C \to M \cup \{\perp\}
 \]
