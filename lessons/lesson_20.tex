@@ -13,7 +13,7 @@ The Random Oracle Model treats a given hash function $H$ as a truly random funct
 
 \subsection{Full domain hashing}
 
-Let $(f, f^{-1}, \Gen)$ be a \tdp{} scheme over some domain $\X_{\pk}$
+Let $(f, f^{-1}, \Gen)$ be a \tdp{} scheme over some domain $\mathcal{X}_{\pk}$
 
 Take \rsa:
 \begin{itemize}
@@ -49,7 +49,7 @@ Build a similar asymmetric-authentication scheme as such:
 
         \receive{\shortstack[l]{
             $(pk, sk) \pickUAR \Gen(1^\lambda)$ \\
-            $x \pickUAR \X_{pk}$ \\
+            $x \pickUAR \mathcal{X}_{pk}$ \\
             $y = f(pk, x)$
         }}{$pk, y$}{}
 
