@@ -6,7 +6,7 @@ Modern confidentiality/authentication systems are forged under \emph{Kerckhoffs'
 
 \section{Secret communication}
 
-\todo{Image of Alice,Bob, Eve in ske}
+\todo{Image of Alice, Bob, Eve in ske}
 
 The typical objects defined and used in secret communication topics are:
 \begin{itemize}
@@ -32,31 +32,22 @@ Note how this definition doesn't involve the encryption key. % Is it important? 
 
 The perfect secrecy definition can be rephrased in different ways, bringing more details to light:
 \begin{enumerate}
-    \item $\Pr[M = m] = \Pr[M = m \knowing C \evaluatesto c]$
-    \item $M \indep C$
+    \item \label{def:ps1} $\Pr[M = m] = \Pr[M = m \knowing C \evaluatesto c]$
+    \item \label{def:ps2}$M \indep C$
     %TODO - Better formalize: the variables m, m' and k are 'chosen' by their own distibutions, c is just a result instead
     % Maybe decompose it into smaller bits: use event sets instead
-    \item $\forall m_1, m_2 \in \M, c \in \C \implies \Pr[\Enc(K, m_1) = c] = \Pr[\Enc(K, m_2) = c]$
+    \item \label{def:ps3}$\forall m_1, m_2 \in \M, c \in \C \implies \Pr[\Enc(K, m_1) = c] = \Pr[\Enc(K, m_2) = c]$
 \end{enumerate}
-
-A remark has to be done here:
-\begin{align*}
-    & \Pr[\Enc(K, m) = c] \\
-    =& \Pr[\Enc(K, M) = c \knowing M \evaluatesto m] \\
-    \neq& \Pr[\Enc(K, M) = c]
-\end{align*}
-
-which is exactly the difference between picking a specific message $m$ (as in: \emph{choosing} $m$), and picking it at random, just as $M$ describes.
     
 \begin{proposition}
     All the previous statements are equivalent.
 \end{proposition}
 
 \begin{proof}
-    The proof is structured as a cyclic implication between the threee definitions:
+    The proof is structured as a cyclic implication between the three definitions:
     
     \begin{itemize}
-        \item $(1) \implies (2)$: Start from one side of the independency ddefinition, and work through the other:
+        \item $(\ref{def:ps1}) \implies (\ref{def:ps2})$: Start from one side of the independency ddefinition, and work through the other:
         \begin{align*}
             & \Pr[C = c \wedge M = m]                           & \\
             =& \Pr[C = c] \Pr[M = m \knowing C \evaluatesto c]  & \text{(Conditioned prob.)} \\
@@ -64,7 +55,7 @@ which is exactly the difference between picking a specific message $m$ (as in: \
         \end{align*}
         This proves that $M$ and $C$ are independent distributions.
         
-        \item $(2) \implies (3)$: For the proof's purposes, let $M$ be an arbitrary distribution over $\M$; recall that, by definition: $C := \Enc(K, M)$:
+        \item $(\ref{def:ps2}) \implies (\ref{def:ps3})$: For the proof's purposes, let $M$ be an arbitrary distribution over $\M$; recall that, by definition: $C := \Enc(K, M)$:
         \begin{align*}
             & \Pr[\Enc(K, m_1) = c]                             & \\
             =& \Pr[\Enc(K, M) = c \knowing M \evaluatesto m_1]  & \text{(Introducing $M$)} \\
@@ -75,7 +66,7 @@ which is exactly the difference between picking a specific message $m$ (as in: \
         \end{align*}
 
 
-        \item $(3) \implies (1)$:
+        \item $(\ref{def:ps3}) \implies (\ref{def:ps1})$:
         \begin{align*}
             & \Pr[C = c] & \\
             =& \sum_{m}\Pr[C = c \wedge M = m]                                  & \text{(Total prob.)} \\
@@ -100,6 +91,16 @@ which is exactly the difference between picking a specific message $m$ (as in: \
     Thus, we conclude that all three definitions for perfect secrecy are equivalent.
 
 \end{proof}
+
+A remark on definition \ref{def:ps3} has to be done here:
+
+\begin{align*}
+    & \Pr[\Enc(K, m) = c] \\
+    =& \Pr[\Enc(K, M) = c \knowing M \evaluatesto m] \\
+    \neq& \Pr[\Enc(K, M) = c]
+\end{align*}
+
+which is exactly the difference between picking a specific message $m$ (as in: \emph{choosing} $m$), and picking it at random, just as $M$ denotes implicitly.
 
 \subsection{One Time Pad (OTP)}
 
@@ -143,27 +144,28 @@ By observing our recent proof, some insights (and problems) arise:
 
 Combined with the fact that keys must be preemptively shared in a secure fashion, these problems make for a quite impractical cryptographic scheme. One can further this analysis and generalize it to all ``perfect'' schemes, giving a rather delusive conclusion:
 
+\begin{figure}[h]
+    \centering
+    \def\firstcircle{(0,0) circle (1.5cm)}
+    \def\secondcircle{(60:0) circle (0.9cm)}
+    \begin{tikzpicture}
+        \begin{scope}[shift={(3cm,-5cm)}]
+            \draw \firstcircle node[label={[xshift=1.0cm, yshift=0.3cm]$\M$}] { };
+            \draw \secondcircle node[label={[xshift=1.2cm, yshift=-0.5cm]$m$}] {$D$};
+        \end{scope}
+    \end{tikzpicture}
+    \caption{Where the messages stand}
+\end{figure}
+
 \begin{theorem}
     For a secrecy scheme to be perfectly secret: $|\K| \geq |\M|$
 \end{theorem}
 \begin{proof}
-    Perfection will be disproved by breaking the first definition. Let $M \sim \unifdist(\M)$, and take $c \in \C : \Pr[C = c] > 0$. Consider $D = \{\Dec(k, c) : k \in \K\}$ as the set of all images of the decryption routine with all keys in $\K$. The offending assumption is that $|\K| < |\M|$. Then, by how $D$ is defined:
+    Perfection will be disproved by breaking definition \ref{def:ps1}. Let $M \sim \unifdist(\M)$, and take $c \in \C : \Pr[C = c] > 0$. Consider $D = \{\Dec(k, c) : k \in \K\}$ as the set of all images of the decryption routine with all keys in $\K$. The offending assumption is that $|\K| < |\M|$. Then, by how $D$ is defined:
+
     \[
         |D| \leq |\K| < |\M| \implies \exists m \in \M \setminus D
     \]
-
-    \begin{figure}[h]
-        \centering
-        \def\firstcircle{(0,0) circle (1.5cm)}
-        \def\secondcircle{(60:0) circle (0.9cm)}
-        \begin{tikzpicture}
-            \begin{scope}[shift={(3cm,-5cm)}]
-                \draw \firstcircle node[label={[xshift=1.0cm, yshift=0.3cm]$\M$}] { };
-                \draw \secondcircle node[label={[xshift=1.2cm, yshift=-0.5cm]$m$}] {$D$};
-            \end{scope}
-        \end{tikzpicture}
-        \caption{Where the messages stand}
-    \end{figure}
 
     Fix this message $m$, and remember that by $M$'s definition, $\Pr[M = m] = |\M|^{-1}$. Since $m \notin D$, there can be no key in $\K$ such that $\Dec(k, c) = m$. By observing that $C$ strictly distributes over $D$, where $m$ is not present, $\Pr[M = m \knowing C \evaluatesto c] = 0$. Putting everything together:
     \[
