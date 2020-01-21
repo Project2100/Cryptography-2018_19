@@ -15,43 +15,48 @@ Decryption is trivially implemented by \textsc{xor}-ing the ciphered blocks with
 
 \begin{figure}[ht]
     \centering
+    \begin{tikzpicture}[node distance = 12mm, >=latex']
 
-    \tikzstyle{box}  = [draw, minimum size=2em]
-    \tikzstyle{init} = [pin edge={to-,thin,black}, pin distance = 0.3cm]
+        \path[->]
+            node (m1) {$m_1$}
+            node (x1) [right of = m1] {$\xor$}
+            node (c1) [below of = x1] {$c_1$}
+            node (f1) [box, above of = x1] {$f_k$}
+            node (r1) [above of = f1] {$r$}
 
-    \begin{tikzpicture}[node distance = 1.2cm, auto, >=latex']
+            node (m2) [right of = x1] {$m_2$}
+            node (x2) [right of = m2] {$\xor$}
+            node (c2) [below of = x2] {$c_2$}
+            node (f2) [box, above of = x2] {$f_k$}
+            node (r2) [above of = f2] {$r$}
 
-        \node (r1) {$r$};
-        \node (r2) [right of = r1, node distance = 2cm] {$r$};
-        \node (rd) [right of = r2, node distance = 2cm] {$\dots$};
-        \node (rt) [right of = rd, node distance = 2cm] {$r$};
+            node (xd) [right of = x2, node distance = 15mm] {$\dots$}
+            node (cd) [right of = c2, node distance = 15mm] {$\dots$}
+            node (fd) [right of = f2, node distance = 15mm] {$\dots$}
+            node (rd) [right of = r2, node distance = 15mm] {$\dots$}
 
-        \node (f1) [box, below of = r1] {$f_k$};
-        \node (f2) [box, below of = r2] {$f_k$};
-        \node (fd) [below of = rd] {$\dots$};
-        \node (ft) [box, below of = rt] {$f_k$};
-        
-        \node (x1) [below of = f1, pin={[init]left:$m_1$}] {$\xor$};
-        \node (x2) [below of = f2, pin={[init]left:$m_2$}] {$\xor$};
-        \node (xd) [below of = fd] {$\dots$};
-        \node (xt) [below of = ft, pin={[init]left:$m_t$}] {$\xor$};
-        
-        \node (c1) [below of = x1] {$c_1$};
-        \node (c2) [below of = x2] {$c_2$};
-        \node (cd) [below of = xd] {$\dots$};
-        \node (ct) [below of = xt] {$c_t$};
+            node (mt) [right of = xd] {$m_t$}
+            node (xt) [right of = mt] {$\xor$}
+            node (ct) [below of = xt] {$c_t$}
+            node (ft) [box, above of = xt] {$f_k$}
+            node (rt) [above of = ft] {$r$}
 
-        \path[->] (r1) edge (f1);
-        \path[->] (r2) edge (f2);
-        \path[->] (rt) edge (ft);
+            (r1) edge (f1)
+            (r2) edge (f2)
+            (rt) edge (ft)
 
-        \path[->] (f1) edge (x1);
-        \path[->] (f2) edge (x2);
-        \path[->] (ft) edge (xt);
-        
-        \path[->] (x1) edge (c1);
-        \path[->] (x2) edge (c2);
-        \path[->] (xt) edge (ct);
+            (f1) edge (x1)
+            (f2) edge (x2)
+            (ft) edge (xt)
+
+            (m1) edge (x1)
+            (m2) edge (x2)
+            (mt) edge (xt)
+            
+            (x1) edge (c1)
+            (x2) edge (c2)
+            (xt) edge (ct)
+        ;
 
     \end{tikzpicture}
     \caption{\textsc{ecb}-mode block-cipher in action, using a \prf{} as the encryption routine}
@@ -74,53 +79,51 @@ This time, a \emph{pseudorandom permutation}(\prp) is used instead of a \prf; th
 
 \begin{figure}[ht]
     \centering
+    \begin{tikzpicture}[node distance = 12mm, > = latex']
 
-    \tikzstyle{box}  = [draw, minimum size=2em]
-    \tikzstyle{init} = [pin edge={to-,thin,black}, pin distance = 0.3cm]
+        \draw[->]
+            node (r) {$r$}
+            node (c0) [below of = r, node distance = 24mm] {$c_0$}
 
-    \begin{tikzpicture}[node distance = 1cm, auto, >=latex']
+            node (c1) [right of = c0, node distance = 24mm] {$c_1$}
+            node (p1) [box, above of = c1] {$P_k$}
+            node (x1) [above of = p1] {$\xor$}
+            node (m1) [above of = x1] {$m_1$}
+            
+            node (c2) [right of = c1, node distance = 24mm] {$c_2$}
+            node (p2) [box, above of = c2] {$P_k$}
+            node (x2) [above of = p2] {$\xor$}
+            node (m2) [above of = x2] {$m_2$}
 
-        \node (r1) {$m_1$};
-        \node (r2) [right of = r1, node distance = 2cm] {$m_2$};
-        \node (rd) [right of = r2, node distance = 2cm] {$\dots$};
-        \node (rt) [right of = rd, node distance = 2cm] {$m_t$};
-        
-        \node (x1) [below of = r1] {$\xor$};
-        \node (x2) [below of = r2] {$\xor$};
-        \node (xd) [below of = rd] {$\dots$};
-        \node (xt) [below of = rt] {$\xor$};
+            node (cd) [right of = c2, node distance = 24mm] {$\dots$}
+            node (pd) [above of = cd] {$\dots$}
+            node (xd) [above of = pd] {$\dots$}
+            node (md) [above of = xd] {$\dots$}
 
-        \node (f1) [box, below of = x1] {$P_k$};
-        \node (f2) [box, below of = x2] {$P_k$};
-        \node (fd) [below of = xd] {$\dots$};
-        \node (ft) [box, below of = xt] {$P_k$};
-        
-        \node (c1) [below of = f1] {$c_1$};
-        \node (c2) [below of = f2] {$c_2$};
-        \node (cd) [below of = fd] {$\dots$};
-        \node (ct) [below of = ft] {$c_t$};
+            node (ct) [right of = cd, node distance = 24mm] {$c_t$}
+            node (pt) [box, above of = ct] {$P_k$}
+            node (xt) [above of = pt] {$\xor$}
+            node (mt) [above of = xt] {$m_t$}
+            
+            (r) edge (c0)
 
-        
-        \path[->] (r1) edge (x1);
-        \path[->] (r2) edge (x2);
-        \path[->] (rt) edge (xt);
+            (m1) edge (x1)
+            (m2) edge (x2)
+            (mt) edge (xt)
 
-        \path[->] (x1) edge (f1);
-        \path[->] (x2) edge (f2);
-        \path[->] (xt) edge (ft);
-        
-        \path[->] (f1) edge (c1);
-        \path[->] (f2) edge (c2);
-        \path[->] (ft) edge (ct);
+            (x1) edge (p1)
+            (x2) edge (p2)
+            (xt) edge (pt)
 
-        \node (r) [left of = x1, node distance = 2cm] {$r$};
-        \node (c0) [left of = c1, node distance = 2cm] {$c_0$};
-        \path[->] (r) edge (c0);
-        
-        \draw[->] (c0) -- +(1cm, 0) -- +(1cm, 2cm) -- (x1);
-        \draw[->] (c1) -- +(1cm, 0) -- +(1cm, 2cm) -- (x2);
-        \draw[->] (c2) -- +(1cm, 0) -- +(1cm, 2cm) -- (xd);
-        \draw[->] (cd) -- +(1cm, 0) -- +(1cm, 2cm) -- (xt);
+            (p1) edge (c1)
+            (p2) edge (c2)
+            (pt) edge (ct)
+
+            (c0) -| +(12mm, 24mm) edge (x1)
+            (c1) -| +(12mm, 24mm) edge (x2)
+            (c2) -| +(12mm, 24mm) edge (xd)
+            (cd) -| +(12mm, 24mm) -- (xt)
+        ;
 
     \end{tikzpicture}
     \caption{\textsc{cbc}-mode block-cipher in action, using a \prp{} as the encryption routine}
@@ -134,50 +137,56 @@ Also denoted as \textsc{ctr} in short, this mode closely resembles \textsc{ecb}-
 \begin{figure}[ht]
     \centering
 
-    \tikzstyle{box}  = [draw, minimum size=2em]
-    \tikzstyle{init} = [pin edge={to-,thin,black}, pin distance = 0.3cm]
+    \begin{tikzpicture}[node distance = 12mm, > = latex']
 
-    \begin{tikzpicture}[node distance = 1cm, auto, >=latex']
+        \draw[->]
+            node (c0) {$c_0$}
 
-        \node (r1) {$r$};
-        \node (r2) [right of = r1, node distance = 2cm] {$r + 1$};
-        \node (rd) [right of = r2, node distance = 2cm] {$\dots$};
-        \node (rt) [right of = rd, node distance = 2cm] {$r + t - 1$};
+            node (c1) [right of = c0, node distance = 24mm] {$c_1$}
+            node (x1) [above of = c1] {$\xor$}
+            node (m1) [left of = x1] {$m_1$}
+            node (f1) [box, above of = x1] {$f_k$}
+            node (r1) [above of = f1] {$r$}
 
-        \node (f1) [box, below of = r1] {$f_k$};
-        \node (f2) [box, below of = r2] {$f_k$};
-        \node (fd) [below of = rd] {$\dots$};
-        \node (ft) [box, below of = rt] {$f_k$};
-        
-        \node (x1) [below of = f1, pin={[init]left:$m_1$}] {$\xor$};
-        \node (x2) [below of = f2, pin={[init]left:$m_2$}] {$\xor$};
-        \node (xd) [below of = fd] {$\dots$};
-        \node (xt) [below of = ft, pin={[init]left:$m_t$}] {$\xor$};
-        
-        \node (c1) [below of = x1] {$c_1$};
-        \node (c2) [below of = x2] {$c_2$};
-        \node (cd) [below of = xd] {$\dots$};
-        \node (ct) [below of = xt] {$c_t$};
-        
-        \node (c0) [left of = c1, node distance = 2cm] {$c_0$};
-        
-        \path[->] (r1) edge (r2);
-        \path[->] (r2) edge (rd);
-        \path[->] (rd) edge (rt);
+            node (c2) [right of = c1, node distance = 24mm] {$c_2$}
+            node (x2) [above of = c2] {$\xor$}
+            node (m2) [left of = x2] {$m_2$}
+            node (f2) [box, above of = x2] {$f_k$}
+            node (r2) [above of = f2] {$r + 1$}
 
-        \path[->] (r1) edge (f1);
-        \path[->] (r2) edge (f2);
-        \path[->] (rt) edge (ft);
+            node (cd) [right of = c2, node distance = 19mm] {$\dots$}
+            node (xd) [above of = cd] {$\dots$}
+            node (fd) [above of = xd] {$\dots$}
+            node (rd) [above of = fd] {$\dots$}
 
-        \path[->] (f1) edge (x1);
-        \path[->] (f2) edge (x2);
-        \path[->] (ft) edge (xt);
-        
-        \path[->] (x1) edge (c1);
-        \path[->] (x2) edge (c2);
-        \path[->] (xt) edge (ct);
+            node (ct) [right of = cd, node distance = 24mm] {$c_t$}
+            node (xt) [above of = ct] {$\xor$}
+            node (mt) [left of = xt] {$m_t$}
+            node (ft) [box, above of = xt] {$f_k$}
+            node (rt) [above of = ft] {$r + t - 1$}
+            
+            (r1) edge (r2)
+            (r2) edge (rd)
+            (rd) edge (rt)
 
-        \draw[->] (r1) -- (-2cm, 0) -- (c0);
+            (r1) edge (f1)
+            (r2) edge (f2)
+            (rt) edge (ft)
+
+            (f1) edge (x1)
+            (f2) edge (x2)
+            (ft) edge (xt)
+            
+            (m1) edge (x1)
+            (m2) edge (x2)
+            (mt) edge (xt)
+
+            (x1) edge (c1)
+            (x2) edge (c2)
+            (xt) edge (ct)
+
+            (r1) -| (c0)
+        ;
 
     \end{tikzpicture}
     \caption{Counter-mode block-cipher in action, using a \prf{} as the encryption routine}
