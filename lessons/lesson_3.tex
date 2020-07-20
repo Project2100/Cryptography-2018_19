@@ -14,10 +14,10 @@ Suppose to have a biased coin $B \sim \berdist(p) : p \neq \half$. How to craft 
     \item Sample $b_2 \pickUAR B$
     \item If $b_1 = b_2$ go to step \ref{enum:VNEsample}
     \item \label{enum:VNEreturn} Else:
-    \begin{itemize}
-        \item If $b_1 = 0 \wedge b_2 = 1$ output 1
-        \item If $b_1 = 1 \wedge b_2 = 0$ output 0 
-    \end{itemize}
+          \begin{itemize}
+              \item If $b_1 = 0 \wedge b_2 = 1$ output 1
+              \item If $b_1 = 1 \wedge b_2 = 0$ output 0
+          \end{itemize}
 \end{enumerate}
 
 Some considerations can be made: The probability of both single cases in step \ref{enum:VNEreturn} is $p(1 - p)$, therefore the probability to reach it is $2p(1 - p)$. Also, it is apparent that the number of possible failures in reaching step \ref{enum:VNEreturn} follow a geometric distribution in $p$, thus the probability of increased number of failures decrease exponentially.
@@ -32,16 +32,16 @@ We now get back to our ultimate goal. Let $X$ be any random variable over a spac
 
 Using this measure, we can already see an interesting case, which involves ``constant'' random variables:
 \begin{align*}
-    X \sim \mathcal{C}onst(\overline{x}) \implies& \Pr[X = \overline{x}] = 1 \\
-    \implies& \Pr[X \neq \overline{x}] = 0 \\
-    \implies& H_{\infty}(X) = -\log_2(\Pr[X = \overline{x}]) = -\log_2(1) = 0
+    X \sim \mathcal{C}onst(\overline{x}) \implies & \Pr[X = \overline{x}] = 1                                       \\
+    \implies                                      & \Pr[X \neq \overline{x}] = 0                                    \\
+    \implies                                      & H_{\infty}(X) = -\log_2(\Pr[X = \overline{x}]) = -\log_2(1) = 0
 \end{align*}
 
 And in fact, a constant variable is useless in creating a uniform distribution: it always gives the same outcome, making everything deterministic. Therefore, such variables must be excluded in our search for a ``universal extractor''.
 On the other hand, looking at a uniform distribution:
 \begin{align*}
-    X \sim \unifdist(\Omega) \implies& \forall x \Pr[X = x] = \oneover{|\Omega|} \\
-    \implies& H_{\infty}(X) = -\log_2(\oneover{|\Omega|})
+    X \sim \unifdist(\Omega) \implies & \forall x \Pr[X = x] = \oneover{|\Omega|}   \\
+    \implies                          & H_{\infty}(X) = -\log_2(\oneover{|\Omega|})
 \end{align*}
 
 Knowing that $\Omega$ is be our usual domain choice of binary strings of a given length $\binary^n$, the min-entropy becomes exactly $n$\footnote{This also sheds some light in how string length is a frequent topic in the cryptography realm, as it usually expresses a cryptosystem's strength: the greater its min-entropy, the harder it is to find the right key from scratch for a ciphertext.}.
@@ -69,10 +69,10 @@ Using this measure, we can actually seek how much min-entropy we require in the 
     \todo{Help with the proof, things don't look good}
 
     %Let \ext{} be a candidate extractor, assume that $X$ is any random variable for which $\ext(X)$ is a fair coin. We are %in a situation where 
-%
+    %
     %Let \ext{} be a candidate extractor, Let b be any binary value s.t. $|Ext^-1(b)|$ is maximal ($Ext^-1: \binary \to \binary^n$)\\
     %$\implies |Ext^-1(b)|\geq 2^{n-1}=\frac{2^2}{2}$
-%
+    %
     %\begin{figure}[ht]
     %    \centering
     %    \begin{tikzpicture}[>=latex]
@@ -80,35 +80,35 @@ Using this measure, we can actually seek how much min-entropy we require in the 
     %        \node (a1) {};
     %        \node[below=0.3cm of a1] (a2) {};
     %        \node[below=0.3cm of a2] (a3) {};
-%
+    %
     %        \node[below=0.6cm of a3] (a4) {};
     %        \node[below=0.3cm of a4] (a5) {};
     %        \node[below=0.3cm of a5] (a6) {};
-%
+    %
     %        \node[below=0.3cm of a3] (l) {};
     %        \node[right=1.4cm of l] (l1) {};
     %        \node[left=1.4cm of l] (l2) {};
     %        \draw[-,black] (l2) -- (l1);
-%
+    %
     %        \node[right=4cm of a2] (b1) {$x=0$};
     %        \node[right=4cm of a5] (b3) {$x=1$};
-%
+    %
     %        \node[ellipse,line width = 1pt, draw=black,minimum size=3cm,fit={(a1) (a6)}] {};
-%
+    %
     %        \node[below=1cm of a6,font=\color{black}\Large] {$\binary^n$};
-%
+    %
     %        \draw[-,black] (a3) to[out=-10,in=190] (b1.190);
     %        \draw[-,black] (a2) -- (b1.180);
     %        \draw[-,black] (a1) to[out=10,in=170] (b1.170);
-%
+    %
     %        \draw[-,black] (a6) to[out=-10,in=190] (b3.190);
     %        \draw[-,black] (a5) -- (b3.180);
     %        \draw[-,black] (a4) to[out=10,in=170] (b3.170);
     %    \end{tikzpicture}
     %\end{figure}
-%
+    %
     %Define $X$ to be uniform over $Ext^-1(b)$ so $H_{\infty}(x)=n-1$ but $Ext(X)=b$ CONSTANT.
-%
+    %
     %\dots
 
 \end{proof}
@@ -125,7 +125,7 @@ Before giving a formal definition of such an extractor, we require another notio
     \[
         SD(X, Y) = \half\sum_{x \in \Omega}|\Pr[X = x] - \Pr[Y = x]|
     \]
-    
+
 \end{definition}
 
 In an intuitive stance, this distance amounts to half the area delimited by the two distributions.
@@ -172,5 +172,82 @@ This lemma has been proven by Russell Impagliazzo, Leonid Levin and Michael Luby
 \end{lemma}
 
 \begin{proof}
-    \todo{---}
+    Let $Y\:= (S, h_S(X))$ and $Y':= (S', h_{S'}(X'))$ defined over $\mathcal{Y}:= \binary^{l+d}$, so that $Y$ and $Y'$ are i.i.d.
+    We want to show that $\Delta(Y, U) \leq \epsilon$. For lemma \ref{collision probability}, we need to show that $Col(Y) \leq \frac{1 + 4\epsilon^2}{|\mathcal{Y}|}$
+    \begin{align*}
+        Col(Y) = \Pr(Y=Y')                & = \Pr(S=S', h_S(X) = h_S(X'))       \\
+        \mbox{(independence)} \rightarrow & = \Pr(S = S') \Pr(h_S(X) = h_S(X'))
+    \end{align*}
+
+    \underline{Fact 1:} $S= U_d \Rightarrow Col(S) \leq 2^{-d}$
+
+    \begin{proof}
+        $Col(S) = \sum_s \Pr(S=s)^2 = \sum_s \Pr(S=s)\frac{1}{2^d} = \frac{1}{2^d}\sum_s \Pr(S=s) = \frac{1}{2^d}$
+    \end{proof}
+
+    So
+    \begin{align*}
+        Col(Y)                     & \leq 2^{-d} \Pr(h_S(X) = h_S(X'), X = X') + \Pr(h_S(X) = h_S(X') | X \neq X'))               \\
+        \mbox{(Bayes)} \rightarrow & \leq 2^{-d} (\Pr(X = X') \Pr(h_S(X) = h_S(X') | X = X') + \Pr(h_S(X) = h_S(X') | X \neq X')) \\
+    \end{align*}
+
+    \underline{Fact 2:} $X: H_\infty(X) \geq k \Rightarrow Col(X) \leq 2^{-k}$
+
+    \begin{proof}
+        Left as exercise.
+    \end{proof}
+
+    \underline{Fact 3:} if $\mathcal{X}$ is pairwise independent, then  $\Pr(h_S(X) = h_S(X') | X \neq X') \leq 2^{-l}$
+
+    \begin{proof}
+        Left as exercise.
+    \end{proof}
+
+    All these facts imply that
+    \begin{align*}
+        Col(Y)                                       & \leq 2^{-d}(2^{-k} + 2^{-l}) = \frac{1}{2^{d+l}}(2^{l-k} + 1)        \\
+        \mbox{(for k of the hypothesis)} \rightarrow & \leq \frac{1}{|\mathcal{Y}|}(2^{2 - 2 \log(\frac{1}{\epsilon})} + 1) \\
+                                                     & = \frac{1}{|\mathcal{Y}|} (1 + 4\epsilon^2)
+    \end{align*}
+\end{proof}
+
+Note that for small values of $\epsilon$ we have high values of min-entropy, that implies high value for k. We still don't know if we can find an extractor with $k \approx l$: it's an open problem.
+
+\begin{lemma}[Collision probability]
+    \label{collision probability}
+    Let $Y$ be a random variable over $\mathcal{Y}$ such that the probability of collision $Col(Y):= \sum_{\mathit{y} \in \mathcal{Y}} \Pr(Y=\mathit{y})^2 \leq \frac{1 + 4\epsilon^2}{|\mathcal{Y}|}$.
+    Then $\Delta(Y, U) \leq \epsilon$, i.e. Y is almost uniform over $\mathcal{Y}$.
+\end{lemma}
+
+Note that
+\begin{align*}
+    \Pr(Y=Y') & = \Pr(\cup_\mathit{y} \{Y= \mathit{y}, Y'= \mathit{y}\})                                                    \\
+              & = \sum_{\mathit{y}}\Pr(Y= \mathit{y}, Y'= \mathit{y}) = \, \leftarrow \mbox{(independent)}                  \\
+              & = \sum_{\mathit{y}} \Pr(Y= \mathit{y}) \Pr(Y'= \mathit{y}) = \, \leftarrow \mbox{(identical distributions)} \\
+              & = \sum_{\mathit{y}} \Pr(Y= \mathit{y})^2                                                                    \\
+              & = Col(Y)
+\end{align*}
+
+\begin{proof}
+    By applying the definition, the statistical distance between $Y$ and $U$ is:
+    \[\Delta(Y, U) = \frac{1}{2}\sum_{\mathit{y} \in \mathcal{Y}} |\Pr(Y = \mathit{y}) - \frac{1}{|\mathcal{Y}|}|\]
+
+    Let $q_\mathit{y}:= \Pr(Y = \mathit{y}) - \frac{1}{|\mathcal{Y}|}$ and (a sign function) $s_\mathit{y}:= \begin{cases} 1, & \mbox{if } q_\mathit{y} \geq 0 \\ -1, & \mbox{otherwise} \end{cases}$
+
+    \begin{align*}
+        \Delta(Y, U)                        & = \frac{1}{2}\sum_{\mathit{y}} q_\mathit{y} s_\mathit{y}                               \\
+                                            & = \frac{1}{2}\langle \vec{q}, \vec{s}\rangle                                           \\
+        \mbox{(Cauchy-Schwarz)} \rightarrow & \leq \frac{1}{2}\sqrt{\langle \vec{q}, \vec{q}\rangle \langle \vec{s}, \vec{s}\rangle} \\
+                                            & = \frac{1}{2}\sqrt{\sum_{\mathit{y}} q_\mathit{y}^2 |\mathcal{Y}|}
+    \end{align*}
+
+    Now
+    \begin{align*}
+        \sum_\mathit{y} q_\mathit{y}^2 & = \sum_\mathit{y} (\Pr(Y=\mathit{y}) - \frac{1}{|\mathcal{Y}|})^2                                              \\
+                                       & = \sum_\mathit{y} (\Pr(Y=\mathit{y})^2 - \frac{2}{|\mathcal{Y}|}\Pr(Y=\mathit{y}) + \frac{1}{|\mathcal{Y}|^2}) \\
+                                       & = Col(Y) - \frac{2}{|\mathcal{Y}|} + \frac{1}{|\mathcal{Y}|}                                                   \\
+                                       & \leq  \frac{1 + 4\epsilon^2}{|\mathcal{Y}|} - \frac{2}{|\mathcal{Y}|} + \frac{1}{|\mathcal{Y}|}                \\
+                                       & = \frac{4\epsilon^2}{|\mathcal{Y}|}
+    \end{align*}
+    that implies $\Delta(Y, U) \leq \epsilon$.
 \end{proof}
