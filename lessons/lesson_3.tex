@@ -234,12 +234,20 @@ This lemma has been proven by Russell Impagliazzo, Leonid Levin and Michael Luby
     then $\ext$ is a ($k$, $\varepsilon$)-seeded randomness extractor.
 \end{lemma}
 
+\todo{This proof has a sneaky issue:
+\begin{itemize}
+    \item The collision bound uses an uniform RV to assess the statistical distance that is independent of the target RV; it is unclear how the same-seed notion of the extractor def affects the lemma's validity
+
+    Update: on further analysis, the proof changes drastically. Needs a more thorough review
+\end{itemize}
+}
+
 \begin{proof}
     Let $Y = (S, h_S(X))$ be a random variable over $\binary^{d + l}$, where $S$ distributes uniformly; the extractor definition requires that:
     \[
         \statdist(Y, (S, \unifdist(\binary^l))) \leq \varepsilon
     \]
-    Since the variable $(S, \unifdist(\binary^l))$ effectively distributes uniformly over $\binary^{d + l}$, by lemma \ref{lem:colbound}\footnote{Note that the lemma does not restrict any dependence relation between the random variable of interest and the uniform distribution} it suffices to show that $Col(Y) \leq |\binary^{-d - l}| (1 + 4 \varepsilon^2)$. To this end, let $Y'$ be another random variable that is \iid{} from $Y$. The collision probability of $Y$ equates to:
+    Since the variable $(S, \unifdist(\binary^l))$ effectively distributes uniformly over $\binary^{d + l}$, by lemma \ref{lem:colbound} it suffices to show that $Col(Y) \leq |\binary^{-d - l}| (1 + 4 \varepsilon^2)$. To this end, let $Y'$ be another random variable that is \iid{} from $Y$. The collision probability of $Y$ equates to:
     \begin{align*}
          &\ Col(Y)                                               &                                               \\
         =&\ \Pr[Y = Y']                                          &                                               \\
