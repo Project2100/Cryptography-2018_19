@@ -1,6 +1,8 @@
 \mychapter{3}{Lesson 3} %181003
 
 \newcommand{\ext}{\textup{\textsf{Ext}}}
+\newcommand{\statdist}{\ensuremath{\Delta_\textsc{s}}}
+\newcommand{\sdtu}{\ensuremath{\Delta_\textsc{u}}}
 
 \section{Randomness Extraction}
 
@@ -14,10 +16,10 @@ Suppose to have a biased coin $B \sim \berdist(p) : p \neq \half$. How to craft 
     \item Sample $b_2 \pickUAR B$
     \item If $b_1 = b_2$ go to step \ref{enum:VNEsample}
     \item \label{enum:VNEreturn} Else:
-          \begin{itemize}
-              \item If $b_1 = 0 \wedge b_2 = 1$ output 1
-              \item If $b_1 = 1 \wedge b_2 = 0$ output 0
-          \end{itemize}
+    \begin{itemize}
+        \item If $b_1 = 0 \wedge b_2 = 1$ output 1
+        \item If $b_1 = 1 \wedge b_2 = 0$ output 0
+    \end{itemize}
 \end{enumerate}
 
 Some considerations can be made: The probability of both single cases in step \ref{enum:VNEreturn} is $p(1 - p)$, therefore the probability to reach it is $2p(1 - p)$. Also, it is apparent that the number of possible failures in reaching step \ref{enum:VNEreturn} follow a geometric distribution in $p$, thus the probability of increased number of failures decrease exponentially.
@@ -25,23 +27,23 @@ Some considerations can be made: The probability of both single cases in step \r
 We now get back to our ultimate goal. Let $X$ be any random variable over a space $\Omega$, we wish to design an ``extraction'' algorithm \ext{} such that $U = \ext(X)$ distributes uniformly over $\Omega$. To help ourselves, we will deal with probability spaces of binary strings ($\binary^n$), and define a measure of ``how much'' a distribution is uniform over its space:
 
 \begin{definition} Let X be a random variable from a given probability distribution. Its \emph{min-entropy} is defined as follows:
-    \[
-        H_{\infty}(X) = -\log_2(\max(\Pr[X = x]))
-    \]
+\[
+    H_{\infty}(X) = -\log_2(\max(\Pr[X = x]))
+\]
 \end{definition}
 
 Using this measure, we can already see an interesting case, which involves ``constant'' random variables:
 \begin{align*}
     X \sim \mathcal{C}onst(\overline{x}) \implies & \Pr[X = \overline{x}] = 1                                       \\
-    \implies                                      & \Pr[X \neq \overline{x}] = 0                                    \\
-    \implies                                      & H_{\infty}(X) = -\log_2(\Pr[X = \overline{x}]) = -\log_2(1) = 0
+                                         \implies & \Pr[X \neq \overline{x}] = 0                                    \\
+                                         \implies & H_{\infty}(X) = -\log_2(\Pr[X = \overline{x}]) = -\log_2(1) = 0 \\
 \end{align*}
 
 And in fact, a constant variable is useless in creating a uniform distribution: it always gives the same outcome, making everything deterministic. Therefore, such variables must be excluded in our search for a ``universal extractor''.
 On the other hand, looking at a uniform distribution:
 \begin{align*}
     X \sim \unifdist(\Omega) \implies & \forall x \Pr[X = x] = \oneover{|\Omega|}   \\
-    \implies                          & H_{\infty}(X) = -\log_2(\oneover{|\Omega|})
+                             \implies & H_{\infty}(X) = -\log_2(\oneover{|\Omega|})
 \end{align*}
 
 Knowing that $\Omega$ is be our usual domain choice of binary strings of a given length $\binary^n$, the min-entropy becomes exactly $n$\footnote{This also sheds some light in how string length is a frequent topic in the cryptography realm, as it usually expresses a cryptosystem's strength: the greater its min-entropy, the harder it is to find the right key from scratch for a ciphertext.}.
@@ -123,23 +125,27 @@ Before giving a formal definition of such an extractor, we require another notio
 \begin{definition} \emph{Statistical Distance}:
     Let $X$ and $Y$ be two random variables on the same probability space. Their \emph{statistical distance} is defined as follows:
     \[
-        SD(X, Y) = \half\sum_{x \in \Omega}|\Pr[X = x] - \Pr[Y = x]|
+        \statdist(X, Y) = \half\sum_{x \in \Omega}|\Pr[X = x] - \Pr[Y = x]|
     \]
 
 \end{definition}
 
-In an intuitive stance, this distance amounts to half the area delimited by the two distributions.
+From a more visual perspective, this distance amounts to half the area delimited by the two distributions, if drawn one over another on the outcome space.
 
 \todo{Image of the statistical distance}
+
+In most scenarios, given a random variable $X$, it is valuable to know how much it is distant to a uniform random variable $U$ over the same space $\Omega$. To this purpose, the notation $\statdist(X, U)$ will be shortened to $\sdtu(X)$, making any definition of uniform variables implicit.
 
 \begin{definition}
     Let $\ext \in \binary^d \times \binary^n \to \binary^l$ be a seeded extractor, and $S \sim \unifdist(\binary^d)$. Then it is a ($k$, $\varepsilon$)-extractor iff:
     \[
-        \forall X : H_{\infty}(X) \geq k \implies SD((S, \ext(S, X)), (S, \unifdist(\binary^l))) \leq \varepsilon
+        \forall X : H_{\infty}(X) \geq k \implies \statdist((S, \ext(S, X)), (S, \unifdist(\binary^l))) \leq \varepsilon
     \]
 \end{definition}
 
 Do note that $S$ takes part in both sides of the statistical distance: this is to be interpreted that the seed is known at the time of extraction.
+
+\todo{Need to rethink this definition further}
 
 \subsection{Universal hash functions}
 
@@ -153,101 +159,170 @@ Getting back to our hash function families, we see that they too use an argument
 \end{definition}
 
 \begin{definition}
-    Let $X$ and $Y$ be two \iid{} random variables; a \emph{collision} is the event of both evaluating to the same outcome. The probability of such an event is:
+    Let $X$ and $Y$ be two \iid{} random variables; a \emph{collision} is the event of both variables evaluating to the same outcome. Such event probabilities are denoted as:
     \[
-        Col(X) = Col(Y) = \Pr[X = Y] = \sum_{x \in \Omega}\Pr[X = x \wedge Y = x] = \sum_{x \in \Omega}\Pr[X = x]^2
+        Col(X) = Col(Y) = \Pr[X = Y]
     \]
 \end{definition}
+
+A different formulation of collision probability can be reached by simple manipulations, with the added benefit that it refers to only one of the two \iid{} random variables:
+\begin{align*}
+    \Pr(X = Y) =& \sum_{x \in \Omega} \Pr[X = x \wedge Y = x] & \text{(Total probability)} \\
+               =& \sum_{x \in \Omega} \Pr[X = x] \Pr[Y = x]   & \text{(Independency)}      \\
+               =& \sum_{x \in \Omega} \Pr[X = x]^2                                         \\
+\end{align*}
+
+\begin{lemma}[Collision bound] \label{lem:colbound}
+    Let $X$ be a random variable such that its collision probability is upper bounded by the following function of some positive value $\varepsilon$ arbitrarily close to $0$:
+    \[
+        Col(X) \leq \frac{1 + 4\varepsilon^2}{|\Omega|}
+    \]
+    Then $\sdtu(X) \leq \varepsilon$, meaning that $X$ is almost uniform over $\Omega$.
+\end{lemma}
+
+
+\begin{proof}
+    By definition of statistical distance:
+    \[
+        \sdtu(X) = \half \sum_{x \in \Omega} \left| \Pr[X = x] - \oneover{|\Omega|} \right|
+    \]
+
+    Decompose each of the above addends into the couple $q_x$ and $s_x$:
+    \[
+        q_x = \Pr[X = x] - \oneover{|\Omega|} \qquad s_x =
+        \begin{cases}
+            1  & \text{if $q_x \geq 0$} \\
+            -1 & \text{otherwise}
+        \end{cases}
+    \]
+    
+    Then, by the Euclidean variant of the Cauchy-Schwarz inequality:
+    \begin{align*}
+        \sdtu(X) =&\ \half \sum_{x \in \Omega} q_x s_x                                & \text{(Decomposition)}     \\
+              \leq&\ \half \sqrt{\sum_{x \in \Omega} q_x^2 \sum_{x \in \Omega} s_x^2} & \text{(Cauchy-Schwarz)}    \\
+                 =&\ \half \sqrt{|\Omega| \sum_{x \in \Omega} q_x^2}                  & (\forall x \; (s_x^2 = 1)) \\
+    \end{align*}
+
+    Focusing on the sum $\sum_{x \in \Omega} q_x^2$:
+    \begin{align*}
+        \sum_{y \in \Omega} q_x^2 =&\ \sum_{x \in \Omega} \left( \Pr[X = x] - \oneover{|\Omega|} \right)^2                                   \\
+                                  =&\ \sum_{x \in \Omega} \left( \Pr[X = x]^2 - \frac{2}{|\Omega|} \Pr[X = x] + \oneover{|\Omega|^2} \right) \\
+                                  =&\ Col(X) - \frac{2}{|\Omega|} + \frac{1}{|\Omega|}                                                       \\
+                               \leq&\ \frac{1 + 4 \varepsilon^2}{|\Omega|} - \frac{2}{|\Omega|} + \oneover{|\Omega|}                         \\
+                                  =&\ \frac{4 \varepsilon^2}{|\Omega|}
+    \end{align*}
+
+    Thus, getting back to the statistical distance evaluation:
+    \begin{align*}
+        \sdtu(X) \leq&\ \half \sqrt{|\Omega| \sum_{x \in \Omega} q_x^2}        \\
+                 \leq&\ \half \sqrt{|\Omega| \frac{4 \varepsilon^2}{|\Omega|}} \\
+                    =&\ \half 2 \varepsilon = \varepsilon                      \\
+    \end{align*}
+
+    and by stating that $\varepsilon$ is arbitrarily close to zero, $X$ is statistically close to a uniform distribution.
+\end{proof}
 
 \subsubsection{Leftover hash lemma}
 
 This lemma has been proven by Russell Impagliazzo, Leonid Levin and Michael Luby:
 
 \begin{lemma}[Leftover hash]
-    Let $h_s$ be a pairwise-independent hash function, and define $\ext \in \binary^d \times \binary^n \to \binary^l$ to be a seeded randomness extractor. Then if $\ext(s, x) = h_s(x)$, and $x$ follows a distribution $X$ such that:
+    Let $h_s$ be a pairwise-independent hash function with uniform seed $S$, and $\ext \in \binary^d \times \binary^n \to \binary^l$ be a seeded randomness extractor. Then if $\ext(S, x) = h_S(x)$, and $x$ is governed by a random variable $X$ with min-entropy $H_{\infty}(X) \geq k$, where:
     \[
-        H_\infty(X) = k \geq l + 2\log_2\oneover{\varepsilon} - 2
+       k = l - 2 \log_2 \varepsilon - 2
     \]
     then $\ext$ is a ($k$, $\varepsilon$)-seeded randomness extractor.
 \end{lemma}
 
-\begin{proof}
-    Let $Y\:= (S, h_S(X))$ and $Y':= (S', h_{S'}(X'))$ defined over $\mathcal{Y}:= \binary^{l+d}$, so that $Y$ and $Y'$ are i.i.d.
-    We want to show that $\Delta(Y, U) \leq \epsilon$. For lemma \ref{collision probability}, we need to show that $Col(Y) \leq \frac{1 + 4\epsilon^2}{|\mathcal{Y}|}$
-    \begin{align*}
-        Col(Y) = \Pr(Y=Y')                & = \Pr(S=S', h_S(X) = h_S(X'))       \\
-        \mbox{(independence)} \rightarrow & = \Pr(S = S') \Pr(h_S(X) = h_S(X'))
-    \end{align*}
-
-    \underline{Fact 1:} $S= U_d \Rightarrow Col(S) \leq 2^{-d}$
-
-    \begin{proof}
-        $Col(S) = \sum_s \Pr(S=s)^2 = \sum_s \Pr(S=s)\frac{1}{2^d} = \frac{1}{2^d}\sum_s \Pr(S=s) = \frac{1}{2^d}$
-    \end{proof}
-
-    So
-    \begin{align*}
-        Col(Y)                     & \leq 2^{-d} \Pr(h_S(X) = h_S(X'), X = X') + \Pr(h_S(X) = h_S(X') | X \neq X'))               \\
-        \mbox{(Bayes)} \rightarrow & \leq 2^{-d} (\Pr(X = X') \Pr(h_S(X) = h_S(X') | X = X') + \Pr(h_S(X) = h_S(X') | X \neq X')) \\
-    \end{align*}
-
-    \underline{Fact 2:} $X: H_\infty(X) \geq k \Rightarrow Col(X) \leq 2^{-k}$
-
-    \begin{proof}
-        Left as exercise.
-    \end{proof}
-
-    \underline{Fact 3:} if $\mathcal{X}$ is pairwise independent, then  $\Pr(h_S(X) = h_S(X') | X \neq X') \leq 2^{-l}$
-
-    \begin{proof}
-        Left as exercise.
-    \end{proof}
-
-    All these facts imply that
-    \begin{align*}
-        Col(Y)                                       & \leq 2^{-d}(2^{-k} + 2^{-l}) = \frac{1}{2^{d+l}}(2^{l-k} + 1)        \\
-        \mbox{(for k of the hypothesis)} \rightarrow & \leq \frac{1}{|\mathcal{Y}|}(2^{2 - 2 \log(\frac{1}{\epsilon})} + 1) \\
-                                                     & = \frac{1}{|\mathcal{Y}|} (1 + 4\epsilon^2)
-    \end{align*}
-\end{proof}
-
-Note that for small values of $\epsilon$ we have high values of min-entropy, that implies high value for k. We still don't know if we can find an extractor with $k \approx l$: it's an open problem.
-
-\begin{lemma}[Collision probability]
-    \label{collision probability}
-    Let $Y$ be a random variable over $\mathcal{Y}$ such that the probability of collision $Col(Y):= \sum_{\mathit{y} \in \mathcal{Y}} \Pr(Y=\mathit{y})^2 \leq \frac{1 + 4\epsilon^2}{|\mathcal{Y}|}$.
-    Then $\Delta(Y, U) \leq \epsilon$, i.e. Y is almost uniform over $\mathcal{Y}$.
-\end{lemma}
-
-Note that
-\begin{align*}
-    \Pr(Y=Y') & = \Pr(\cup_\mathit{y} \{Y= \mathit{y}, Y'= \mathit{y}\})                                                    \\
-              & = \sum_{\mathit{y}}\Pr(Y= \mathit{y}, Y'= \mathit{y}) = \, \leftarrow \mbox{(independent)}                  \\
-              & = \sum_{\mathit{y}} \Pr(Y= \mathit{y}) \Pr(Y'= \mathit{y}) = \, \leftarrow \mbox{(identical distributions)} \\
-              & = \sum_{\mathit{y}} \Pr(Y= \mathit{y})^2                                                                    \\
-              & = Col(Y)
-\end{align*}
+\todo{This proof has major issues:
+\begin{itemize}
+    \item The distributions $Y$ and $Y'$ are modeled with distinct seeds and hash images from distinct RVs; however the extractor def requires the same seed on both, and a uniform distribution on the second
+    \item The collision bound uses an independent uniform RV to assess the statistical distance; it is unclear how the same-seed notion of the extractor def affects the lemma's validity, but again, $Y'$ isn't explicitly specified to be completely uniform
+\end{itemize}
+}
 
 \begin{proof}
-    By applying the definition, the statistical distance between $Y$ and $U$ is:
-    \[\Delta(Y, U) = \frac{1}{2}\sum_{\mathit{y} \in \mathcal{Y}} |\Pr(Y = \mathit{y}) - \frac{1}{|\mathcal{Y}|}|\]
+    Let $Y = (S, h_S(X))$ and $Y'= (S', h_{S'}(X'))$ be two \iid{} random variables, where $S \sim S' \sim \unifdist(\binary^d)$. We want to show that $\statdist(Y, Y') \leq \varepsilon$. For lemma \ref{lem:colbound}, we need to show that $Col(Y) \leq \frac{1 + 4 \varepsilon^2}{|\Omega_Y|}$.
 
-    Let $q_\mathit{y}:= \Pr(Y = \mathit{y}) - \frac{1}{|\mathcal{Y}|}$ and (a sign function) $s_\mathit{y}:= \begin{cases} 1, & \mbox{if } q_\mathit{y} \geq 0 \\ -1, & \mbox{otherwise} \end{cases}$
-
+    The collision probability of $Y$ equates to:
     \begin{align*}
-        \Delta(Y, U)                        & = \frac{1}{2}\sum_{\mathit{y}} q_\mathit{y} s_\mathit{y}                               \\
-                                            & = \frac{1}{2}\langle \vec{q}, \vec{s}\rangle                                           \\
-        \mbox{(Cauchy-Schwarz)} \rightarrow & \leq \frac{1}{2}\sqrt{\langle \vec{q}, \vec{q}\rangle \langle \vec{s}, \vec{s}\rangle} \\
-                                            & = \frac{1}{2}\sqrt{\sum_{\mathit{y}} q_\mathit{y}^2 |\mathcal{Y}|}
+         &\ Col(Y)                                               &                                               \\
+        =&\ \Pr[Y = Y']                                          &                                               \\
+        =&\ \Pr[S = S' \wedge h_S(X) = h_{S'}(X')]               & \mathllap{\text{(By definition)}}             \\
+        =&\ \Pr[S = S'] \Pr[h_S(X) = h_{S'}(X') \knowing S = S'] & \mathllap{\text{(Conditional prob.)}}         \\
+        =&\ \Pr[S = S'] \Pr[h_S(X) = h_S(X')]                    & \mathllap{\text{(Condition collapse)}}        \\
+        =&\ 2^{-d} \Pr[h_S(X) = h_S(X')]                         & \mathllap{\text{(Uniform collision prob.)}}   \\
+        =&\ 2^{-d} \left( \Pr[h_S(X) = h_S(X') \wedge X = X'] + \Pr[h_S(X) = h_S(X') \wedge X \neq X'] \right) & \\
+         &                                                       & \mathllap{\text{(Total probability)}}         \\
     \end{align*}
 
-    Now
+    The two addends are tackled separately. For the first one: 
+
     \begin{align*}
-        \sum_\mathit{y} q_\mathit{y}^2 & = \sum_\mathit{y} (\Pr(Y=\mathit{y}) - \frac{1}{|\mathcal{Y}|})^2                                              \\
-                                       & = \sum_\mathit{y} (\Pr(Y=\mathit{y})^2 - \frac{2}{|\mathcal{Y}|}\Pr(Y=\mathit{y}) + \frac{1}{|\mathcal{Y}|^2}) \\
-                                       & = Col(Y) - \frac{2}{|\mathcal{Y}|} + \frac{1}{|\mathcal{Y}|}                                                   \\
-                                       & \leq  \frac{1 + 4\epsilon^2}{|\mathcal{Y}|} - \frac{2}{|\mathcal{Y}|} + \frac{1}{|\mathcal{Y}|}                \\
-                                       & = \frac{4\epsilon^2}{|\mathcal{Y}|}
+         &\ \Pr[h_S(X) = h_S(X') \wedge X = X']               &                               \\
+        =&\ \Pr[X = X'] \Pr[h_S(X) = h_S(X') \knowing X = X'] & \text{(Conditional prob.)}    \\
+        =&\ Col(X) \Pr[h_S(X) = h_S(X') \knowing X = X']      & \text{(Collision def.)}       \\
+        =&\ Col(X) \Pr[h_S(X) = h_S(X)]                       & \text{(Condition collapse)}   \\
+        =&\ Col(X)                                            & \text{(Prob. of a tautology)} \\
     \end{align*}
-    that implies $\Delta(Y, U) \leq \epsilon$.
+
+    \begin{proposition}
+        Given any random variable $X$:
+        \[
+            H_\infty(X) \geq k \implies Col(X) \leq 2^{-k} \qedhere
+        \]
+    \end{proposition}
+
+    \begin{proof}
+        By definition of min-entropy\footnote{The definition specifies explicitly a base-2 logarithm, but can actually be any base; in case, the statement to be proved shall correct the collision probability bound accordingly by changing its exponential basis}:
+        \begin{align*}
+            -\log \max_{x \in \Omega}(\Pr [X = x]) &\geq k      \\
+            \log \max_{x \in \Omega}(\Pr [X = x])  &\leq -k     \\
+            \max_{x \in \Omega}(\Pr [X = x])       &\leq 2^{-k} \\
+        \end{align*}
+
+        On the other hand:
+        \begin{align*}
+            Col(X) =&\ \sum_{x \in \Omega} \Pr[X = x]^2                               \\
+                \leq&\ \sum_{x \in \Omega} \Pr[X = x] \max_{y \in \Omega}(\Pr[X = y]) \\
+                   =&\ \max_{y \in \Omega}(\Pr[X = y]) \sum_{x \in \Omega} \Pr[X = x] \\
+                   =&\ \max_{y \in \Omega}(\Pr[X = y])                                \\
+        \end{align*}
+
+        Therefore:
+        \[
+            Col(X) \leq \max_{x \in \Omega}(\Pr[X = x]) \leq 2^{-k}
+        \]
+    \end{proof}
+
+    Turning focus to the second addend:
+
+    \begin{align*}
+            &\ \Pr[h_S(X) = h_S(X') \wedge X \neq X']                  &                                                  \\
+           =&\ \Pr[X \neq X'] \Pr[h_S(X) = h_S(X') \knowing X \neq X'] & \text{(Conditional prob.)}                       \\
+        \leq&\ \Pr[h_S(X) = h_S(X') \knowing X \neq X']                & \mathllap{\text{(Prob. is not greater than 1)}}  \\
+    \end{align*}
+
+    \begin{proposition}
+        If $h_S$ is a pairwise independent hash function, then  $\Pr[h_S(X) = h_S(X') \knowing X \neq X'] \leq 2^{-l}$
+    \end{proposition}
+    
+    \begin{proof}
+        \todo{Left as exercise.}
+    \end{proof}
+
+
+    Going back to the collision probability of $Y$, and using the two propositions above:
+    \begin{align*}
+        Col(Y) \leq&\ 2^{-d} \left( Col(X) + \Pr[h_S(X) = h_S(X') \knowing X \neq X'] \right) & \\
+               \leq&\ 2^{-d} (2^{-k} + 2^{-l}) & \\
+                  =&\ 2^{-d - l} (2^{-k + l} + 2^{-l + l}) & \\
+                  =&\ \oneover{|\Omega_Y|} (2^{-(l - 2 \log_2(\varepsilon) - 2) + l} + 1)  & \\
+                  =&\ \oneover{|\Omega_Y|} (2^{2 \log_2(\varepsilon) + 2} + 1)  & \\
+                  =&\ \oneover{|\Omega_Y|} (4\varepsilon^2 + 1) & \\
+    \end{align*}
+
+    Applying the collision bound entails that $\statdist(Y, Y') \leq \varepsilon$, therefore $h_S$ is a $(k, \varepsilon)$-seeded randomness extractor
 \end{proof}
+
+Note that for smaller values of $\varepsilon$ we have greater values of min-entropy. A problem that is still open is to find an extractor with $k \approx l$.
