@@ -234,17 +234,12 @@ This lemma has been proven by Russell Impagliazzo, Leonid Levin and Michael Luby
     then $\ext$ is a ($k$, $\varepsilon$)-seeded randomness extractor.
 \end{lemma}
 
-\todo{This proof has major issues:
-\begin{itemize}
-    \item The distributions $Y$ and $Y'$ are modeled with distinct seeds and hash images from distinct RVs; however the extractor def requires the same seed on both, and a uniform distribution on the second
-    \item The collision bound uses an independent uniform RV to assess the statistical distance; it is unclear how the same-seed notion of the extractor def affects the lemma's validity, but again, $Y'$ isn't explicitly specified to be completely uniform
-\end{itemize}
-}
-
 \begin{proof}
-    Let $Y = (S, h_S(X))$ and $Y'= (S', h_{S'}(X'))$ be two \iid{} random variables, where $S \sim S' \sim \unifdist(\binary^d)$. We want to show that $\statdist(Y, Y') \leq \varepsilon$. For lemma \ref{lem:colbound}, we need to show that $Col(Y) \leq \frac{1 + 4 \varepsilon^2}{|\Omega_Y|}$.
-
-    The collision probability of $Y$ equates to:
+    Let $Y = (S, h_S(X))$ be a random variable over $\binary^{d + l}$, where $S$ distributes uniformly; the extractor definition requires that:
+    \[
+        \statdist(Y, (S, \unifdist(\binary^l))) \leq \varepsilon
+    \]
+    Since the variable $(S, \unifdist(\binary^l))$ effectively distributes uniformly over $\binary^{d + l}$, by lemma \ref{lem:colbound}\footnote{Note that the lemma does not restrict any dependence relation between the random variable of interest and the uniform distribution} it suffices to show that $Col(Y) \leq |\binary^{-d - l}| (1 + 4 \varepsilon^2)$. To this end, let $Y'$ be another random variable that is \iid{} from $Y$. The collision probability of $Y$ equates to:
     \begin{align*}
          &\ Col(Y)                                               &                                               \\
         =&\ \Pr[Y = Y']                                          &                                               \\
@@ -310,7 +305,6 @@ This lemma has been proven by Russell Impagliazzo, Leonid Levin and Michael Luby
     \begin{proof}
         \todo{Left as exercise.}
     \end{proof}
-
 
     Going back to the collision probability of $Y$, and using the two propositions above:
     \begin{align*}
