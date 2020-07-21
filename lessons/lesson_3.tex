@@ -198,18 +198,18 @@ A different formulation of collision probability can be reached by simple manipu
     
     Then, by the Euclidean variant of the Cauchy-Schwarz inequality:
     \begin{align*}
-        \sdtu(X) =&\ \half \sum_{x \in \Omega} q_x s_x                                & \text{(Decomposition)}     \\
-              \leq&\ \half \sqrt{\sum_{x \in \Omega} q_x^2 \sum_{x \in \Omega} s_x^2} & \text{(Cauchy-Schwarz)}    \\
-                 =&\ \half \sqrt{|\Omega| \sum_{x \in \Omega} q_x^2}                  & (\forall x \; (s_x^2 = 1)) \\
+        \sdtu(X) =&\ \half \sum_{x \in \Omega} q_x s_x                                                                & \text{(Decomposition)}     \\
+              \leq&\ \half \sqrt{ \left( \sum_{x \in \Omega} q_x^2 \right) \left( \sum_{x \in \Omega} s_x^2 \right) } & \text{(Cauchy-Schwarz)}    \\
+                 =&\ \half \sqrt{|\Omega| \sum_{x \in \Omega} q_x^2}                                                  & (\forall x \; (s_x^2 = 1)) \\
     \end{align*}
 
     Focusing on the sum $\sum_{x \in \Omega} q_x^2$:
     \begin{align*}
-        \sum_{y \in \Omega} q_x^2 =&\ \sum_{x \in \Omega} \left( \Pr[X = x] - \oneover{|\Omega|} \right)^2                                   \\
-                                  =&\ \sum_{x \in \Omega} \left( \Pr[X = x]^2 - \frac{2}{|\Omega|} \Pr[X = x] + \oneover{|\Omega|^2} \right) \\
-                                  =&\ Col(X) - \frac{2}{|\Omega|} + \frac{1}{|\Omega|}                                                       \\
-                               \leq&\ \frac{1 + 4 \varepsilon^2}{|\Omega|} - \frac{2}{|\Omega|} + \oneover{|\Omega|}                         \\
-                                  =&\ \frac{4 \varepsilon^2}{|\Omega|}
+        \sum_{y \in \Omega} q_x^2 =&\ \sum_{x \in \Omega} \left( \Pr[X = x] - \oneover{|\Omega|} \right)^2                                   &                        \\
+                                  =&\ \sum_{x \in \Omega} \left( \Pr[X = x]^2 - \frac{2}{|\Omega|} \Pr[X = x] + \oneover{|\Omega|^2} \right) &                        \\
+                                  =&\ Col(X) - \frac{2}{|\Omega|} + \frac{1}{|\Omega|}                                                       &                        \\
+                               \leq&\ \frac{1 + 4 \varepsilon^2}{|\Omega|} - \frac{2}{|\Omega|} + \oneover{|\Omega|}                         & \text{(By hypothesis)} \\
+                                  =&\ \frac{4 \varepsilon^2}{|\Omega|}                                                                       &                        \\
     \end{align*}
 
     Thus, getting back to the statistical distance evaluation:
@@ -219,7 +219,7 @@ A different formulation of collision probability can be reached by simple manipu
                     =&\ \half 2 \varepsilon = \varepsilon                      \\
     \end{align*}
 
-    and by stating that $\varepsilon$ is arbitrarily close to zero, $X$ is statistically close to a uniform distribution.
+    and by stating that $\varepsilon$ is arbitrarily close to zero, $X$ is statistically close to the uniform distribution over $\Omega$.
 \end{proof}
 
 \subsubsection{Leftover hash lemma}
@@ -234,20 +234,23 @@ This lemma has been proven by Russell Impagliazzo, Leonid Levin and Michael Luby
     then $\ext$ is a ($k$, $\varepsilon$)-seeded randomness extractor.
 \end{lemma}
 
-\todo{This proof has a sneaky issue:
-\begin{itemize}
-    \item The collision bound uses an uniform RV to assess the statistical distance that is independent of the target RV; it is unclear how the same-seed notion of the extractor def affects the lemma's validity
-
-    Update: on further analysis, the proof changes drastically. Needs a more thorough review
-\end{itemize}
-}
-
 \begin{proof}
-    Let $Y = (S, h_S(X))$ be a random variable over $\binary^{d + l}$, where $S$ distributes uniformly; the extractor definition requires that:
+    The extractor definition requires that:
     \[
-        \statdist(Y, (S, \unifdist(\binary^l))) \leq \varepsilon
+        \statdist(Y, (S, U_l)) \leq \varepsilon
     \]
-    Since the variable $(S, \unifdist(\binary^l))$ effectively distributes uniformly over $\binary^{d + l}$, by lemma \ref{lem:colbound} it suffices to show that $Col(Y) \leq |\binary^{-d - l}| (1 + 4 \varepsilon^2)$. To this end, let $Y'$ be another random variable that is \iid{} from $Y$. The collision probability of $Y$ equates to:
+    where $U_l$ distributes unifromly over $\binary^l$. Although the appearance of $S$ in both operands may seem to complicate things, the distance formulation can be changed to remove such constraint, and become simpler:
+    \begin{align*}
+         &\ \statdist((S, h_S(X))), (S, U_l))                                                                                               &                \\
+        =&\ \half \sum_{(s, t) \in \binary^{d + l}} \left| \Pr[(S, h_S(X))) = (s, t)] - \Pr[(S, U_l) = (s, t)] \right|                      &                \\
+        =&\ \half \sum_{(s, t) \in \binary^{d + l}} \left| \Pr[(S, h_S(X))) = (s, t)] - \oneover{|\binary|^d} \oneover{|\binary^l|} \right| & (S \indep U_l) \\
+        =&\ \half \sum_{(s, t) \in \binary^{d + l}} \left| \Pr[(S, h_S(X))) = (s, t)] - \Pr[U_{d + l} = (s, t)] \right|                     &                \\
+         &                                                                                          & \mathllap{(U_{d + l} \sim \unifdist(\binary^{d + l}))} \\
+        =&\ \statdist((S, h_S(X)), U_{d + l})                                                                                               &                \\
+        =&\ \sdtu((S, h_S(X)))                                                                                                              &                \\
+    \end{align*}
+    
+    At this point the \hyperref[lem:colbound]{collision bound} can be used to put an upper bound on this statistical distance. To this end, let $Y = (S, h_S(X))$ and $Y = (S, h_S(X))$ be two \iid{} random variables; the collision probability of $Y$ equates to:
     \begin{align*}
          &\ Col(Y)                                               &                                               \\
         =&\ \Pr[Y = Y']                                          &                                               \\
@@ -298,7 +301,7 @@ This lemma has been proven by Russell Impagliazzo, Leonid Levin and Michael Luby
         \]
     \end{proof}
 
-    Turning focus to the second addend:
+    Shifting focus to the second addend:
 
     \begin{align*}
             &\ \Pr[h_S(X) = h_S(X') \wedge X \neq X']                  &                                                  \\
@@ -319,12 +322,12 @@ This lemma has been proven by Russell Impagliazzo, Leonid Levin and Michael Luby
         Col(Y) \leq&\ 2^{-d} \left( Col(X) + \Pr[h_S(X) = h_S(X') \knowing X \neq X'] \right) & \\
                \leq&\ 2^{-d} (2^{-k} + 2^{-l}) & \\
                   =&\ 2^{-d - l} (2^{-k + l} + 2^{-l + l}) & \\
-                  =&\ \oneover{|\Omega_Y|} (2^{-(l - 2 \log_2(\varepsilon) - 2) + l} + 1)  & \\
-                  =&\ \oneover{|\Omega_Y|} (2^{2 \log_2(\varepsilon) + 2} + 1)  & \\
-                  =&\ \oneover{|\Omega_Y|} (4\varepsilon^2 + 1) & \\
+                  =&\ 2^{-d - l} (2^{-(l - 2 \log_2(\varepsilon) - 2) + l} + 1)  & \\
+                  =&\ 2^{-d - l} (2^{2 \log_2(\varepsilon) + 2} + 1)  & \\
+                  =&\ 2^{-d - l} (4\varepsilon^2 + 1) & \\
     \end{align*}
 
-    Applying the collision bound entails that $\statdist(Y, Y') \leq \varepsilon$, therefore $h_S$ is a $(k, \varepsilon)$-seeded randomness extractor
+    Applying the collision bound entails that $\sdtu(Y) \leq \varepsilon$, therefore $h_S$ is a $(k, \varepsilon)$-seeded randomness extractor.
 \end{proof}
 
 Note that for smaller values of $\varepsilon$ we have greater values of min-entropy. A problem that is still open is to find an extractor with $k \approx l$.
