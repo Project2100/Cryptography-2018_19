@@ -14,7 +14,7 @@ Another way to obtain domain extension for a \mac{} scheme, using the $H \circ F
 
 Let $f_s$ be a \prf, and assume that we have this function
 \[
-    h_s(m) = f_s(m_1||1) \xor ... \xor f_s(m_t||t)
+    h_s(m) = f_s(m_1||1) \oplus ... \oplus f_s(m_t||t)
 \]
 so that the input to $f_s$ is $n + log_2(t)$ bytes long.
 
@@ -32,8 +32,8 @@ so that the input to $f_s$ is $n + log_2(t)$ bytes long.
     \]
     This means that:
     \begin{align*}
-        & \Pr\left[\left(\bigxor_{i = 1}^{t} f_s(m_i, i)\right) = \left(\bigxor_{i = 1}^{t} f_s(m_i', i)\right)\right] \\
-        =& \Pr[\forall i \quad f_s(m_i, i) \xor f_s(m'_i, i) = \bigxor_{j = 1, j \neq i}^{t} f_s(m_j, j) \xor f_s(m'_j, j) = \alpha]
+        & \Pr\left[\left(\bigoplus_{i = 1}^{t} f_s(m_i, i)\right) = \left(\bigoplus_{i = 1}^{t} f_s(m_i', i)\right)\right] \\
+        =& \Pr[\forall i \quad f_s(m_i, i) \oplus f_s(m'_i, i) = \bigoplus_{j = 1, j \neq i}^{t} f_s(m_j, j) \oplus f_s(m'_j, j) = \alpha]
     \end{align*}
     for each $i \in [1,t]$. But $\alpha$ is one unique random number chosen over $2^{n}$ possible candidates, so the collision probability is negligible.
     
@@ -42,7 +42,7 @@ so that the input to $f_s$ is $n + log_2(t)$ bytes long.
 \subsection{\textsc{cbc}-mode \mac{} scheme}
 This mode is used in practice by the \textsc{tls} standard. It's used with a \prf{} $f_s$, setting the starting vector as $\textsc{iv} = 0^n = c_0$ and running this \prf{} as part of \textsc{cbc}. The last block otained by the whole process is the message's signature:
 \[
-    h_s(m) = f_s(m_t \xor f_s(m_{t-1} \xor f_s(\dots f_s(m_2 \xor f_s(m_1 \xor \textsc{iv})) \dots)))
+    h_s(m) = f_s(m_t \oplus f_s(m_{t-1} \oplus f_s(\dots f_s(m_2 \oplus f_s(m_1 \oplus \textsc{iv})) \dots)))
 \]
 \begin{lemma}
     \textsc{cbc} \mac{} defines completely an \textsc{au} family.
@@ -66,31 +66,31 @@ We can use this function to create an \emph{encrypted \textsc{cbc}}, or \textsc{
 \end{proof}
 
 \subsection{\textsc{xor} \mac}
-Instead of $H \circ F$, now the $\Tag$ routine outputs $\phi = (\eta , f_k(\eta) \xor h_s(m))$ where $\eta \pickUAR \binary^n$ is random and it's called \textit{nonce}. Authentication is done as:
+Instead of $H \circ F$, now the $\Tag$ routine outputs $\phi = (\eta , f_k(\eta) \oplus h_s(m))$ where $\eta \pickUAR \binary^n$ is random and it's called \textit{nonce}. Authentication is done as:
 \[
-    (m, (\eta, f_k(\eta) \xor h_s(m)))
+    (m, (\eta, f_k(\eta) \oplus h_s(m)))
 \]
 
-When I want to verify a message and I get the couple $(m, (\eta, v))$, I just check that $v = f_k(\eta) \xor h_s(m)$. It should be hard to find a value called $a$ such that, given $m \neq m'$, 
+When I want to verify a message and I get the couple $(m, (\eta, v))$, I just check that $v = f_k(\eta) \oplus h_s(m)$. It should be hard to find a value called $a$ such that, given $m \neq m'$, 
 \[
-    h_s(m) \xor a = h_s(m')
+    h_s(m) \oplus a = h_s(m')
 \]
 
 In fact, since an adversary who wants to break this scheme has to send a valid couple $(m^*, \phi^*)$ after some queries, he could:
 \begin{itemize}
-    \item ask for message $m$ and store the tag $(\eta, f_k(\eta) \xor h_s(m))$
-    \item try to find $a = h_s(m) \xor h_s(m')$ and modify the previous stored tag adding $v \xor a$, 
+    \item ask for message $m$ and store the tag $(\eta, f_k(\eta) \oplus h_s(m))$
+    \item try to find $a = h_s(m) \oplus h_s(m')$ and modify the previous stored tag adding $v \oplus a$, 
 \end{itemize}
 so now he could send the authenticated message
 \[
-    (m', (\eta, f_k(\eta) \xor h_s(m'))) 
+    (m', (\eta, f_k(\eta) \oplus h_s(m'))) 
 \]
 which is a valid message.
 
 \begin{definition}
     Let $S$ be a uniform seed; a hash function $h_s$ is deemed \emph{Almost \textsc{xor}-universal}, or \textsc{axu} in short, iff:
     \[
-        \forall x_1 \neq x_2, a \implies \Pr[h_S(x_1) \xor h_S(x_2) = a] \leq \varepsilon \qedhere
+        \forall x_1 \neq x_2, a \implies \Pr[h_S(x_1) \oplus h_S(x_2) = a] \leq \varepsilon \qedhere
     \]
 \end{definition}
 
@@ -193,16 +193,16 @@ Going back to the encryption realm, a new definition of attack to a \ske{} schem
 
 \begin{proof}
 
-    Let $m_0$ and $m_1$ be the messages the adversary sends to the challenger as the challenge plaintexts; on receiving the ciphertext $c_b = (r, f_k(r \xor m_b) : b \pickUAR \binary$, the adversary crafts another ciphertext with an arbitrary value $\alpha$:
+    Let $m_0$ and $m_1$ be the messages the adversary sends to the challenger as the challenge plaintexts; on receiving the ciphertext $c_b = (r, f_k(r \oplus m_b) : b \pickUAR \binary$, the adversary crafts another ciphertext with an arbitrary value $\alpha$:
     \[
-        \widehat{c_b} = (r, f_k(r) \xor m_b \xor \alpha)
+        \widehat{c_b} = (r, f_k(r) \oplus m_b \oplus \alpha)
     \]
     and queries the decryption oracle on it. The latter will decrypt the new ciphertext and return a plaintext, which can be easily manipulated by the adversary to reveal exactly which message was encrypted during the challenge:
 
     \begin{align*}
-        \Dec(k, (\widehat{c_b}) &= \Dec(k, (r, f_k(r) \xor m_b \xor \alpha))    \\
-                                &= f_k(r) \xor f_k(r) \xor m_b \xor \alpha      \\
-                                &= m_b \xor \alpha                              \\
+        \Dec(k, (\widehat{c_b}) &= \Dec(k, (r, f_k(r) \oplus m_b \oplus \alpha))    \\
+                                &= f_k(r) \oplus f_k(r) \oplus m_b \oplus \alpha      \\
+                                &= m_b \oplus \alpha                              \\
     \end{align*}
 
     Therefore, the adversary certainly wins after just one decryption query, proving the scheme's vulnerability to \cca{} attacks.

@@ -1,12 +1,6 @@
 % Theoremstyle
 \usepackage{amsthm}
 
-% declare theorem
-\usepackage{thmtools}
-
-% cref
-\usepackage{cleveref}
-
 % Math?lap commands
 \usepackage{mathtools}
 
@@ -40,13 +34,6 @@
 % Key generator for public-privte pairs
 \newcommand{\keygen}{\textsf{\textup{Keygen}}}
 
-% Grouped or
-\newcommand{\biglor}{\bigvee}
-
-% XORs
-\newcommand{\bigxor}{\bigoplus}
-\newcommand{\xor}{\oplus}
-
 \newcommand{\C}{\mathcal{C}} % Cipherspace
 \newcommand{\G}{\mathcal{G}} % Generally used for generators or groups
 \newcommand{\K}{\mathcal{K}} % Keyspace
@@ -56,71 +43,30 @@
 
 \newcommand{\Gen}{\mathrm{Gen}} % Generic generator
 
+% One-Time Pad
+\newcommand{\otp}{\textsc{otp}}
+
 
 %========================================================================================================
 
 
-\theoremstyle{plain}
-\declaretheorem[qed=\ensuremath{\diamond}]{theorem}
-\declaretheorem[qed=\ensuremath{\diamond}]{lemma}
-\declaretheorem[qed=\ensuremath{\diamond}]{corollary}
-\declaretheorem[qed=\ensuremath{\diamond}]{fact}
-\declaretheorem[qed=\ensuremath{\diamond}]{claim}
-\declaretheorem[qed=\ensuremath{\diamond}]{observation}
-\declaretheorem[qed=\ensuremath{\diamond}]{proposition}
-
-\crefname{thm}{theorem}{theorems}
-\Crefname{thm}{Theorem}{Theorems}
-
-\crefname{lem}{lemma}{lemmas}
-\Crefname{lem}{Lemma}{Lemmas}
-
-\crefname{cor}{corollary}{corollarys}
-\Crefname{cor}{Corollary}{Corollarys}
-
-\crefname{fct}{fact}{facts}
-\Crefname{fct}{Fact}{Facts}
-
-\crefname{clm}{claim}{claims}
-\Crefname{clm}{Claim}{Claims}
-
-\crefname{obs}{observation}{observations}
-\Crefname{obs}{Observation}{Observations}
-
-\crefname{prop}{proposition}{propositions}
-\Crefname{prop}{Proposition}{Propositions}
-
-
+\newtheorem{theorem}                    {Theorem}       [chapter]
+\newtheorem{lemma}          [theorem]   {Lemma}
+\newtheorem{corollary}      [theorem]   {Corollary}
+\newtheorem{claim}          [theorem]   {Claim}
+\newtheorem{observation}    [theorem]   {Observation}
+\newtheorem{proposition}    [theorem]   {Proposition}
 \theoremstyle{definition}
-\declaretheorem[qed=\ensuremath{\diamond}]{definition}
-\declaretheorem[qed=\ensuremath{\diamond}]{construction}
-
-\crefname{defn}{definition}{definitions}
-\Crefname{defn}{Definition}{Definitions}
-
-\crefname{cons}{construction}{constructions}
-\Crefname{cons}{Construction}{Constructions}
-
-
-% \theoremstyle{plain}
-\newtheorem{thm}{Theorem}
-\newtheorem{lem}{Lemma}
-\newtheorem{cor}{Corollary}
-\newtheorem{fct}{Fact}
-\newtheorem{clm}{Claim}
-\newtheorem{obs}{Observation}
-\newtheorem{prop}{Proposition}
-\newtheorem{question}{Question}
-\newtheorem{exercise}[theorem]{Exercise}
-\newtheorem{solution}{Solution}
-\newtheorem{example}{Example}
-% \theoremstyle{definition}
-\newtheorem{defn}{Definition}
-\newtheorem{cons}{Construction}
+\newtheorem{definition}     [theorem]   {Definition}
+\newtheorem{exercise}       [theorem]   {Exercise}
+\newtheorem{example}        [theorem]   {Example}
+\newtheorem{construction}               {Construction}
+\theoremstyle{remark}
+\newtheorem{solution}       [theorem]   {Solution}
 
 
 %----------------------IMAGES-----------------------------------
-\usetikzlibrary{tikzmark,decorations.pathreplacing,positioning,shapes,fit,arrows}
+\usetikzlibrary{tikzmark,decorations.pathreplacing,positioning,shapes,fit}
 
 \newcounter{listcount} \newcounter{totcount}
 \newcommand{\printarray}[2][1em]{% \printarray[<width>]{<array list>}

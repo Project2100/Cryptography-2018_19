@@ -279,7 +279,7 @@ However, it is always possible to construct a hardcore predicate for a \owf{}, f
 \begin{theorem}[Goldreich-Levin, '99]
     Let $f$ be a \owf{} and consider $g(x, r) = (f(x), r)$ for $r \in \binary^n$. Then $g$ is a \owf{}, and:
     \[
-        h(x,r) = \left<x, r\right> = \bigxor_{i = 1}^n x_i \xor r_i = \sum_{i = 1}^n x_i \xor r_i \mod 2
+        h(x,r) = \left<x, r\right> = \bigoplus_{i = 1}^n x_i \oplus r_i = \sum_{i = 1}^n x_i \oplus r_i \mod 2
     \]
     is hardcore for $g$.
 \end{theorem}

@@ -113,8 +113,8 @@ An important difference is that $g_k$ is efficiently invertible, although knowle
 \textsc{Prp}s have been successfully constructed by using existing \prf{}s into what is called a \emph{Feistel network}. As a starting point, let $f_k \in \binary^n \to \binary^n$ be a \prf, and define the function $\psi_f$ as follows:
 
 \begin{align*}
-    \psi_f(x, y)        &= (y, x \xor F(y)) = (x', y')                                  \\
-    \psi^{-1}_f(x', y') &= (F(x') \xor y', x') = (F(y) \xor x \xor F(y), y) = (x, y)    \\
+    \psi_f(x, y)        &= (y, x \oplus F(y)) = (x', y')                                  \\
+    \psi^{-1}_f(x', y') &= (F(x') \oplus y', x') = (F(y) \oplus x \oplus F(y), y) = (x, y)    \\
 \end{align*}
 
 \begin{figure}
@@ -125,7 +125,7 @@ An important difference is that $g_k$ is efficiently invertible, although knowle
         \node (x) {$x$};
         \node (y) [below of = x, node distance = 3cm] {$y$};
 
-        \node (xor) [right of = y] {$\xor$};
+        \node (xor) [right of = y] {$\oplus$};
         \node (F) [box, above of = xor, node distance = 1.5cm] {$F_k$};
 
         \draw[->] (x) -- +(2cm, 0) -- +(3cm, -3cm) -- +(4cm, -3cm);
@@ -144,7 +144,7 @@ An important difference is that $g_k$ is efficiently invertible, although knowle
 % AP190121: Some more intermediate steps might be useful
 While this construct is invertible and uses a \prf{}, it is not pseudorandom itself, because the first $n$ bits of $\psi_F$'s image are always equal to $y$, and thus visible to any adversary. A first attempt at fixing this vulnerability would be to apply the construct two times on two different \prf{}s $\psi^2_{F, F'}$, in an attempt to ``hide'' $y$. Yet, this approach still leaks valuable information:
 \[
-    \psi_{F, F'}(x, z) \xor \psi_{F, F'}(y, z) = (x \xor y, \dots)
+    \psi_{F, F'}(x, z) \oplus \psi_{F, F'}(y, z) = (x \oplus y, \dots)
 \]
 
 However, this example with additional restrictions will be useful very soon, so it is reworded as the following lemma:

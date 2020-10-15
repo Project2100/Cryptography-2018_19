@@ -56,12 +56,12 @@ This last definition shows how such a scheme is compliant with the three propert
     \item \emph{No information about the message whatsoever may leak from the ciphertext}. This may seem subtler than the previous point, but it warrants caution. Observe how an adversary \adversary{}, if it has the ability to extract even a tiny bit of information of the original message from the ciphertext, then it is actually able to make an educated guess on which message was encrypted in the first place, putting him at an advantage. This leads the probabilities described in the definition to be sensibly more unbalanced than negligible, forfeiting the desired secrecy.
 \end{enumerate}
 
-By extension, we may ask ourselves what scheme may or may not be \emph{computationally two-time secure}. For instance, let $\Pi_{\xor} = (\Enc, \Dec)$ be a secrecy scheme using a \prg{} $G : \binary^\lambda \to \binary^n$, structured as follows:
+By extension, we may ask ourselves what scheme may or may not be \emph{computationally two-time secure}. For instance, let $\Pi_{\oplus} = (\Enc, \Dec)$ be a secrecy scheme using a \prg{} $G : \binary^\lambda \to \binary^n$, structured as follows:
 
 \begin{itemize}
     \item $\K = \binary^\lambda$, $\M = \C= \binary^n$
-    \item $\Enc(k, m) = G(k) \xor m$
-    \item $\Dec(k, c) = c \xor G(k) = m$
+    \item $\Enc(k, m) = G(k) \oplus m$
+    \item $\Dec(k, c) = c \oplus G(k) = m$
 \end{itemize}
 
 To be two-time secure means that, even if an adversary \adversary{} gets hold of a valid plaintext-ciphertext couple $(\overline{m}, \overline{c})$, he is unable to decrypt any future ciphertexts\footnotemark, apart from the obvious $\overline{c}$. However, observe that \adversary{} is now able to extract valuable information for decrypting future ciphertexts:
@@ -69,18 +69,18 @@ To be two-time secure means that, even if an adversary \adversary{} gets hold of
 \footnotetext{This example models a technique called ``Chosen Plaintext Attack'', which will be discussed in depth later}
 
 \[
-    \overline{c} = \Enc(k, \overline{m}) = G(k) \xor \overline{m} \implies \overline{c} \xor \overline{m} = G(k)
+    \overline{c} = \Enc(k, \overline{m}) = G(k) \oplus \overline{m} \implies \overline{c} \oplus \overline{m} = G(k)
 \]
-so now, for any second ciphertext \adversary{} receives, he can ``mimick'' the decryption routine, and efficiently uncover the underlying plaintext. This proves that $\Pi_\xor$ is not two time-secure; nevertheless, it is still one-time secure:
+so now, for any second ciphertext \adversary{} receives, he can ``mimick'' the decryption routine, and efficiently uncover the underlying plaintext. This proves that $\Pi_\oplus$ is not two time-secure; nevertheless, it is still one-time secure:
 
 \begin{theorem}
-    If $G$ is a \prg, then $\Pi_\xor$ is computationally one-time secure
+    If $G$ is a \prg, then $\Pi_\oplus$ is computationally one-time secure
 \end{theorem}
 
 \begin{proof}
     This proof is another example that showcases the use of hybrid games. Recalling the one-time security definition, we need to show that:
     \[
-        \forall \adversary \in \ppt \implies \cryptog{ind}[\Pi_\xor](\lambda, 0) \compindist \cryptog{ind}[\Pi_\xor](\lambda, 1)
+        \forall \adversary \in \ppt \implies \cryptog{ind}[\Pi_\oplus](\lambda, 0) \compindist \cryptog{ind}[\Pi_\oplus](\lambda, 1)
     \]
     Consider the hybrid game in figure \ref{cryptogame:xorothybrid}, where the original encryption routine is changed to use a completely random value, instead of using $G(k)$\footnotemark. As an exercise, compare it with the original one-time secure definition in figure \ref{cryptogame:otindist}, to check that it perfectly matches.
 
@@ -88,7 +88,7 @@ so now, for any second ciphertext \adversary{} receives, he can ``mimick'' the d
 
     \begin{cryptogame}
         {xorothybrid}
-        {$\hybridg{}[\Pi_\xor](\lambda, b)$}
+        {$\hybridg{}[\Pi_\oplus](\lambda, b)$}
         {r-ind}
 
         \send{$m_0 \neq m_1 \in \binary^l$}{$m_0, m_1$}{}
@@ -96,7 +96,7 @@ so now, for any second ciphertext \adversary{} receives, he can ``mimick'' the d
         \receive{\shortstack[l]{
             $r \pickUAR \binary^l$ \\   % R \sim \unifdist{\binary^l}
             $b \pickUAR \binary$ \\     % B \sim \unifdist{\binary}
-            $c = r \xor m_b$            % C = R \xor m_B
+            $c = r \oplus m_b$            % C = R \oplus m_B
         }}
         {$c$}{}
 
@@ -109,29 +109,29 @@ so now, for any second ciphertext \adversary{} receives, he can ``mimick'' the d
     The proof begins by affirming that:
     \begin{claim}
         \[
-            \forall \adversary \in \ppt \implies \hybridg{}[\Pi_\xor](\lambda, 0) \equiv \hybridg{}[\Pi_\xor](\lambda, 1)
+            \forall \adversary \in \ppt \implies \hybridg{}[\Pi_\oplus](\lambda, 0) \equiv \hybridg{}[\Pi_\oplus](\lambda, 1)
         \]
     \end{claim}
 
     To prove it, notice that $r$ is chosen uniformly at random, and independently of $b$. Thus, no matter how the messages $m_0$ and $m_1$ are structured, $r$ will effectively make the chosen message completely unrecognizable. In formal terms, let $B$ and $R$ be the random variables for \challenger{}'s picks of $b$ and $r$ respectively; then:
     \begin{align*} % AP190906: Totally original, need a peer review here
         & \left| \Pr(B = 0 \knowing C = c) - \Pr(B = 1 \knowing C \evaluatesto c) \right| & \\
-        =& \left| \Pr(B = 0 \knowing R \xor m_B \evaluatesto c) - \Pr(B = 1 \knowing R \xor m_B \evaluatesto c) \right| & \text{(C definition)} \\
-        =& \mathrlap{\frac{\left| \Pr(R \xor m_B = c \knowing B \evaluatesto 0) \Pr(B = 0) - \Pr(R \xor m_B = c \knowing B \evaluatesto 1) \Pr(B = 1) \right|}{\Pr(R \xor m_B = c)}} & \\
+        =& \left| \Pr(B = 0 \knowing R \oplus m_B \evaluatesto c) - \Pr(B = 1 \knowing R \oplus m_B \evaluatesto c) \right| & \text{(C definition)} \\
+        =& \mathrlap{\frac{\left| \Pr(R \oplus m_B = c \knowing B \evaluatesto 0) \Pr(B = 0) - \Pr(R \oplus m_B = c \knowing B \evaluatesto 1) \Pr(B = 1) \right|}{\Pr(R \oplus m_B = c)}} & \\
         & & \text{(Bayes' theorem)} \\
-        =& \frac{\left| \Pr(R \xor m_0 = c) \Pr(B = 0) - \Pr(R \xor m_1 = c) \Pr(B = 1) \right|}{\Pr(R \xor m_B = c)} & \text{(Cond. collapse)} \\
-        =& \frac{\left| \oneover{2^l} \half - \oneover{2^l} \half \right|}{\Pr(R \xor m_B = c)} = 0 & \\
+        =& \frac{\left| \Pr(R \oplus m_0 = c) \Pr(B = 0) - \Pr(R \oplus m_1 = c) \Pr(B = 1) \right|}{\Pr(R \oplus m_B = c)} & \text{(Cond. collapse)} \\
+        =& \frac{\left| \oneover{2^l} \half - \oneover{2^l} \half \right|}{\Pr(R \oplus m_B = c)} = 0 & \\
     \end{align*}
 
-    Having proven that \adversary's success is equivalent to straight guessing in $\hybridg{}[\Pi_\xor]$, we now relate the hybrid game to the original one, affirming that:
+    Having proven that \adversary's success is equivalent to straight guessing in $\hybridg{}[\Pi_\oplus]$, we now relate the hybrid game to the original one, affirming that:
     
     \begin{claim}
         \[
-            \forall \adversary \in \ppt,\, \forall b \in \binary \implies \hybridg{}[\Pi_\xor](\lambda, b) \compindist \cryptog{ind}[\Pi_\xor](\lambda, b) \qedhere
+            \forall \adversary \in \ppt,\, \forall b \in \binary \implies \hybridg{}[\Pi_\oplus](\lambda, b) \compindist \cryptog{ind}[\Pi_\oplus](\lambda, b) \qedhere
         \]
     \end{claim}
 
-    The proof proceeds by reduction as depicted in figure \ref{cryptoredux:xorotprg}, by assuming the existence of a distinguisher $\textsf{D}^{\textsc{ind}}$ for $c = G(k) \xor m_{b}$ and $c = r \xor m_{b}$, and using it to break $G$'s pseudo-random generation property.
+    The proof proceeds by reduction as depicted in figure \ref{cryptoredux:xorotprg}, by assuming the existence of a distinguisher $\textsf{D}^{\textsc{ind}}$ for $c = G(k) \oplus m_{b}$ and $c = r \oplus m_{b}$, and using it to break $G$'s pseudo-random generation property.
 
     \begin{cryptoredux}
         {xorotprg}
@@ -150,7 +150,7 @@ so now, for any second ciphertext \adversary{} receives, he can ``mimick'' the d
 
         \invoke{\shortstack[l]{
             $\beta \pickUAR \binary$ \\
-            $c = x_b \xor m_\beta$
+            $c = x_b \oplus m_\beta$
         }}{$c$}{}
 
         \return{}{$\beta'$}{}
@@ -173,13 +173,13 @@ so now, for any second ciphertext \adversary{} receives, he can ``mimick'' the d
 
     Either way, by the existence of $\distinguisher{}^\textsc{ind}$, \adversary{} gains an edge in efficiently recognizing $G$, which cannot happen by $G$'s definition; the claim is proven. The theorem's proof can be completed by putting the pieces together, as is usual in the hybrid argument:
     \[
-        \cryptog{ind}[\Pi_\xor](\lambda, 0) \compindist
-        \hybridg{}[\Pi_\xor](\lambda, 0) \equiv
-        \hybridg{}[\Pi_\xor](\lambda, 1) \compindist
-        \cryptog{ind}[\Pi_\xor](\lambda, 1)
+        \cryptog{ind}[\Pi_\oplus](\lambda, 0) \compindist
+        \hybridg{}[\Pi_\oplus](\lambda, 0) \equiv
+        \hybridg{}[\Pi_\oplus](\lambda, 1) \compindist
+        \cryptog{ind}[\Pi_\oplus](\lambda, 1)
     \]
 
-    which finally states that $\cryptog{ind}[\Pi_\xor](\lambda, 0) \compindist \cryptog{ind}[\Pi_\xor](\lambda, 1)$.
+    which finally states that $\cryptog{ind}[\Pi_\oplus](\lambda, 0) \compindist \cryptog{ind}[\Pi_\oplus](\lambda, 1)$.
 \end{proof}
  
 

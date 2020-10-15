@@ -136,7 +136,7 @@ The previous scheme works on fixed length messages; as in the encryption domain,
 Assume the message $m = (m_1, \dots, m_t) \in \binary^{n \cdot t}$ for some $t \geq 1$. Given the tagging function $\Tag_k \in \binary^n \to \binary^l$, an attempt to tag the whole message may be to:
 
 \begin{itemize}    
-    \item \textsc{xor} all the message blocks, and then tag: $\phi = \Tag(k, \bigxor_{i = 1}^{t} m_i)$. This approach opens to some easy forgeries: given an authenticated message $(m, \phi)$, an adversary can create a valid couple $(m', \phi)$, where $m'$ is the original message with two flipped bits in two distinct blocks at the same offset; the resulting \textsc{xor} would be the same.
+    \item \textsc{xor} all the message blocks, and then tag: $\phi = \Tag(k, \bigoplus_{i = 1}^{t} m_i)$. This approach opens to some easy forgeries: given an authenticated message $(m, \phi)$, an adversary can create a valid couple $(m', \phi)$, where $m'$ is the original message with two flipped bits in two distinct blocks at the same offset; the resulting \textsc{xor} would be the same.
 
     \item define the tag to be a $t$-sequence of tags, one for each message block. Again, there is an easy way to forge authenticated messages: an adversary can just flip the position of two arbitrary distinct message blocks along with their relative tags, resulting in a different, yet authentic message.
 

@@ -42,9 +42,9 @@
 
 Let us cnsider the following scheme $\Pi$, which is an adaption of the old \cpa-secure \ske{} to public keys:
 \begin{itemize}
-    \item $\Enc(\pk, m) = (r, f_\pk(m \xor r))$, where $r \sim \unifdist(\binary^\lambda)$
-    \item $\Dec(\sk, (c_0, c_1)) = g_\sk(c_1) \xor c_0$
-    \item Correctness: $g_\sk(c_1) \xor c_0 = g_\sk(f_\pk (m \xor r)) \xor r = m \xor r \xor r = m$
+    \item $\Enc(\pk, m) = (r, f_\pk(m \oplus r))$, where $r \sim \unifdist(\binary^\lambda)$
+    \item $\Dec(\sk, (c_0, c_1)) = g_\sk(c_1) \oplus c_0$
+    \item Correctness: $g_\sk(c_1) \oplus c_0 = g_\sk(f_\pk (m \oplus r)) \oplus r = m \oplus r \oplus r = m$
 \end{itemize}
 
 A \emph{trapdoor permutation} (or \tdp) is a \owp{} having the following features:

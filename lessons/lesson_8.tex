@@ -8,7 +8,7 @@ Up until now, encryption has been dealt with messages of fixed size around a pol
 
 The operation of \textsc{ecb}-mode is straightforward: Given a message split into blocks $(m_1, \dots, m_t)$, apply the scheme's encryption routine to each block, as shown in figure \ref{fig:ecb}:
 \[
-    c_i = F_k(r) \xor m_i \quad \forall i \in \{0, \dots, t\}
+    c_i = F_k(r) \oplus m_i \quad \forall i \in \{0, \dots, t\}
 \]
 Decryption is trivially implemented by \textsc{xor}-ing the ciphered blocks with $F_k(r)$.
 
@@ -19,13 +19,13 @@ Decryption is trivially implemented by \textsc{xor}-ing the ciphered blocks with
 
         \path[->]
             node (m1) {$m_1$}
-            node (x1) [right of = m1] {$\xor$}
+            node (x1) [right of = m1] {$\oplus$}
             node (c1) [below of = x1] {$c_1$}
             node (f1) [box, above of = x1] {$f_k$}
             node (r1) [above of = f1] {$r$}
 
             node (m2) [right of = x1] {$m_2$}
-            node (x2) [right of = m2] {$\xor$}
+            node (x2) [right of = m2] {$\oplus$}
             node (c2) [below of = x2] {$c_2$}
             node (f2) [box, above of = x2] {$f_k$}
             node (r2) [above of = f2] {$r$}
@@ -36,7 +36,7 @@ Decryption is trivially implemented by \textsc{xor}-ing the ciphered blocks with
             node (rd) [right of = r2, node distance = 15mm] {$\dots$}
 
             node (mt) [right of = xd] {$m_t$}
-            node (xt) [right of = mt] {$\xor$}
+            node (xt) [right of = mt] {$\oplus$}
             node (ct) [below of = xt] {$c_t$}
             node (ft) [box, above of = xt] {$f_k$}
             node (rt) [above of = ft] {$r$}
@@ -70,11 +70,11 @@ This approach has the advantage of being completely parallelizable, as each bloc
 % AP190105: The explanation anticipates PRPs, which may be a problem. Should be reviewed at later times...
 This mode serializes block encryption by using the preceding ciphered block in the formula:
 \[
-    c_i = P_k(r) \xor m_i \quad \forall i \in \{0, \dots, t\}
+    c_i = P_k(r) \oplus m_i \quad \forall i \in \{0, \dots, t\}
 \]
 This time, a \emph{pseudorandom permutation}(\prp) is used instead of a \prf; they will be discussed later on. The diagram in figure \ref{fig:cbc} shows a general view of \textsc{cbc}-mode's operation. The decryption process is analogous but in a reversed fashion, by computing the preimage of a ciphered block and \textsc{xor}-ing it with the preceding ciphered block:
 \[
-    m_i = P_k^{-1}(c_i) \xor c_{i-1}
+    m_i = P_k^{-1}(c_i) \oplus c_{i-1}
 \]
 
 \begin{figure}[ht]
@@ -87,12 +87,12 @@ This time, a \emph{pseudorandom permutation}(\prp) is used instead of a \prf; th
 
             node (c1) [right of = c0, node distance = 24mm] {$c_1$}
             node (p1) [box, above of = c1] {$P_k$}
-            node (x1) [above of = p1] {$\xor$}
+            node (x1) [above of = p1] {$\oplus$}
             node (m1) [above of = x1] {$m_1$}
             
             node (c2) [right of = c1, node distance = 24mm] {$c_2$}
             node (p2) [box, above of = c2] {$P_k$}
-            node (x2) [above of = p2] {$\xor$}
+            node (x2) [above of = p2] {$\oplus$}
             node (m2) [above of = x2] {$m_2$}
 
             node (cd) [right of = c2, node distance = 24mm] {$\dots$}
@@ -102,7 +102,7 @@ This time, a \emph{pseudorandom permutation}(\prp) is used instead of a \prf; th
 
             node (ct) [right of = cd, node distance = 24mm] {$c_t$}
             node (pt) [box, above of = ct] {$P_k$}
-            node (xt) [above of = pt] {$\xor$}
+            node (xt) [above of = pt] {$\oplus$}
             node (mt) [above of = xt] {$m_t$}
             
             (r) edge (c0)
@@ -143,13 +143,13 @@ Also denoted as \textsc{ctr} in short, this mode closely resembles \textsc{ecb}-
             node (c0) {$c_0$}
 
             node (c1) [right of = c0, node distance = 24mm] {$c_1$}
-            node (x1) [above of = c1] {$\xor$}
+            node (x1) [above of = c1] {$\oplus$}
             node (m1) [left of = x1] {$m_1$}
             node (f1) [box, above of = x1] {$f_k$}
             node (r1) [above of = f1] {$r$}
 
             node (c2) [right of = c1, node distance = 24mm] {$c_2$}
-            node (x2) [above of = c2] {$\xor$}
+            node (x2) [above of = c2] {$\oplus$}
             node (m2) [left of = x2] {$m_2$}
             node (f2) [box, above of = x2] {$f_k$}
             node (r2) [above of = f2] {$r + 1$}
@@ -160,7 +160,7 @@ Also denoted as \textsc{ctr} in short, this mode closely resembles \textsc{ecb}-
             node (rd) [above of = fd] {$\dots$}
 
             node (ct) [right of = cd, node distance = 24mm] {$c_t$}
-            node (xt) [above of = ct] {$\xor$}
+            node (xt) [above of = ct] {$\oplus$}
             node (mt) [left of = xt] {$m_t$}
             node (ft) [box, above of = xt] {$f_k$}
             node (rt) [above of = ft] {$r + t - 1$}
@@ -213,7 +213,7 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
         \send{}{$m = (m_1, \dots, m_t)$}{}
         \receive{\shortstack[l]{
             $r = c_0 \pickUAR \binary^n$ \\
-            $c_i = f_k(r + i - 1) \xor m_i \quad \forall i$
+            $c_i = f_k(r + i - 1) \oplus m_i \quad \forall i$
         }}
         {$c = (c_0, c_1, \dots, c_t)$}{}
 
@@ -225,7 +225,7 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
         \receive{\shortstack[l]{
             $\rho = \gamma_0 \pickUAR \binary^n$ \\
             $b \pickUAR \binary$ \\
-            $(\gamma_b)_i = f_k(\rho + i - 1) \xor (\mu_b)_i \quad \forall i$
+            $(\gamma_b)_i = f_k(\rho + i - 1) \oplus (\mu_b)_i \quad \forall i$
         }}
         {$\gamma_b = (\gamma_0, \gamma_1, \dots, \gamma_t)$}{}
 
@@ -236,7 +236,7 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
         \send{}{$m = (m_1, \dots, m_t)$}{}
         \receive{\shortstack[l]{
             $r = c_0 \pickUAR \binary^n$ \\
-            $c_i = f_k(r + i - 1) \xor m_i \quad \forall i$
+            $c_i = f_k(r + i - 1) \oplus m_i \quad \forall i$
         }}
         {$c = (c_0, c_1, \dots, c_t)$}{}
 
@@ -270,7 +270,7 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
 
     \begin{proof}
     
-        Since $m_i$ doesn't affect the distribution of the result at all, for any $i$, if $R(r^{*})$ behaves like a true random extractor, then the two hybrids are indistinguishable in the general case ($R(r + i) \xor m_i \approx R(r + i)$). However, there is a sneaky issue: if in both games it happens that a given nonce $r_i$ is used in both one query encryption and the challenge mesage encryption at any step, the subsequent encrypted blocks will be completely random in the second hybrid, whereas in the first hybrid the function's images, albeit random, become predictable, enabling a \cpa.
+        Since $m_i$ doesn't affect the distribution of the result at all, for any $i$, if $R(r^{*})$ behaves like a true random extractor, then the two hybrids are indistinguishable in the general case ($R(r + i) \oplus m_i \approx R(r + i)$). However, there is a sneaky issue: if in both games it happens that a given nonce $r_i$ is used in both one query encryption and the challenge mesage encryption at any step, the subsequent encrypted blocks will be completely random in the second hybrid, whereas in the first hybrid the function's images, albeit random, become predictable, enabling a \cpa.
 
         Nevertheless, it can be proved that these ``collisions'' happen with negligible probability within $\hybridg{1}[\textsc{ctr}]$. Let:
         \begin{itemize}

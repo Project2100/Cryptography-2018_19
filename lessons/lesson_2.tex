@@ -2,39 +2,58 @@
 
 \section{Authentic communication}
 
-\todo{Msg auth image (bob, eve, tag)}
 
-\subsection{Message Authentication Code scheme}
-
-\textbf{Syntax:}
-
+A simple scenario exposing the problem of authentication is depicted in figure \ref{fig:authentication}. This time, the parties Alice and Bob want to ensure that they are effectivley communicating to each other, or in other words, nobody else is \emph{impersonating} one of the two. The objects used here are:
 \begin{itemize}
-    \item $\K$: Key space
-    \item $\M$: Message space
-    \item $\C$: Ciphertext space
-    \item $\Phi$: Tag (or signature) space
-    \item $\Tag \in \K \times \M \to \Phi$: Tagging (or signing) function
-    \item $\Ver \in \K \times \M \times \Phi \to \binary$: Verifying (or validating) function
+    \item The data to be shared, or \emph{message} $m$;
+    \item Some additional secret information, shared by the two parties, that is used to \emph{sign} the message: the \emph{authentication key} or just \emph{key} $k$;
+    \item The result of signing a message $m$ using the key $k$: the \emph{signature} or \emph{tag} $\phi$.
 \end{itemize}
 
-\Tag{} and \Ver{} form a \emph{cryptographic authentication scheme}, or just \emph{authentication scheme}, and it must abide by the rule:
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}
+        \draw
+            (0, 0) node (a) [box, fill = white] {Alice} 
+            (5, 0) node (b) [box, fill = white] {Bob}
+            (2.5, -1) node (e) [box, fill = white] {Eve}
+        ;
+
+        \draw[-Stealth] (a) -- node [midway, above] {$(m, \phi)$} (b);
+        \draw[-Stealth] (0, -1) node [below] {$k$} -- (a);
+        \draw[-Stealth] (5, -1) node [below] {$k$} -- (b);
+        \draw[-Stealth] (-1, 0) node [left] {$m$} -- (a);
+        \draw[-Stealth] (b) -- (6, 0) node [right] {$1$};
+        \draw[-Stealth] (2, -0.1) -- (3, -0.1)
+            (2.5, -0.1) -- (e);
+
+    \end{tikzpicture}
+
+    \caption{A depiction of the problem of authentic communication}
+    \label{fig:authentication}
+\end{figure}
+
+Here is employed a \emph{cryptographic authentication scheme}, or just \emph{authentication scheme}, typically taking the form $\Psi = (\Tag, \Ver)$, where:
+\begin{itemize}
+    \item $\Tag \in \K \times \M \to \Phi$ is the function that, given a message $m$ in $\M$ and a key $k$ in $\K$ generates the signature $\phi$
+    \item $\Ver \in \K \times \M \times \Phi \to \binary$ decides whether $\phi$ is the correct signature for the message $m$ using the key $k$. It is udeful to note that, in various schemes, the verifier simply consists in invoking the tagging function, and comparing the resulting signature with the given one:
+    \[
+        \Ver(k, m, \phi) = [\Tag(k, m) = \phi]
+    \]
+\end{itemize}
+
+Given such definitions, an authentication scheme works as intended if and only if:
 \[
     \forall m \in \M, \forall k \in \K \implies \Ver(k, m, \Tag(k, m)) = 1
 \]
 
-In the usual case (deterministic), the verifier consists only of an equality check, reusing the \Tag{} routine: $\Tag(k, m) = \phi$
-
-The security aspect to consider in these schemes is the signatures' \emph{unforgeability}. Suppose that an attacker chooses a message $m$ and obtains its tag $\phi$ without knowing the key $k$ used in the process; then there shall be no better means of declaring a couple $(m', \phi') : \Ver(k, m', \phi') = 1$ other than random guessing, or knowing the key, of course.
-
-Some more formal definitions of unforgeability follow:
+The security aspect to consider in these schemes is the signatures' \emph{unforgeability}: if Eve is able to obtain a signature $\phi$ of a message $m$ of her own choice, then she shall have no better means of \emph{forging} a valid couple $(m', \phi')$ such that $\Ver(k, m', \phi') = 1$ other than random guessing, or knowing the key, of course. The coming definitions will help to give this notion more formal ground:
 
 \begin{definition} \emph{($\varepsilon$-statistical one-time security)}:
-    A given authentication scheme has $\varepsilon$-statistical one-time security iff, given a valid couple $(m_1, \phi_1)$, any adversary cannot \emph{forge} a fresh valid couple $(m_2, \phi_2)$ without knowing the signature key $k$. Formally:
-    \begin{gather*}
-        \forall m_1, m_2 \in \M : m_1 \neq m_2, \forall \phi_1, \phi_2 \in \Phi \\
-        \Downarrow \\
-        \Pr[\Tag(K, m_2) = \phi_2 \knowing \Tag(K, m_1) \evaluatesto \phi_1] \leq \varepsilon
-    \end{gather*}
+    A given authentication scheme has $\varepsilon$-statistical one-time security iff, given a valid couple $(m_1, \phi_1)$, any adversary cannot \emph{forge} a fresh valid couple $(m_2, \phi_2)$ without knowing the signature key $k$:
+    \[
+        \forall m_1 \neq m_2 \in \M \, \forall \phi_1, \phi_2 \in \Phi \quad \Pr[\Tag(K, m_2) = \phi_2 \knowing \Tag(K, m_1) = \phi_1] \leq \varepsilon
+    \]
 \end{definition}
 
 \subsubsection{Pairwise-independent hashing}

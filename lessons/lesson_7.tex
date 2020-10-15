@@ -228,21 +228,21 @@ Now it's time to define a stronger notion of security, which is widely used in c
 \end{definition}
 
 
-Having given this definition of security, recall the $\Pi_\xor$ scheme defined in the previous lesson. It is easy to see that $\Pi_\xor$ is not \cpa-secure for the same reasons that it is not computationally 2-time secure; however this example sheds some new light about a deeper problem:
+Having given this definition of security, recall the $\Pi_\oplus$ scheme defined in the previous lesson. It is easy to see that $\Pi_\oplus$ is not \cpa-secure for the same reasons that it is not computationally 2-time secure; however this example sheds some new light about a deeper problem:
 
 %AP181230: Refer to page 72 of Katz-Lindell for a good explanation
 \begin{observation}
     No deterministic scheme can achieve \cpa-security.
 \end{observation}
 
-This is true, because nothing prevents the adversary from asking the challenger to encrypt either $m_0$ or $m_1$, or even both, before starting the actual challenge; just as in the 2-time case for $\Pi_\xor$, he will know the messages' ciphertexts in advance, so he will be able to tell which message the challenger has encrypted every time. The solution for obtaining a \cpa-secure encryption scheme consists of returning different ciphertexts for the same message, even better if they look random. This can be achieved by using \prf{}s.
+This is true, because nothing prevents the adversary from asking the challenger to encrypt either $m_0$ or $m_1$, or even both, before starting the actual challenge; just as in the 2-time case for $\Pi_\oplus$, he will know the messages' ciphertexts in advance, so he will be able to tell which message the challenger has encrypted every time. The solution for obtaining a \cpa-secure encryption scheme consists of returning different ciphertexts for the same message, even better if they look random. This can be achieved by using \prf{}s.
 
 Consider the following \ske{} scheme $\Pi_{f_k}$, where $f_k$ is a \prf{} structured as follows:
 
 \begin{itemize}
-    \item $\Enc(k, m) = (c_1, c_2) = (r, f_k(r) \xor m)$, where $k \pickUAR \binary^\lambda$ and $r \pickUAR \binary^n$
+    \item $\Enc(k, m) = (c_1, c_2) = (r, f_k(r) \oplus m)$, where $k \pickUAR \binary^\lambda$ and $r \pickUAR \binary^n$
     
-    \item $\Dec(k, (c_1, c_2)) = f_k(c_1) \xor c_2$
+    \item $\Dec(k, (c_1, c_2)) = f_k(c_1) \oplus c_2$
 \end{itemize}
 
 Observe that the random value $r$ is part of the ciphertext, making it long $n+l$ bits; also more importantly, the adversary can and will always see $r$. The key $k$ though, which gives a \textit{flavour} to the \prf, is still secret.
@@ -257,7 +257,7 @@ Observe that the random value $r$ is part of the ciphertext, making it long $n+l
     \begin{itemize}
         \item $r \pickUAR \binary^n$
         \item $R \pickUAR \mathfrak{R}(n, l)$
-        \item $c = (r, R(r) \xor m)$, where $m$ is the plaintext to be encrypted
+        \item $c = (r, R(r) \oplus m)$, where $m$ is the plaintext to be encrypted
     \end{itemize}
 
     and then the last hybrid $\hybridg{2}$ will simply output $(r_1, r_2) \pickUAR U_{n + l}$.
@@ -292,7 +292,7 @@ Observe that the random value $r$ is part of the ciphertext, making it long $n+l
                 $z_0 \pickUAR f_k(r)$ \\
                 $z_1 \pickUAR R(r)$
             }}{$z_b$}{}
-            \invoke{$c = (r, z_b \xor m)$}{$c$}{}
+            \invoke{$c = (r, z_b \oplus m)$}{$c$}{}
             \cseqendloop
 
             \cseqdelay
@@ -303,7 +303,7 @@ Observe that the random value $r$ is part of the ciphertext, making it long $n+l
                 $z_0^* \pickUAR f_k(r)$ \\
                 $z_1^* \pickUAR R(r)$
             }}{$z_b^*$}{}
-            \invoke{$c^* = (r^*, z_b^* \xor m_0^*)$}{$c^*$}{}
+            \invoke{$c^* = (r^*, z_b^* \oplus m_0^*)$}{$c^*$}{}
 
             \cseqdelay
         
@@ -314,7 +314,7 @@ Observe that the random value $r$ is part of the ciphertext, making it long $n+l
                 $z_0 \pickUAR f_k(r)$ \\
                 $z_1 \pickUAR R(r)$
             }}{$z_b$}{}
-            \invoke{$c = (r, z_b \xor m)$}{$c$}{}
+            \invoke{$c = (r, z_b \oplus m)$}{$c$}{}
             \cseqendloop
             
             \cseqdelay
@@ -338,7 +338,7 @@ Observe that the random value $r$ is part of the ciphertext, making it long $n+l
     \end{lemma}
 
     \begin{proof}
-        Firstly, it can be safely assumed that any ciphertext $(r_i, R(r_i) \xor m_b)$ distributes equivalently with its own sub-value $R(r_i)$, because of $R$'s true randomness, and independency from $m_b$.
+        Firstly, it can be safely assumed that any ciphertext $(r_i, R(r_i) \oplus m_b)$ distributes equivalently with its own sub-value $R(r_i)$, because of $R$'s true randomness, and independency from $m_b$.
 
         %AP190102: An image visualizing the repeat event might be very useful
         Having said that, the two hybrids apparently distribute uniformly, making them perfectly equivalent; however there is a caveat: if both games are run and one value $\overline{r}$ is queried twice in both runs, then on the second query the adversary will receive the same image in $\hybridg{1}$, but almost certainly a different one in $\hybridg{2}$. This is because the first hybrid uses a function, which is deterministic by its nature, whereas the image in the second hybrid is picked completely randomly from the codomain. Nevertheless, this sneaky issue about "collisions" can be proven to happen with negligible probability.
