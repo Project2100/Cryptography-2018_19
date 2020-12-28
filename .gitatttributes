@@ -1,0 +1,10 @@
+*               text=auto
+
+*.tex           text diff=tex
+*.md            text diff=markdown
+
+latexmkrc       text
+
+.gitattributes  export-ignore
+.gitignore      export-ignore
+.gitignore      export-ignore
