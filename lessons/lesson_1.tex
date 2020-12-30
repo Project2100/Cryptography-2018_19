@@ -77,7 +77,7 @@ The perfect secrecy definition can be rephrased in different ways, bringing more
         \begin{align*}
              & \Pr[\Enc(K, m_1) = c]                & \\
             =& \Pr[\Enc(K, M) = c \knowing M = m_1] & \text{(Introducing $M$)} \\
-            =& \Pr[C = c \knowing M = m_1]          & \text{($C$ defintion)} \\
+            =& \Pr[C = c \knowing M = m_1]          & \text{($C$ definition)} \\
             =& \Pr[C = c]                           & \text{(Using 2.)} \\
             =& \Pr[\Enc(K, m_2) = c]                & \text{(Same steps reversed, where $m_1 \mapsto m_2$)}\\
         \end{align*}
@@ -115,7 +115,7 @@ which is exactly the difference between \emph{choosing} a specific message $m$, 
 
 \subsection{One-time Pad}
 
-The One-time Pad, or \otp{} in short, is a fairly simmple scheme that leverages the involutory property of the \textsc{xor} operation. Let all the spaces $\K$, $\M$ and $\C$ be binary strings of some length $\binary^l$, and define the following cryptographic scheme:
+The One-time Pad, or \otp{} in short, is a fairly simple scheme that leverages the involutory property of the \textsc{xor} operation. Let all the spaces $\K$, $\M$ and $\C$ be binary strings of some length $\binary^l$, and define the following cryptographic scheme:
 \begin{itemize}
     \item $\Enc(k, m) = k \oplus m = c$
     \item $\Dec(k, c) = k \oplus c = m$
@@ -137,12 +137,12 @@ The One-time Pad, or \otp{} in short, is a fairly simmple scheme that leverages 
     This satisfies the third definition of perfect secrecy.
 \end{proof}
 
-%TODO OLD NOTE: Observation: k is truly random, but fixed, compare with Pi_\oplus's encryption routine: from a security standpoint, nothing changes! actualy, \Pi_\oplus may be weaker bruteforce wise than OTP!
+%TODO OLD NOTE: Observation: k is truly random, but fixed, compare with Pi_\oplus's encryption routine: from a security standpoint, nothing changes! actually, \Pi_\oplus may be weaker brute-force wise than OTP!
 
 By observing our recent proof, some insights (and problems) arise:
 \begin{enumerate}
     \item The key and the message's lengths must always match ($|k| = |m|$);
-    \item As the name suggests, keys are useful just for one encryption. Otherwise, given two encryptions witht he same key, an attacker may exploit the \textsc{xor}'s idempotency to extract valuable information from both ciphertexts\footnote{This vulnerability of applying a function on a ciphertext, and expecting as a result the image of the original message by the same function, is called \emph{malleability}, and is explored further in the notes.}:
+    \item As the name suggests, keys are useful just for one encryption. Otherwise, given two encryptions with the same key, an attacker may exploit the \textsc{xor}'s idempotency to extract valuable information from both ciphertexts\footnote{This vulnerability of applying a function on a ciphertext, and expecting as a result the image of the original message by the same function, is called \emph{malleability}, and is explored further in the notes.}:
     \[
         c_1 = k \oplus m_1 \wedge c_2 = k \oplus m_2 \implies c_1 \oplus c_2 = m_1 \oplus m_2
     \]

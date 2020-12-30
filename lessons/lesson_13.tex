@@ -15,7 +15,7 @@
 \end{lemma}
 
 \begin{proof}
-    Assume there exists $b \in \integer_n$ such that $ab \equiv_n 1$. Then, there exists a quotient for the division $by$ nbetween a and b with remainder 1. Observe that $\gcd(a, n)$ divides $ab + qn$, which is equal to 1. It entails that $\gcd(a, n) = 1$, which is a contradiction.
+    Assume there exists $b \in \integer_n$ such that $ab \equiv_n 1$. Then, there exists a quotient for the division $by$ between a and b with remainder 1. Observe that $\gcd(a, n)$ divides $ab + qn$, which is equal to 1. It entails that $\gcd(a, n) = 1$, which is a contradiction.
 \end{proof}
 
 \begin{lemma}
@@ -43,7 +43,7 @@
     $r_{i + 2} \leq r_i/2 \forall 0 \leq i \leq t - 2 \implies \#steps = \lambda - 1 \text{ if } |b| \in \binary^\lambda$
 \end{claim}
 
-The hypohesis is a natural consequence of the repeated modulo operations.
+The hypothesis is a natural consequence of the repeated modulo operations.
 
 \begin{observation}[Exponentiation mod n: Square and multiply]
     Let $b \in \binary^l$, where by writing $b_i$ we denote b's i-th bit. Then:
@@ -88,7 +88,7 @@ We now turn our attention to some conjectures that form the basis for most of th
 % CDH -> DDH -> DL
 \subsubsection{Discrete logarithm}
 
-Given $g$ and $g^x$ in a $\lambda$-bit group, there is no efficient algorithm for computing $y$ such that $g^y = g^x$ withouut knowing $x$ beforehand:
+Given $g$ and $g^x$ in a $\lambda$-bit group, there is no efficient algorithm for computing $y$ such that $g^y = g^x$ without knowing $x$ beforehand:
 \[
     \forall \adversary \in \ppt \implies \Pr[\cryptog{dl}(\lambda) = 1] \in \negl(\lambda)
 \]
@@ -155,7 +155,7 @@ Given a group $G$ and three elements in it $g^x$, $g^y$, $g^z$, it is impractica
     
 \end{cryptogame}
 
-All these assumptions helped in constructind the \emph{Diffie-Hellman key exchange} protocol, which is a way to establish a \ske{} channel from an unsafe channel, with any adversary unable to efficiently break the channel's secrecy. Do note that authentication is left out of the picture here.
+All these assumptions helped in constructing the \emph{Diffie-Hellman key exchange} protocol, which is a way to establish a \ske{} channel from an unsafe channel, with any adversary unable to efficiently break the channel's secrecy. Do note that authentication is left out of the picture here.
 
 \begin{cryptosequence}
     {dhkex}

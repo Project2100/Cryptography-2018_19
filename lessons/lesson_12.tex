@@ -1,7 +1,7 @@
 \mychapter{12}{Lesson 12} %181107
 \section{Hashing}
 
-Remember one solution to domain-exetension for \prf{}s, as a composition of a \prf{} $F$ with an almost universal hash function $H$. Hash functions compress their arguments to some ``fingerprint'', which is asssumed to be unique. However, since this compression in this context inherently introduces information loss, it is not guaranteed that every message gets its own unique fingerprint; indeed, there will be some instances where two messages yield the same hash value, or in other words, the hashes \emph{collide}. It is desirable for a hash function to be \emph{resistant} to these events, meaning that it is hard to reproduce such collisions.
+Remember one solution to domain-extension for \prf{}s, as a composition of a \prf{} $F$ with an almost universal hash function $H$. Hash functions compress their arguments to some ``fingerprint'', which is assumed to be unique. However, since this compression in this context inherently introduces information loss, it is not guaranteed that every message gets its own unique fingerprint; indeed, there will be some instances where two messages yield the same hash value, or in other words, the hashes \emph{collide}. It is desirable for a hash function to be \emph{resistant} to these events, meaning that it is hard to reproduce such collisions.
 
 \begin{definition}
     A hash function family $H$ is deemed \emph{collision-resistant}, denoted as $H \in \crh$ iff the probability of finding a collision is negligible, even when knowing the seed $s$. Formally:

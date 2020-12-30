@@ -4,8 +4,8 @@
 
 Having a better idea of what can and can't be accomplished in the cryptographic world, by means of theorems and proofs, we can focus now on the goal of defining a cryptographic system that meets our requirements. In this lesson, we focus specifically on the secrecy-oriented schemes, thus dealing with encryption and decryption of messages.
 
-The requirements of a ``good'' encryption scheme are collectivey called those of \emph{computationally secure encryption}: the characerizing requirement is to design a task, or routine, that is \emph{computationally hard} for an attacker to revert.
-In detail: this task usually involves a secret key\footnotemark, and is accomplished in polynomial time, and any attacker who wishes to revert it has no efficient means of doing it wothout knowing such key. Other properties include:
+The requirements of a ``good'' encryption scheme are collectively called those of \emph{computationally secure encryption}: the characterizing requirement is to design a task, or routine, that is \emph{computationally hard} for an attacker to revert.
+In detail: this task usually involves a secret key\footnotemark, and is accomplished in polynomial time, and any attacker who wishes to revert it has no efficient means of doing it without knowing such key. Other properties include:
 
 \footnotetext{This is the case for symmetric-key schemes, though many other kinds exist: some involving ``public'' keys, some others not having any key at all}
 
@@ -66,12 +66,12 @@ By extension, we may ask ourselves what scheme may or may not be \emph{computati
 
 To be two-time secure means that, even if an adversary \adversary{} gets hold of a valid plaintext-ciphertext couple $(\overline{m}, \overline{c})$, he is unable to decrypt any future ciphertexts\footnotemark, apart from the obvious $\overline{c}$. However, observe that \adversary{} is now able to extract valuable information for decrypting future ciphertexts:
 
-\footnotetext{This example models a technique called ``Chosen Plaintext Attack'', which will be discussed in depth later}
+\footnotetext{This example models a technique called \emph{Chosen Plaintext Attack}, which will be discussed in depth later}
 
 \[
     \overline{c} = \Enc(k, \overline{m}) = G(k) \oplus \overline{m} \implies \overline{c} \oplus \overline{m} = G(k)
 \]
-so now, for any second ciphertext \adversary{} receives, he can ``mimick'' the decryption routine, and efficiently uncover the underlying plaintext. This proves that $\Pi_\oplus$ is not two time-secure; nevertheless, it is still one-time secure:
+so now, for any second ciphertext \adversary{} receives, he can \emph{mimic} the decryption routine, and efficiently uncover the underlying plaintext. This proves that $\Pi_\oplus$ is not two time-secure; nevertheless, it is still one-time secure:
 
 \begin{theorem}
     If $G$ is a \prg, then $\Pi_\oplus$ is computationally one-time secure
@@ -169,7 +169,7 @@ so now, for any second ciphertext \adversary{} receives, he can ``mimick'' the d
         \item if $x_b$ is a random value, then $\distinguisher^\textsc{ind}$ will perform as depicted in the hybrid game, thus giving right or wrong answers at random;
         \item if b is the result of $G$, then $\distinguisher^\textsc{ind}$ has a better chance in finding the right answer by its own design;
     \end{itemize}
-    From these observations, especially the second point, the adversary \adversary{} has a better chance of winning the \prg{} game by asserting that $x_b$ comes from $G$ whenever $\distinguisher^\textsc{ind}$ makes a correct guess; conversely, \adversary{} will preferrably declare that $x_b$ is truly random whenever $\distinguisher^\textsc{ind}$ fails a guess, as the probability of the latter getting fooled by a random value is sensibly greater than by a pseudo-random one.
+    From these observations, especially the second point, the adversary \adversary{} has a better chance of winning the \prg{} game by asserting that $x_b$ comes from $G$ whenever $\distinguisher^\textsc{ind}$ makes a correct guess; conversely, \adversary{} will preferably declare that $x_b$ is truly random whenever $\distinguisher^\textsc{ind}$ fails a guess, as the probability of the latter getting fooled by a random value is sensibly greater than by a pseudo-random one.
 
     Either way, by the existence of $\distinguisher{}^\textsc{ind}$, \adversary{} gains an edge in efficiently recognizing $G$, which cannot happen by $G$'s definition; the claim is proven. The theorem's proof can be completed by putting the pieces together, as is usual in the hybrid argument:
     \[
@@ -216,7 +216,7 @@ Such a function becomes cumbersome and difficult to maintain in practice; theref
     Let $f$ be a function, then it is deemed pseudo-random (therefore, $f$ is a \prf{}) iff it is computationally indistinguishable from a true random function.
 \end{definition}
 
-In detail, \prf{}s are actually designed as function families $f_k$\footnotemark, where $k$ is a parameter that indexes the funcitions inside the family. To model the \prf{}s' indistinguishability from random functions, let $F \in \binary^\lambda \to (\binary^{n(\lambda)} \to \binary^{l(\lambda)} )$, usually denoted simply by $f_k$, be a \prf{}, and define $\mathfrak{R}(n, l)$ to be the domain that collects the random functions from $\binary^{n(\lambda)}$ to $\binary^{l(\lambda)}$.
+In detail, \prf{}s are actually designed as function families $f_k$\footnotemark, where $k$ is a parameter that indexes the functions inside the family. To model the \prf{}s' indistinguishability from random functions, let $F \in \binary^\lambda \to (\binary^{n(\lambda)} \to \binary^{l(\lambda)} )$, usually denoted simply by $f_k$, be a \prf{}, and define $\mathfrak{R}(n, l)$ to be the domain that collects the random functions from $\binary^{n(\lambda)}$ to $\binary^{l(\lambda)}$.
 
 \footnotetext{Does this remind you of something else? If not, look back in lesson 2 and 3.}
 
@@ -285,7 +285,7 @@ This section is dedicated to a concrete example of a \prf{} which is built from 
         k \mapsto (G_0(k), G_1(k))
     \]
 
-    Since the principal mechanism makes use of the halves being the same length of the argment, in the same spirit, we will denote the action of using one half of an image of $G$ as argument of $G$ itself in a shorter fashion, as demonstrated in the following example:
+    Since the principal mechanism makes use of the halves being the same length of the argument, in the same spirit, we will denote the action of using one half of an image of $G$ as argument of $G$ itself in a shorter fashion, as demonstrated in the following example:
     \[
         G_a(G_b(G_c(k))) =: G_{abc}(k)
     \]

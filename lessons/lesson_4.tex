@@ -38,7 +38,7 @@ What is exactly a negligible function? Below here there is a possible interpreta
     \]
 \end{definition}
 
-Note that these actually represent upper bounds for functions: a negligible function adheres to the polyomial function definition, whereas the opposite isn't true. To sum it up: $\negl \subset \poly$.
+Note that these actually represent upper bounds for functions: a negligible function adheres to the polynomial function definition, whereas the opposite isn't true. To sum it up: $\negl \subset \poly$.
 
 \begin{exercise}
     Let $p(\lambda), p'(\lambda) \in \poly(\lambda)$ and $\nu(\lambda), \nu'(\lambda) \in \negl(\lambda)$. Then prove the following:
@@ -216,7 +216,7 @@ So, this means that, when this property is verified by two random variables, the
         \item $\distinguisher_f$ replies with his outcome
         \item \adversary{} relays the outcome to the challenger
     \end{enumerate}
-    All of this is done in polynomial time, since all functions and machines involved in the process opeate in \ppt. This contradicts the computational indistinguishablilty of $X$ and $Y$.
+    All of this is done in polynomial time, since all functions and machines involved in the process operate in \ppt. This contradicts the computational indistinguishablilty of $X$ and $Y$.
 
     \begin{cryptoredux}
         {fdistin}
@@ -234,7 +234,7 @@ So, this means that, when this property is verified by two random variables, the
         % The distinguisher applies f to z and relays the image to A
         \invoke{}{$f(z_b)$}{}
         
-        % Adversary distinguishes betweeen the two distributions
+        % Adversary distinguishes between the two distributions
         \return{}{$b'$}{}
 
         \send{}{$b'$}{\textsc{Output 1 iff} $b' = b$}

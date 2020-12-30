@@ -73,7 +73,7 @@ Build a similar asymmetric-authentication scheme as such:
 
     \begin{itemize}
         \item The adversary makes the same number of RO queries as the number of signing queries done by the distinguisher (without loss of generality)
-        \item The RO query must be done \emph{before} the corresponding sign query, otherwise the advarsary cannot sign the messages, as specified by the scheme
+        \item The RO query must be done \emph{before} the corresponding sign query, otherwise the adversary cannot sign the messages, as specified by the scheme
     \end{itemize}
 
     The RO queries are actually an analogue of the definition of a random function, and it is the \emph{programming} step of the oracle itself; then if the signing queries do not correspond to any RO query, abort the game.

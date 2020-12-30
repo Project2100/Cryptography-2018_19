@@ -355,7 +355,7 @@ We will define a membership-hard language using the \ddh{} assumption
     \]
 \end{definition}
 
-Observe that, piven a group $G$ of order $q$ with $(g_1, g_2)$ as generators, we will have $(g_1, g_2, c_1, c_2)$ but if we impose $g_1 = g$ and $g_2=g^a$ then the previous construction becomes $(g, g^a, c_1, c_2)$. By definition, $c_1 = g_1^{r_1}$ and $c_2 = g_2^{r_2}$, thus I can write $(g, g^a, g^r, g^{ar})$.
+Observe that, given a group $G$ of order $q$ with $(g_1, g_2)$ as generators, we will have $(g_1, g_2, c_1, c_2)$ but if we impose $g_1 = g$ and $g_2=g^a$ then the previous construction becomes $(g, g^a, c_1, c_2)$. By definition, $c_1 = g_1^{r_1}$ and $c_2 = g_2^{r_2}$, thus I can write $(g, g^a, g^r, g^{ar})$.
 
 Now we can define our system $\Pi := (Setup, Prove, Verify)$:
 
@@ -434,7 +434,7 @@ Now we can define our system $\Pi := (Setup, Prove, Verify)$:
 \noindent\textbf{Correctness:}\\ $\Pi=h_2^rh_3^{r\beta}=(g_1^{x_3}g_2^{x_4})^r(g_1^{x_5}g_2^{x_6})^r=c_1^{x_3}c_2^{x_4}c_1^{\beta x_5}c_2^{\beta x_6}=c_1^{x_3+\beta x_5}c_2^{x_4+\beta x_6}=\widetilde{\Pi}$
 
 \begin{theorem}
-    The above construction define a 2-universal DVNIZK for $L_{DDH}$    
+    The above construction define a 2-universal DV-NIZK for $L_{DDH}$    
 \end{theorem}
 \pagebreak
 \begin{proof}

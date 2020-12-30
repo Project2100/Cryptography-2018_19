@@ -2,11 +2,11 @@
 
 \section{Message Authentication Codes and unforgeability}
 
-After having explored the security conerns and challenges of the \ske{} realm, it is time to turn the attention to symmetric authentication schemes, or \mac{} schemes. Recall that a \mac{} scheme is a couple $(\textit{Tag}, \textit{Verify})$, with the purpose of auhenticating the message's source. In this chapter, the tagging function will be denoted as $\textit{Tag}_k$, akin to a \prf.
+After having explored the security concerns and challenges of the \ske{} realm, it is time to turn the attention to symmetric authentication schemes, or \mac{} schemes. Recall that a \mac{} scheme is a couple $(\textit{Tag}, \textit{Verify})$, with the purpose of authenticating the message's source. In this chapter, the tagging function will be denoted as $\textit{Tag}_k$, akin to a \prf.
 
 The desirable property that a \mac{} scheme should hold is to prevent any attacker from generating a valid couple $(m^*, \phi^*)$, even after querying a tagging oracle polynomially many times\footnotemark.
 \footnotetext{Do note the similarities (and differences) between unforgeability in this setting and \cpa-security in the secrecy setting}
-The act of generating a valid couple from scratch is called \emph{forging}, and the aforementioned propery is defined as \emph{unforgeability against chosen-message attacks} (or \ufcma, in short); its game diagram is shown in figure \ref{cryptogame:ufcma}. Do note that $m^*$ is stated to be outside the query set $M$, expressing the ``freshness'' of the forged couple\footnotemark. In formal terms:
+The act of generating a valid couple from scratch is called \emph{forging}, and the aforementioned property is defined as \emph{unforgeability against chosen-message attacks} (or \ufcma, in short); its game diagram is shown in figure \ref{cryptogame:ufcma}. Do note that $m^*$ is stated to be outside the query set $M$, expressing the ``freshness'' of the forged couple\footnotemark. In formal terms:
 
 \footnotetext{Observe how this setup bears a striking resemblance to the \prf{} game. We're onto something...}
 
@@ -131,7 +131,7 @@ Having defined a good notion of security in the \mac{} scheme domain, we turn ou
 
 \section{Domain extension for \mac{} schemes}
 
-The previous scheme works on fixed length messages; as in the encryption domain, there are techinques for tagging variable length messages which are \ufcma-secure. However, before showing them, some other apparently secure modes are described here to give some possible insights on how to tackle the problem. 
+The previous scheme works on fixed length messages; as in the encryption domain, there are techniques for tagging variable length messages which are \ufcma-secure. However, before showing them, some other apparently secure modes are described here to give some possible insights on how to tackle the problem. 
 
 Assume the message $m = (m_1, \dots, m_t) \in \binary^{n \cdot t}$ for some $t \geq 1$. Given the tagging function $\Tag_k \in \binary^n \to \binary^l$, an attempt to tag the whole message may be to:
 
@@ -146,7 +146,7 @@ Assume the message $m = (m_1, \dots, m_t) \in \binary^{n \cdot t}$ for some $t \
 
 \subsection{Universal hash functions}
 
-A devised solution which has been proven to be secure relies on the following definition: a function family $H$ which can be used to ``shrink'' variable length messages and then composed with a \prf{} $f_k$:
+A devised solution which has been proven to be secure relies on the following definition: a function family $H$ which can be used to \emph{shrink} variable length messages and then composed with a \prf{} $f_k$:
 \[
    H \in \binary^\lambda \to (\binary^{n \cdot t} \to \binary^n) : s \mapsto h_s
 \]
@@ -169,7 +169,7 @@ To overcome this problem, we can consider two options:
     \]
 \end{definition}
 
-If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then the family is also called \emph{perfectly universal}; in the case where $\varepsilon \in \negl(\lambda)$ isntead, it is defined as \emph{almost universal} (\textsc{au}). Care should be taken in telling the difference between universality and pairwise independence, which states:
+If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then the family is also called \emph{perfectly universal}; in the case where $\varepsilon \in \negl(\lambda)$ instead, it is defined as \emph{almost universal} (\textsc{au}). Care should be taken in telling the difference between universality and pairwise independence, which states:
 \[
     (h_S(x), h_S(x')) \equiv U_{2n}
 \]
@@ -302,7 +302,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
 \end{proof}
 
 \begin{corollary}
-    Let $\Pi = (\Tag, \Ver)$ be a variable length message \mac{} scheme where, given a \prf{} $f_k$ and an \textsc{au} hash funcion family $h_s$, the tagging function is defined as $f_k(h_s)$. Then $\Pi$ is \ufcma-secure.
+    Let $\Pi = (\Tag, \Ver)$ be a variable length message \mac{} scheme where, given a \prf{} $f_k$ and an \textsc{au} hash function family $h_s$, the tagging function is defined as $f_k(h_s)$. Then $\Pi$ is \ufcma-secure.
 \end{corollary}
 
 \subsection{Hash function families from finite fields}

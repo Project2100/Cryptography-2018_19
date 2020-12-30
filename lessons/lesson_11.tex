@@ -106,7 +106,7 @@ Nothing prevents a \prf{} $g_k$ to be bijective; in this case, it is referred to
     \cryptog{prp}[g_k](\lambda, 0) \compindist \cryptog{prp}[g_k](\lambda, 1)
 \]
 
-An important difference is that $g_k$ is efficiently invertible, although knowledge of $k$ is reqiuired in order to do so.
+An important difference is that $g_k$ is efficiently invertible, although knowledge of $k$ is required in order to do so.
 
 \subsection{Feistel network}
 
@@ -159,7 +159,7 @@ However, this example with additional restrictions will be useful very soon, so 
 
 \begin{cryptogame}
     {randfeis}
-    {The randomic-Feistel distinguishing game: $\cryptog{r-feis}s$}
+    {The random-Feistel distinguishing game: $\cryptog{r-feis}s$}
     {r-feis}
 
     \cseqchallenger{\shortstack[l]{
@@ -190,7 +190,7 @@ Going back to the Feistel networks in general, it should be easy to see that the
 \[
     \psi^l_\Phi(x, y) = \psi_{F}(\psi_{F''}( \ldots \psi_{F^{(l)}}(x, y) \ldots ))
 \]
-where $\Phi$ is the sequence of \prf{}s used at each single step. It can be shown that the rounds neeed to obtain a network that is indeed pseudorandom is just 3; also, the same \prf{} can be used, it is sufficient to change the seed on each iteration\footnotemark:
+where $\Phi$ is the sequence of \prf{}s used at each single step. It can be shown that the rounds need to obtain a network that is indeed pseudorandom is just 3; also, the same \prf{} can be used, it is sufficient to change the seed on each iteration\footnotemark:
 
 \begin{theorem}[Michael Luby - Charles Rackoff]
     Let $F_i, F_j, F_k$ be a \prf{} over three seeds. Then $\psi^3_{i, j, k}$ is a \prp.
