@@ -50,7 +50,7 @@ Given such definitions, an authentication scheme works as intended if and only i
 The security aspect to consider in these schemes is the signatures' \emph{unforgeability}: if Eve is able to obtain a signature $\phi$ of a message $m$ of her own choice, then she shall have no better means of \emph{forging} a valid couple $(m', \phi')$ such that $\Ver(k, m', \phi') = 1$ other than random guessing, or knowing the key, of course. The coming definitions will help to give this notion more formal ground:
 
 \begin{definition} \emph{($\varepsilon$-statistical one-time security)}:
-    A given authentication scheme has $\varepsilon$-statistical one-time security iff, given a valid couple $(m_1, \phi_1)$, any adversary cannot \emph{forge} a fresh valid couple $(m_2, \phi_2)$ without knowing the signature key $k$:
+    An authentication scheme has $\varepsilon$-statistical one-time security iff, given a valid couple $(m_1, \phi_1)$, any adversary cannot \emph{forge} a fresh valid couple $(m_2, \phi_2)$ without knowing the signature key $k$:
     \[
         \forall m_1 \neq m_2 \in \M \, \forall \phi_1, \phi_2 \in \Phi \quad \Pr[\Tag(K, m_2) = \phi_2 \knowing \Tag(K, m_1) = \phi_1] \leq \varepsilon
     \]

@@ -201,13 +201,16 @@ It should be noted that, if such functions are to be implemented in computers, t
 
 \[  
     \color{black!50}
-    \overbracket[0.5pt][5pt]{\;\color{black}\printarray[4em]{0010...}\;}^{l \text{ bits}}_1\;
-    \overbracket[0.5pt][5pt]{\;\color{black}\printarray[4em]{1110...}\;}^{l \text{ bits}}_2\;
-    \overbracket[0.5pt][5pt]{\;\color{black}\printarray[4em]{0011...}\;}^{l \text{ bits}}_3\;\;
+    \overbracket[0.5pt][5pt]{\;\color{black}\framebox[4em][c]{0010...}\;}^{l \text{ bits}}_1\;
+    \overbracket[0.5pt][5pt]{\;\color{black}\framebox[4em][c]{1110...}\;}^{l \text{ bits}}_2\;
+    \overbracket[0.5pt][5pt]{\;\color{black}\framebox[4em][c]{0011...}\;}^{l \text{ bits}}_3\;\;
     \color{black!25}
-    \printarray[2em]{..., ..., ..., ...}\;\;
+    \framebox[2em][c]{\rule{0pt}{1.5ex}...}\;
+    \framebox[2em][c]{\rule{0pt}{1.5ex}...}\;
+    \framebox[2em][c]{\rule{0pt}{1.5ex}...}\;
+    \framebox[2em][c]{\rule{0pt}{1.5ex}...}\;\;
     \color{black!50}
-    \overbracket[0.5pt][5pt]{\;\color{black}\printarray[4em]{1110...}\;}^{l \text{ bits}}_{2^n}
+    \overbracket[0.5pt][5pt]{\;\color{black}\framebox[4em][c]{1110...}\;}^{l \text{ bits}}_{2^n}
 \]
 
 Such a function becomes cumbersome and difficult to maintain in practice; therefore, it is desirable to find a kind of function which looks as a random function possible, but does not require to be wholly memorized, while not forgetting to maintain poly-time complexity. Pseudo-randomness comes to the rescue here:

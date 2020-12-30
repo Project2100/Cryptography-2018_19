@@ -32,7 +32,7 @@ The typical setting for the problem of secret communication is depicted in figur
     \label{fig:secrecy}
 \end{figure}
 
-To complete the picture, a \emph{cryptographic secrecy scheme}, or \emph{encryption scheme} is typically used in this scenario; it has the form $\Xi = (\Enc, \Dec)$, where:
+To complete the picture, the two parties Alice and Bob use a \emph{cryptographic secrecy scheme}, or \emph{encryption scheme} to convert the message in an encrypted form, and vice versa. It has the form $\Xi = (\Enc, \Dec)$, where:
 \begin{itemize}
     \item $\Enc \in \K \times \M \to \C$ is the function that, given a message $m$ in $\M$ and a key $k$ in $\K$ performs the encryption, and thus generates the corresponding ciphertext $c$ in $\C$;
     \item $\Dec \in \K \times \C \to \M$ restores a message starting from the ciphertext and the key originally used in the encryption.

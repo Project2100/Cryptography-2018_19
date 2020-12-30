@@ -442,17 +442,12 @@ Now we can define our system $\Pi := (Setup, Prove, Verify)$:
     - Take any $(c_1,c_2) \notin L_{DDH}$\\
     - Fix $(c_1,c_2,l)\neq (c_1',c_2',l')$ s.t. $(c_1,c_2),(c_1',c_2')\notin L_{DDH}$ which means:
     \begin{itemize}
-        \item $(c_1,c_2)=(g_1^{r_1}g_2^{r_2})$ \tikzmark{start}
-        \item $(c_1',c_2')=(g_1^{r_1'}g_2^{r_2'})$ \tikzmark{end}
+        \item $(c_1, c_2) = (g_1^{r_1}, g_2^{r_2}) \qquad r_1 \neq r_2$
+        \item $(c_1', c_2') = (g_1^{r_1'}, g_2^{r_2'}) \qquad r'_1 \neq r'_2$
         \item $\beta=H_s(c_1,c_2,l)$
         \item $\beta'=H_s(c'_1,c'_2,l')$
     \end{itemize}
-    \begin{tikzpicture}[remember picture,overlay]
-        \draw[decorate,decoration={brace,raise=12pt}]
-          ([yshift=2ex]{{pic cs:end}|-{pic cs:start}}) --
-            node[xshift=15pt,anchor=west] {$r_1\neq r_2$ and $r'_1\neq r'_2$} 
-          ([yshift=-0.5ex]pic cs:end);
-    \end{tikzpicture}
+    
     - Let's define a MAP
     \begin{gather*}
         \mu'(x_3,x_4,x_5,x_6)=(\omega, \widetilde{\Pi}=Ver(\tau,(c_1,c_2,l)),\widetilde{\Pi'}=Ver(\tau,(c_1',c_2',l')))= \\

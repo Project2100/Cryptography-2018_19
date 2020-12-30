@@ -1,36 +1,70 @@
 \documentclass[10pt, a4paper]{report}
+
+\usepackage{nonotation}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%% FONTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
-
 \usepackage{bold-extra} % Used for boldface-smallcaps combo in section headers
 \usepackage[normalem]{ulem} % For strikethrough text
 
-% Package for hyperlinks
-\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%% HYPERLINKS %%%%%%%%%%%%%%%%%%%%%%%%%
+
+\PassOptionsToPackage{hyphens}{url}
+\usepackage{hyperref}
+
 \hypersetup{
     colorlinks,
-    linkcolor={red!70!black},
-    citecolor={blue!50!black},
-    urlcolor={blue!80!black}
+    linkcolor       = {red!70!black},
+    citecolor       = {blue!50!black},
+    urlcolor        = {blue!80!black}
 }
 
-\usepackage{pifont} % Hyperlink dingbat
+% Hyperlink dingbat
+\usepackage{pifont} 
 \newcommand{\linkicon}{\ding{226}}
 
-\usepackage{nonotation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%% TIKZ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
 
 % Tikz styles used throughout all the figures
 % Nodes
-\tikzstyle{box}   = [draw, minimum size = 2em]
-\tikzstyle{nobox} = [minimum size = 2em]
+\tikzstyle{box}     = [draw, minimum size = 2em]
+\tikzstyle{nobox}   = [minimum size = 2em]
 % Pins
-\tikzstyle{init}  = [pin edge = {-to, thin, black}]
+\tikzstyle{init}    = [pin edge = {-to, thin, black}]
 
-\input{macro.tex}
 
-% Custom sections for visual reminders
+%%%%%%%%%%%%%%%%%%%%%%%%% THEOREMS %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{amsthm}
+
+\newtheorem{theorem}                    {Theorem}       [chapter]
+\newtheorem{lemma}          [theorem]   {Lemma}
+\newtheorem{corollary}      [theorem]   {Corollary}
+\newtheorem{claim}          [theorem]   {Claim}
+\newtheorem{observation}    [theorem]   {Observation}
+\newtheorem{proposition}    [theorem]   {Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}     [theorem]   {Definition}
+\newtheorem{exercise}       [theorem]   {Exercise}
+\newtheorem{example}        [theorem]   {Example}
+\newtheorem{construction}               {Construction}
+\theoremstyle{remark}
+\newtheorem{solution}       [theorem]   {Solution}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%% TODOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{xcolor}
+\usepackage{framed}
+
 \newcounter{todocount}
 \definecolor{shadecolor}{rgb}{1, 1, 0}
 \newcommand{\todo}[1]{
@@ -41,6 +75,35 @@
 }
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%% OTHER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Math?lap commands
+\usepackage{mathtools}
+
+% Custom chapter title
+\newcommand{\mychapter}[2]{
+    \setcounter{chapter}{#1}
+    \setcounter{section}{0}
+    \chapter*{#2}
+    \addcontentsline{toc}{chapter}{#2}
+}
+
+\newcommand{\upto}{\text{---}} % Range ligature
+\renewcommand{\mod}{\mathrel{\textup{mod}}} % Remainder operator
+\newcommand{\groupgen}{\mathcal{GG}} % Group generators for standard assumptions
+\newcommand{\quadres}{\mathcal{Q}uad} % Quadratic residue group
+\newcommand{\keygen}{\textsf{\textup{Keygen}}} % Key generator for public-privte pairs
+\newcommand{\C}{\mathcal{C}} % Cipherspace
+\newcommand{\G}{\mathcal{G}} % Generally used for generators or groups
+\newcommand{\K}{\mathcal{K}} % Keyspace
+\newcommand{\M}{\mathcal{M}} % Messagespace
+\newcommand{\RO}{\mathrm{RO}} % Random oracle
+\newcommand{\Gen}{\mathrm{Gen}} % Generic generator
+\newcommand{\otp}{\textsc{otp}} % One-Time Pad
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{document}
 
     \tableofcontents
@@ -50,7 +113,7 @@
     Cryptography is the collection of techniques that are designed to enable secure communication between two parties in a setting where third parties intend to listen and/or modify the transmitted information. While encryption schemes are usually the first things that come to mind, it is worthwhile to carefully consider all the aspects that cryptography influences:
 
     \begin{itemize}
-        \item \emph{Confidentiality}: the two parties can safely assume that they are communicating privately; this can be further  split into:
+        \item \emph{Confidentiality}: the two parties can safely assume that they are communicating privately; this can be further split into:
               \begin{itemize}
                   \item \emph{Secrecy}: the aspect of communication privacy;
                   \item \emph{Authentication}: the aspect of party identity verification.
@@ -59,7 +122,7 @@
         \item \emph{Integrity}: Some techniques employed here are also designed to ensure that the transmitted data is not  altered, a property of which desirability is paramount in safety-critical scenarios.
     \end{itemize}
 
-    Modern cryptography systems are usually designed according to \emph{Kerckhoffs's principle}, which states that a secure system  shall only rely on the encryption keys, and not by the secrecy of the underlying algorithm; as Claude Shannon later summed up:   \emph{``the enemy knows the scheme''}. The problem of sharing the key between two parties while retaining communication   confidentiality thus becomes central in developing a good scheme, and is the main focus of almost every scheme described here.
+    Modern cryptography systems are usually designed according to \emph{Kerckhoffs's principle}, which states that a secure system  shall only rely on the encryption keys, and not by the secrecy of the underlying algorithm; as Claude Shannon later summed up: \emph{``the enemy knows the scheme''}. The problem of sharing the key between two parties while retaining communication   confidentiality thus becomes central in developing a good scheme, and is the main focus of almost every scheme described here.
 
     \part{Mathematical foundations}
 
@@ -68,11 +131,11 @@
     \input{lessons/lesson_3.tex}
     \input{lessons/lesson_4.tex}
     \input{lessons/lesson_5.tex}
-    \input{lessons/lesson_6.tex}
-    \input{lessons/lesson_7.tex}
 
     \part{Symmetric schemes}
 
+    \input{lessons/lesson_6.tex}
+    \input{lessons/lesson_7.tex}
     \input{lessons/lesson_8.tex}
     \input{lessons/lesson_9.tex}
     \input{lessons/lesson_10.tex}
