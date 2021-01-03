@@ -22,7 +22,7 @@ Suppose to have a biased coin $B \sim \berdist(p) : p \neq \half$. How to craft 
     \end{itemize}
 \end{enumerate}
 
-Some considerations can be made: The probability of both single cases in step \ref{enum:VNEreturn} is $p(1 - p)$, therefore the probability to reach it is $2p(1 - p)$. Also, it is apparent that the number of possible failures in reaching step \ref{enum:VNEreturn} follow a geometric distribution in $p$, thus the probability of increased number of failures decrease exponentially.
+Some considerations can be made: The probability of both single cases in step \ref{enum:VNEreturn} is $p(1 - p)$, therefore the probability to reach it is $2p(1 - p)$. Also, it is apparent that the number of possible failures in reaching step \ref{enum:VNEreturn} follow a geometric distribution in $p$, thus the probability of an increased number of failures decrease exponentially.
 
 We now get back to our ultimate goal. Let $X$ be any random variable over a space $\Omega$, we wish to design an ``extraction'' algorithm \ext{} such that $U = \ext(X)$ distributes uniformly over $\Omega$. To help ourselves, we will deal with probability spaces of binary strings ($\binary^n$), and define a measure of ``how much'' a distribution is uniform over its space:
 
@@ -46,20 +46,20 @@ On the other hand, looking at a uniform distribution:
                              \implies & H_{\infty}(X) = -\log_2(\oneover{|\Omega|})
 \end{align*}
 
-Knowing that $\Omega$ is be our usual domain choice of binary strings of a given length $\binary^n$, the min-entropy becomes exactly $n$\footnote{This also sheds some light in how string length is a frequent topic in the cryptography realm, as it usually expresses a cryptosystem's strength: the greater its min-entropy, the harder it is to find the right key from scratch for a ciphertext.}.
+Knowing that $\Omega$ is be our usual domain choice of binary strings of a given length $\binary^n$, the min-entropy becomes exactly $n$\footnote{This also sheds some light in how the string length is a frequent topic in the cryptography realm, as it usually expresses a cryptosystem's strength: the greater its min-entropy, the harder it is to find the right key from scratch for a ciphertext.}.
 Using this measure, we can actually seek how much min-entropy we require in the original distribution $X$ in order for the extractor to return a uniform distribution. Ideally, we would like a value as close to 0 as possible, because a min-entropy of zero leads to constant variables, which have been excluded beforehand. Alas, it turns out that:
 \begin{claim}
     There is no such universal \ext{} algorithm that returns a uniform distribution from random variables $X$ with min-entropy $H_{\infty}(X) \leq n - 1$
 \end{claim}
 
 \begin{proof}
-    % Notes: In our domain, the extraction problem to a unifdist reduces to an extraction of a fair coin; from there, creating a unifdist consists in doing as many coin flips as the strings' length in the domain of choice (remember we're still in the domain of bianry strings, each coin flip is essentially one bit).
+    % Notes: In our domain, the extraction problem to a unifdist reduces to an extraction of a fair coin; from there, creating a unifdist consists in doing as many coin flips as the strings' length in the domain of choice (remember we're still in the domain of binary strings, each coin flip is essentially one bit).
 
     % Furthermore, extraction of a fair coin reduces to the extraction of a generic bernoulli variable: from there we can simply use the Von Neumann extractor to get a fair coin
 
     % WHAT'S HAPPENING DOWN HERE?!?!?!
 
-    %Let \ext{} be a candidate extractor which outputs a fair coin from any given random variable $X$ in a fixed length binary string space. The resulting coin effectively splits $X$'s domain in two parts $X_0$ and $X_1$, in an attempt to balance the probability that $X$ is in either part. Now, pick the biggest one $X_b$
+    %Let \ext{} be a candidate extractor which outputs a fair coin from any given random variable $X$ in a fixed-length binary string space. The resulting coin effectively splits $X$'s domain in two parts $X_0$ and $X_1$, in an attempt to balance the probability that $X$ is in either part. Now, pick the biggest one $X_b$
 
     %ILLUMINATION: fix ext , run with any X, ext bipartitions the domain, define Y to be unif over an arbitrary part b. Ext(Y) will be forced to output the constant RV on b. contradiction
 
@@ -115,7 +115,7 @@ Using this measure, we can actually seek how much min-entropy we require in the 
 
 \end{proof}
 
-So this approach is doomed, unless we factor in a preemptive small amount of true randomness in the algorithm. This is what a \emph{seeded extractor} does:
+So this approach is doomed unless we factor in a preemptive small amount of true randomness in the algorithm. This is what a \emph{seeded extractor} does:
 \[
     \ext: \underbrace{\binary^d}_{seed(public)}\times \underbrace{\binary^n}_{input} \to \underbrace{\binary^l}_{output}
 \]
@@ -301,7 +301,7 @@ This lemma has been proven by Russell Impagliazzo, Leonid Levin and Michael Luby
         \]
     \end{proof}
 
-    Shifting focus to the second addend:
+    Shifting the focus to the second addend:
 
     \begin{align*}
             &\ \Pr[h_S(X) = h_S(X') \wedge X \neq X']                  &                                                  \\
@@ -317,7 +317,7 @@ This lemma has been proven by Russell Impagliazzo, Leonid Levin and Michael Luby
     \end{proposition}
     
     \begin{proof}
-        \todo{Left as exercise.}
+        \todo{Left as an exercise.}
     \end{proof}
 
     Going back to the collision probability of $Y$, and using the two propositions above:
