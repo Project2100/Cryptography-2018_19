@@ -132,7 +132,7 @@ This time, a \emph{pseudorandom permutation}(\prp) is used instead of a \prf; th
 
 \subsection{Counter mode}
 
-Also denoted as \textsc{ctr} in short, this mode closely resembles \textsc{ecb}-mode but uses a ``rolling'' nonce instead of a static one, as shown in figure \ref{fig:ctr}. At each successive block, the nonce is incremented by 1 and then used in a single block encryption. Since the nonce is in $\binary^n$, the increment is done modulo $2^n$ so that the value will wrap around to 0 it it ever overflows. Decryption is analogous.
+Also denoted as \textsc{ctr} in short, this mode closely resembles \textsc{ecb}-mode but uses a ``rolling'' nonce instead of a static one, as shown in figure \ref{fig:ctr}. At each successive block, the nonce is incremented by 1 and then used in a single block encryption. Since the nonce is in $\binary^n$, the increment is done modulo $2^n$ so that the value will wrap around to 0 if it ever overflows. Decryption is analogous.
 
 \begin{figure}[ht]
     \centering
@@ -205,7 +205,7 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
 
     \begin{cryptogame}
         {ctrcpa}
-        {A chosen plaintext attack to counter-mode block-cipher}
+        {A chosen-plaintext attack to counter-mode block-cipher}
         {cpa}
         
         \cseqbeginloop
@@ -280,7 +280,7 @@ This apparently innocuous change to \textsc{ebc} is enough to ensure \cpa-securi
             \item \textsc{Overlap} event: $\exists i, j, \iota : r_i + j = \rho + \iota$
         \end{itemize}
 
-        The \textsc{Overlap} event exactly models our problematic scenario. Now it suffices to show that it occurs negligibly. For simplicity, assume the involved messages are of same length, that is $t_i = \tau =: t$. Denote with $\textsc{Overlap}_i$ to be the event that the $i$-th query overlaps the challenge sequence as specified above.
+        The \textsc{Overlap} event exactly models our problematic scenario. Now it suffices to show that it occurs negligibly. For simplicity, assume the involved messages are of the same length, that is $t_i = \tau =: t$. Denote with $\textsc{Overlap}_i$ to be the event that the $i$-th query overlaps the challenge sequence as specified above.
 
         Fix some $\rho$. One can see that $\textsc{Overlap}_i$ happens if:
         \[
