@@ -6,7 +6,7 @@ What is exactly a negligible function? Below here there is a possible interpreta
 \begin{quotation}
     ``[...] in modern cryptographic schemes, we generally do not try to achieve perfect secrecy [...]. Instead, we define security against a specific set of adversaries whose computational power is bounded. Generally, we assume an adversary that is bounded to run in time polynomial to $n$, where $n$ is the security parameter given to the key generation algorithm [...].
 
-    So consider a scheme $\Pi$ where the only attack against it is brute-force attack. We consider $\Pi$ to be secure if it cannot be broken by a brute-force attack in polynomial time.
+    So consider a scheme $\Pi$ where the only attack against it is the brute-force attack. We consider $\Pi$ to be secure if it cannot be broken by a brute-force attack in polynomial time.
 
     The idea of \emph{negligible probability} encompasses this exact notion. In $\Pi$, let's say that we have a polynomial-bounded adversary. Brute force attack is not an option. But instead of brute force, the adversary can try (a polynomial number of) random values and hope to guess the right one. In this case, we define security using negligible functions: The probability of success has to be smaller than the reciprocal of any polynomial function.
 
@@ -75,7 +75,7 @@ Note that these actually represent upper bounds for functions: a negligible func
 
 \section{One-way functions}
 
-From here, we start defining an object that is fundamental to everyday cryptography: the \emph{one-way} function, or \owf{} in short. Colloquially, a one-way function is a function that is ``easy to compute'', while being ``hard to invert'' a the same time, the concept of hardness being borrowed by complexity theory.
+From here, we start defining an object that is fundamental to everyday cryptography: the \emph{one-way} function, or \owf{} in short. Colloquially, a one-way function is a function that is ``easy to compute'', while being ``hard to invert'' at the same time, the concept of hardness being borrowed by complexity theory.
 
 \begin{definition}    
     Let $f : \binary^{n(\lambda)} \to \binary^{n(\lambda)}$ be a function. Then it is a \owf{} iff:
@@ -177,7 +177,7 @@ A \emph{challenger} \challenger{} chooses a value $z$ among $X_\lambda$ and $Y_\
 
 If we let $X_\lambda$ and $Y_\lambda$ to be \emph{computationally indistinguishable}, then, fixed 1 as one of the sources, the probability that \distinguisher{} says ``1!'' when \challenger{} picks $z$ from $X_\lambda$ is \emph{not so far} from the probability that \distinguisher{} says ``1!'' when \challenger{} picks $z$ from $Y_\lambda$.
 
-So, this means that, when this property is verified by two random variables, there isn't too much \textit{difference} between the two variables in terms of information avaliable to \distinguisher{}, otherwise the distance between the two probabilities should be much more than a negligible quantity.
+So, this means that, when this property is verified by two random variables, there isn't too much \textit{difference} between the two variables in terms of information available to \distinguisher{}, otherwise the distance between the two probabilities should be much more than a negligible quantity.
 
 \begin{lemma} \label{lem:compmall}
     Let $f$ be a function that has polynomial time-complexity. Then, for any two ensembles $X$ and $Y$:
@@ -216,7 +216,7 @@ So, this means that, when this property is verified by two random variables, the
         \item $\distinguisher_f$ replies with his outcome
         \item \adversary{} relays the outcome to the challenger
     \end{enumerate}
-    All of this is done in polynomial time, since all functions and machines involved in the process operate in \ppt. This contradicts the computational indistinguishablilty of $X$ and $Y$.
+    All of this is done in polynomial time, since all functions and machines involved in the process operate in \ppt. This contradicts the computational indistinguishability of $X$ and $Y$.
 
     \begin{cryptoredux}
         {fdistin}
