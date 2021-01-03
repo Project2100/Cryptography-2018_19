@@ -63,14 +63,14 @@ A \emph{trapdoor permutation} (or \tdp) is a \owp{} having the following feature
     \[
         g(\sk, f(\pk, x)) = x
     \]
-    \item No efficient adversary is able to invert $f_{\pk}$ wihout knowing $\sk$
+    \item No efficient adversary is able to invert $f_{\pk}$ without knowing $\sk$
 \end{itemize}
 
 Note that because $\pk$ is public, an adversary can perform any polynomial number of encryptions with $\pk$, and see the corresponding ciphertext. This is the same characteristic of \pke{} schemes we described just a while ago. It entails that, if left deterministic, a \tdp{} is not \cpa-secure.
 
 Also, the scheme described above is not \cpa-secure form the start: the adversary, by choosing two messages for the challenge, and receiving the ciphertext $(c_0 = r, c_1)$, along with the public key, has everything needed to reconstruct the encryption and check whichever message was encrypted, much like the problem of \ufcma against a deterministic \mac scheme.
 
-%The idea is to reuse the message as part of the randomness, or more in detail, use its hardcore predicate. The resulting scheme would the look like this:
+%The idea is to reuse the message as part of the randomness, or more in detail, use its hardcore predicate. The resulting scheme would then look like this:
 Here, in this scheme, we combine randomness and the notion of hardcore predicate $\hc$:
 
 % AP190123 - IMPORTANT NOTE: This scheme is intended to work for single-bit messages
@@ -220,7 +220,7 @@ and $g$ powered to odd exponents will have this form. From here, it's possible t
 
 \subsection{Rabin's Trapdoor permutation}
 
-Now we study a one way function built on previous deductions about number theory and modular arithmetic. The \emph{Rabin trapdoor permutation} is defined as: 
+Now we study a one-way function built on previous deductions about number theory and modular arithmetic. The \emph{Rabin trapdoor permutation} is defined as: 
 \[
     f(x) = x^2 \mod n
 \]
