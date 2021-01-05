@@ -14,7 +14,7 @@ Let's define a new $\Pi = (\keygen, \Enc, \Dec)$. Generate the needed public par
     \item Decryption: $\Dec(\sk, (c_1, c_2))= c_1^{-\sk} \cdot c_2$
 \end{itemize}
 
-Correctness of this scheme follows from some algebraic steps:
+The correctness of the scheme follows from some algebraic steps:
 \begin{align*}
     \hat{m} &= \Dec(\sk, \Enc(\pk, m))          \\
             &= \Dec(x, \Enc(g^x, m))            \\
@@ -82,9 +82,9 @@ Correctness of this scheme follows from some algebraic steps:
     %AP190915: Not so sure...
     \textbf{Note:} it is important to note that we can measure the advantage of $\adversary$, so fixed its output $Adv_{\adversary}(\lambda) = |\underbrace{\Pr[\overbrace{\adversary = 1}^{b' = 1} \knowing b = 0}_{\adversary\ loses}] - \underbrace{\Pr[\overbrace{\adversary = 1}^{b' = 1} \knowing b = 1]}_{\adversary\ wins}|$. Since $b$ is fixed the above formula will give a value $\lambda \in negl$, generally the advantage of an adversary is: $\frac{1}{2}+\lambda$ (random guessing + a negligible factor). %maybe this is a repetition but I think I never wrote it anywhere else
 
-    \todo{Here the 1/2 value may refer to how the Katz-Lindell book exposes their proofs by leaving arbitrary choice of $b$ to the challengers, thus limiting the probability of the adversaries' success by 1/2.
+    \todo{Here the 1/2 value may refer to how the Katz-Lindell book exposes their proofs by leaving an arbitrary choice of $b$ to the challengers, thus limiting the probability of the adversaries' success by 1/2.
     
-    Venturi prefers to fix $b$ beforehand, meaning the whole proof can be stated by setting b to either 0 or 1, and mantain its validity without changing anything else. In this way, he somehow bounds the probability of success to be $\leq \negl(\lambda)$}
+    Venturi prefers to fix $b$ beforehand, meaning the whole proof can be stated by setting b to either 0 or 1, and maintain its validity without changing anything else. In this way, he somehow bounds the probability of success to be $\leq \negl(\lambda)$}
 
     We will prove that:
     \[
@@ -163,7 +163,7 @@ These observations lead to the conclusion that this scheme is not \cca-secure. H
 
 Consider the following use case: a client $C$ has an object $x$ and wants to apply a function $f$ over it, but it lacks the computational power to execute it. There is another subject $S$, which is able to efficiently compute $f$, so the goal is to let it compute $f(x)$ but the client wishes to keep $x$ secret from him. This can be achieved using a \textsc{fh-pke} scheme as follows:
 
-% QUESTION: Why use a PKE scheme (and not a SKE)? Are there some advantages-shortcomings?
+% QUESTION: Why use a PKE scheme (and not an SKE)? Are there some advantages-shortcomings?
 
 \begin{cryptosequence}
     {delseccomp}
@@ -257,7 +257,7 @@ Correctness is defined as $\mathcal{P}rove(\omega, y, x) = \mathcal{V}erify(\tau
     
 \end{cryptosequence}
 
-Purpose of a proof system is to give a way to convince someone (the ``verifier'') that someone else (the ``prover'') knows something (the ``statement'' $y$), and nothing more, to no one else. The proof can be computed in two different ways, this is the core notion of \emph{zero-knowledge}, $\neg \tau \implies \textsc{zk}$
+The purpose of a proof system is to give a way to convince someone (the ``verifier'') that someone else (the ``prover'') knows something (the ``statement'' $y$), and nothing more, to no one else. The proof can be computed in two different ways, this is the core notion of \emph{zero-knowledge}, $\neg \tau \implies \textsc{zk}$
 
 \subsubsection{Properties}
 
@@ -272,7 +272,7 @@ Purpose of a proof system is to give a way to convince someone (the ``verifier''
 
 
 \begin{definition}[$t$-universality, or $t - 1$ simulation soundness]
-    % Designated verifier non interactive zero knowledge
+    % Designated verifier non-interactive zero-knowledge
     Let $\Pi$ be a \textsc{dv-nizk} scheme; it is \textit{t-universal} iff for any distinct $y_{1 \upto t} \notin L$ we have: 
     \[
         (\omega, \mathcal{V}erify(\tau, y_1), \ldots, \mathcal{V}erify(\tau, y_{t})) = (\omega, v_1, \ldots, v_t)

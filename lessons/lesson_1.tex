@@ -44,7 +44,7 @@ Thus, for a secrecy scheme to work as intended, the following statement must hol
 \]
 
 \begin{definition}[Shannon's perfect secrecy]
-    Let $M$ be a generic random variable over $\M$, and $K$ a uniform random variable over $\K$. Then, the cryptosystem $\Xi: (\Enc, \Dec)$ is deemed \emph{perfectly secret} iff the ciphertext $C = \Enc(K, M)$ obtained by encrypting a the random message $M$ using the uniformly random key $K$ is effectively useless in retrieving any information about the original message:
+    Let $M$ be a generic random variable over $\M$, and $K$ a uniform random variable over $\K$. Then, the cryptosystem $\Xi: (\Enc, \Dec)$ is deemed \emph{perfectly secret} iff the ciphertext $C = \Enc(K, M)$ obtained by encrypting the random message $M$ using the uniformly random key $K$ is effectively useless in retrieving any information about the original message:
     \[
         \forall M \sim \mathcal{R}and(\M) \, \forall C \simeq \Enc(K, M) \quad \Pr[M = m] = \Pr[M = m \knowing C = c]
     \]

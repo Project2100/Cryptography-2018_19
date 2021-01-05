@@ -106,11 +106,11 @@ Figure \ref{fig:mdbase} depicts a general view of the algorithm. Let it be denot
 
     \end{cryptoredux}
 
-    Ignore same blocks: find largest j such that:
+    Ignore same blocks: find the largest j such that:
     \[
         (b_j, x_{j - 1}) \neq (b'_j, y_{j - 1}) \wedge h_s(b_j, x_{j - 1}) = h_s(b'_j, y_{j - 1})
     \]
-    this implies the rest of th message is equal, then the resulting final hash will be equal, thus for $j > 0$ we have a collision.
+    this implies the rest of the message is equal, then the resulting final hash will be equal, thus for $j > 0$ we have a collision.
 
 \end{proof}
 
@@ -131,7 +131,7 @@ In order to adapt the MD-construct to messages of variable length, some sort of 
 This is an example of padding which encodes the message length in itself.
 
 \begin{theorem}
-    The strengthened construct is collision resistant for variable-length messages.
+    The strengthened construct is collision-resistant for variable-length messages.
 \end{theorem}
 
 \begin{proof}
