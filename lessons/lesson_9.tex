@@ -288,7 +288,7 @@ If $\varepsilon = 2^{-n}$, meaning the collision probability is minimized, then 
         where $q$ denotes the adversary's query count. It suffices to show that $\Pr[\textsc{Bad}] \in \negl(\lambda)$.
 
         % AP190108: Copied verbatim from my notes, maybe this is something Venturi wrote. Doesn't mean I fully understand it...
-        Since we don't care what happens after a collision, we can alternatively consider a mental experiment where we answer all queries at random, and only at the end sample $s \pickUAR \binary^\lambda$ and check of collisions: this does not change the value of $\Pr(\textsc{Bad})$. Now queries are independent of $s$, and this eases our proof:
+        Since we don't care what happens after a collision, we can alternatively consider a mental experiment where we answer all queries at random, and only at the end sample $s \pickUAR \binary^\lambda$ and check for collisions: this does not change the value of $\Pr(\textsc{Bad})$. Now queries are independent of $s$, and this eases our proof:
         \begin{align*}
             \Pr[\textsc{Bad}] &= \Pr[\exists x_i \neq x_j, h_S(x_i) = h_S(x_j)] &                               \\
             &\leq \sum_{i \neq j} \Pr[h_S(x_i) = h_S(x_j)]                      & \text{$h_s$ is \textsc{au})}  \\
