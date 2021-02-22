@@ -2,10 +2,10 @@
 
 \section{Secret communication}
 
-The typical setting for the problem of secret communication is depicted in figure \ref{fig:secrecy}. The parties Alice and Bob want to share data in a private fashion, and thus prevent a third party Eve form learning the shared data, in a word, \emph{eavesdropping}. The objects used here are:
+The typical setting for the problem of secret communication is depicted in figure \ref{fig:secrecy}. The parties Alice and Bob want to share data in a private fashion, thus preventing a third party Eve from \emph{eavesdropping}.\footnote{That is, getting a hold of the information shared between the parties} The objects of interest here are:
 \begin{itemize}
     \item The data to be shared, or \emph{message} $m$;
-    \item Some secret information, shared between Alice and Bob, that is used to \emph{encrypt} the message: the \emph{encryption key} or just \emph{key} $k$;
+    \item Some secret information, shared between and known only to Alice and Bob, that is used to \emph{encrypt} the message: the \emph{encryption key} or just \emph{key} $k$;
     \item The result of encrypting a message $m$ using the key $k$: the ciphertext $c$.
 \end{itemize}
 
@@ -23,8 +23,7 @@ The typical setting for the problem of secret communication is depicted in figur
         \draw[-Stealth] (5, -1) node [below] {$k$} -- (b);
         \draw[-Stealth] (-1, 0) node [left] {$m$} -- (a);
         \draw[-Stealth] (b) -- (6, 0) node [right] {$m$};
-        \draw[-Stealth] (2, -0.1) -- (3, -0.1)
-            (2.5, -0.1) -- (e);
+        \draw[-Stealth] (2, -0.1) -- (3, -0.1) (2.5, -0.1) -- (e);
 
     \end{tikzpicture}
 
@@ -32,153 +31,179 @@ The typical setting for the problem of secret communication is depicted in figur
     \label{fig:secrecy}
 \end{figure}
 
-To complete the picture, the two parties Alice and Bob use a \emph{cryptographic secrecy scheme}, or \emph{encryption scheme} to convert the message in an encrypted form, and vice versa. It has the form $\Xi = (\Enc, \Dec)$, where:
+To complete the picture, the two parties Alice and Bob employ a \emph{cryptographic secrecy scheme}, or \emph{encryption scheme} to convert the message in an encrypted form, and vice versa. It has the form $\Xi = (\Enc, \Dec)$, where:
 \begin{itemize}
-    \item $\Enc \in \K \times \M \to \C$ is the function that, given a message $m$ in $\M$ and a key $k$ in $\K$ performs the encryption, and thus generates the corresponding ciphertext $c$ in $\C$;
-    \item $\Dec \in \K \times \C \to \M$ restores a message starting from the ciphertext and the key originally used in the encryption.
+    \item $\Enc \in \K \times \M \to \C$ is a machine that, given a message $m$ in $\M$ and a key $k$ in $\K$, returns a ciphertext $c$ in $\C$, which is an \emph{encrypted} form of the meesage;
+    \item $\Dec \in \K \times \C \to \M$ is a machine that restores the message $m$ encrypted in the given ciphertext $c$ by using the key $k$, effectively \emph{decrypting} the message.
 \end{itemize}
 
-Thus, for a secrecy scheme to work as intended, the following statement must hold:
+For the time being, assume that both \Enc{} and \Dec{} work as normal functions. A fundamental requirement of encryption schemes is that they always completely preserve the message after a whole round of encryption and decryption:
 \[
-    \forall m \in \M \, \forall k \in \K \quad \Dec(k, \Enc(k, m)) = m
+    \forall m \in \M \; \forall k \in \K \quad \Dec(k, \Enc(k, m)) = m
 \]
 
-\begin{definition}[Shannon's perfect secrecy]
-    Let $M$ be a generic random variable over $\M$, and $K$ a uniform random variable over $\K$. Then, the cryptosystem $\Xi: (\Enc, \Dec)$ is deemed \emph{perfectly secret} iff the ciphertext $C = \Enc(K, M)$ obtained by encrypting the random message $M$ using the uniformly random key $K$ is effectively useless in retrieving any information about the original message:
+A first definition that formalizes secrecy of an encryption scheme comes from Shannon:
+
+% TODO one-time?!?
+% TODO - Is CPA the reason why perfect many-time secrecy isn't even contemplated?
+\begin{definition}[\textsc{Perfect secrecy} --- Shannon's perfect secrecy]
+    Given an encryption scheme $\Xi: (\Enc, \Dec)$, let $M$ be a generic random variable over the message space $\M$, with the only requirement that all messages $m$ have positive probability (i.e. it is \emph{nonexclusive}), and $K$ be a uniform random variable over the key space $\K$:
+    \begin{align*}
+        M \in&\ \mathcal{R}and(\M) : \forall m \in \M \quad \Pr[M = m] > 0 \\
+        K \in&\ \unifdist(\K)
+    \end{align*}
+    Then let $\Enc(K, M)$ be the resulting ciphertext from encrypting $M$ using $K$. The scheme $\Xi$ is deemed \emph{perfectly secret} iff such ciphertext is effectively useless in retrieving any information about the original message:
     \[
-        \forall M \sim \mathcal{R}and(\M) \, \forall C \simeq \Enc(K, M) \quad \Pr[M = m] = \Pr[M = m \knowing C = c]
+        \forall m \in \M \; \forall c \in \C \quad \Pr[M = m] = \Pr[M = m \knowing \Enc(K, M) = c]
     \]
 \end{definition}
 
-The perfect secrecy definition can be rephrased in different ways, bringing more details to light:
+%Perfect one-time secrecy is usually shortened to just \emph{perfect secrecy},\footnote{An explanation for this is in chapter 7} 
+This definition can be rephrased in different ways, bringing more details to light:
     
 \begin{proposition}
     The following statements are equivalent:
     \begin{enumerate}
-        \item \label{def:ps1} $\Pr[M = m] = \Pr[M = m \knowing C = c]$
-        \item \label{def:ps2} $M \indep C$
+        \item \label{def:ps1} $\Pr[M = m] = \Pr[M = m \knowing \Enc(K, M) = c]$
+        \item \label{def:ps2} $M \indep \Enc(K, M)$
         \item \label{def:ps3} $\forall m_1, m_2 \in \M \, \forall c \in \C \quad \Pr[\Enc(K, m_1) = c] = \Pr[\Enc(K, m_2) = c]$
     \end{enumerate}
 \end{proposition}
 
 \begin{proof}
-    The proof is structured as a cyclic implication between the three definitions:
+    The proof is structured as a cyclic implication between the three proposed definitions:
     
     \begin{itemize}
         \item $(\ref{def:ps1}) \implies (\ref{def:ps2})$: Start from one side of the independency definition, and work through the other:
         \begin{align*}
-             & \Pr[C = c \wedge M = m]              & \\
-            =& \Pr[C = c] \Pr[M = m \knowing C = c] & \text{(Conditional prob.)} \\
-            =& \Pr[C = c] \Pr[M = m]                & \text{(Using 1.)} \\
+             & \Pr[M = m \wedge \Enc(K, M) = c]                         & \\
+            =& \Pr[M = m \knowing \Enc(K, M) = c] \Pr[\Enc(K, M) = c]   & \text{(Conditional prob.)} \\
+            =& \Pr[M = m] \Pr[\Enc(K, M) = c]                           & \text{(Using \ref{def:ps1})} \\
         \end{align*}
-        This proves that $M$ and $C$ are independent distributions.
+        This proves that $M$ and $\Enc(K, M)$ are indeed independent random variables.
         
         \item $(\ref{def:ps2}) \implies (\ref{def:ps3})$: Let $M$ be a generic random variable over $\M$. Then:
         \begin{align*}
-             & \Pr[\Enc(K, m_1) = c]                & \\
-            =& \Pr[\Enc(K, M) = c \knowing M = m_1] & \text{(Introducing $M$)} \\
-            =& \Pr[C = c \knowing M = m_1]          & \text{($C$ definition)} \\
-            =& \Pr[C = c]                           & \text{(Using 2.)} \\
-            =& \Pr[\Enc(K, m_2) = c]                & \text{(Same steps reversed, where $m_1 \mapsto m_2$)}\\
+             & \Pr[\Enc(K, m_1) = c]                                & \\
+            =& \Pr[\Enc(K, M) = c \knowing M = m_1]                 & \text{(Conditioning $m$)} \\
+            =& \Pr[\Enc(K, M) = c \wedge M = m_1] \Pr[M = m_1]^{-1} & \text{(Conditional prob.)} \\
+            =& \Pr[\Enc(K, M) = c]                                  & \text{(Using \ref{def:ps2})} \\
+            =& \Pr[\Enc(K, m_2) = c]                                & \mathllap{\text{(Same steps reversed, where $m_1 \mapsto m_2$)}} \\
         \end{align*}
 
         \item $(\ref{def:ps3}) \implies (\ref{def:ps1})$:
         \begin{align*}
-             & \Pr[C = c]                                                   & \\
-            =& \sum_{m \in \M}\Pr[C = c \wedge M = m]                       & \text{(Total prob.)} \\
-            =& \sum_{m \in \M}\Pr[\Enc(K, M) = c \wedge M = m]              & \text{($C$ definition)} \\
+             & \Pr[\Enc(K, M) = c]                                          & \\
+            =& \sum_{m \in \M}\Pr[\Enc(K, M) = c \wedge M = m]              & \text{(Total prob.)} \\
             =& \sum_{m \in \M}\Pr[\Enc(K, M) = c \knowing M = m] \Pr[M = m] & \text{(Conditional prob.)} \\
             =& \sum_{m \in \M}\Pr[\Enc(K, m) = c] \Pr[M = m]                & \text{(Condition collapse)} \\
-            =& \Pr[\Enc(K, \overline{m}) = c] \sum_{m \in \M} \Pr[M = m]    & \text{(Using 3.)} \\
-            =& \Pr[\Enc(K, \overline{m}) = c]                               & \text{(Total prob.)} \\
-            =& \Pr[\Enc(K, M) = c \knowing M = \overline{m}]                & \text{(Condition expansion)} \\
-            =& \Pr[C = c \knowing M = \overline{m}]                         & \text{($C$ definition)} \\
+            =& \Pr[\Enc(K, m_0) = c] \sum_{m \in \M} \Pr[M = m]             & \mathllap{\text{(Using \ref{def:ps3} with arbitrary $m_0$})} \\
+            =& \Pr[\Enc(K, m_0) = c]                                        & \text{(Total prob.)} \\
+            =& \Pr[\Enc(K, M) = c \knowing M = m_0]                         & \text{(Conditioning $m_0$)}
         \end{align*}
 
-        Knowing this, and applying Bayes' theorem, we get back to the first definition:
+        By applying Bayes' theorem, the above result can be turned into the first definition of perfect secrecy:
         \begin{align*}
                     & \Pr[C = c] = \Pr[C = c \knowing M = m]                                        & \\
             \implies& \Pr[C = c] = \Pr[M = m \knowing C = c] \cdot \frac{\Pr[C = c]}{\Pr[M = m]}    & \text{(Bayes' theorem)} \\
-            \implies& \Pr[M = m] = \Pr[M = m \knowing C = c]                                        & \\
+            \implies& \Pr[M = m] = \Pr[M = m \knowing C = c]                                        &
         \end{align*}
+        where $C = \Enc(K, M)$.
     \end{itemize}
 \end{proof}
 
-A remark on definition \ref{def:ps3} has to be done here:
+About definition \ref{def:ps3}, it could be insightful to remark that, for any message $m$ and ciphertext $c$:
 \begin{align*}
         & \Pr[\Enc(K, m) = c] \\
        =& \Pr[\Enc(K, M) = c \knowing M = m] \\
     \neq& \Pr[\Enc(K, M) = c]
 \end{align*}
 
-which is exactly the difference between \emph{choosing} a specific message $m$, and picking it at random, as $M$ suggests.
+which is the difference between \emph{choosing} a specific message $m$, and picking it at random, according to $M$' distribution.
 
 \subsection{One-time Pad}
 
-The One-time Pad, or \otp{} in short, is a fairly simple scheme that leverages the involutory property of the \textsc{xor} operation. Let all the spaces $\K$, $\M$ and $\C$ be binary strings of some length $\binary^l$, and define the following cryptographic scheme:
+The One-time Pad, or \otp{} in short, is a simple encryption scheme that leverages the involutory property of the \textsc{xor} operation. Let all the spaces $\K = \M = \C = \binary^l$ be binary strings of some length $l$, and define this scheme $\otp = (\Enc, \Dec)$ as such:
 \begin{itemize}
-    \item $\Enc(k, m) = k \oplus m = c$
-    \item $\Dec(k, c) = k \oplus c = m$
-    \item Correctness: $\Dec(k, \Enc(k, m)) = \Dec(k, k \oplus m) = k \oplus k \oplus m = m$.
+    \item $\Enc(k, m) = k \oplus m$
+    \item $\Dec(k, c) = k \oplus c$
+    \item[--] Correctness: $\Dec(k, \Enc(k, m)) = \Dec(k, k \oplus m) = k \oplus k \oplus m = m$
 \end{itemize}
 
 \begin{theorem}
     \otp{} is perfectly secret.
 \end{theorem}
 \begin{proof}
-    The proof is essentially a retelling of the steps used for proving that the second definition of perfect secrecy implies the third one. Let $K \sim \unifdist(\K)$. Then, $\forall m_1, m_2, c \in \binary^l$:
+    The proof makes use of definition \ref{def:ps3} of perfect secrecy. Let $K$ be a uniformly random key; then for any binary strings $m_1$, $m_2$ and $c$:
     \begin{align*}
         & \Pr[\Enc(K, m_1) = c]     & \\
         =& \Pr[K \oplus m_1 = c]    & \\
         =& \Pr[K = c \oplus m_1]    & \\
-        =& \oneover{|\K|}           & \text{(K is uniform)} \\
-        =& \Pr[\Enc(K, m_2) = c]    & \text{(Same steps reversed, where $m_1 \mapsto m_2$)} \\  
+        =& |\K|^{-1}                & \text{(K is uniform)} \\
+        =& \Pr[\Enc(K, m_2) = c]    & \text{(Same steps reversed, where $m_1 \mapsto m_2$)}  
     \end{align*}
-    This satisfies the third definition of perfect secrecy.
 \end{proof}
 
 %TODO OLD NOTE: Observation: k is truly random, but fixed, compare with Pi_\oplus's encryption routine: from a security standpoint, nothing changes! actually, \Pi_\oplus may be weaker brute-force wise than OTP!
 
-By observing our recent proof, some insights (and problems) arise:
+At this point, some important observations are in order:
 \begin{enumerate}
     \item The key and the message's lengths must always match ($|k| = |m|$);
-    \item As the name suggests, keys are useful just for one encryption. Otherwise, given two encryptions with the same key, an attacker may exploit the \textsc{xor}'s idempotency to extract valuable information from both ciphertexts\footnote{This vulnerability of applying a function on a ciphertext, and expecting as a result the image of the original message by the same function, is called \emph{malleability}, and is explored further in the notes.}:
+    \item As the scheme's name suggests, keys are useful just for one encryption. In fact, if the same key is used for two different encryptions, an attacker may exploit the \textsc{xor}'s idempotency to extract valuable information from both ciphertexts:
     \[
         c_1 = k \oplus m_1 \wedge c_2 = k \oplus m_2 \implies c_1 \oplus c_2 = m_1 \oplus m_2
     \]
+
+    % This is actually an example of scheme malleability
     
 \end{enumerate}
 
+%\footnote{This vulnerability of applying a function on a ciphertext, and expecting as a result the image of the original message by the same function, is called \emph{malleability}, and is explored further in the notes.}
+
 %\footnote{An encryption algorithm is "malleable" if it is possible to transform a ciphertext into another ciphertext which decrypts to a related plaintext. That is, given an encryption $c$ of a plaintext $m$, it is possible to generate another valid ciphertext $c'$, for a known $Enc$, $Dec$, without necessarily knowing or learning $m$.}
 
-Combined with the fact that keys must be preemptively shared in a secure fashion, these problems make for a quite impractical cryptographic scheme. One can further this analysis and generalize it to all ``perfect'' schemes, giving a rather delusive conclusion:
-
-\begin{figure}[h]
-    \centering
-    \def\firstcircle{(0,0) circle (1.5cm)}
-    \def\secondcircle{(60:0) circle (0.9cm)}
-    \begin{tikzpicture}
-        \begin{scope}[shift={(3cm,-5cm)}]
-            \draw \firstcircle node[label={[xshift=1.0cm, yshift=0.3cm]$\M$}] { };
-            \draw \secondcircle node[label={[xshift=1.2cm, yshift=-0.5cm]$m$}] {$D$};
-        \end{scope}
-    \end{tikzpicture}
-    \caption{Where the messages stand}
-\end{figure}
+Combined with the fact that keys must be preemptively shared in a secret fashion, these caveats make for an impractical encryption scheme. The first point can actually be generalized for any scheme that is perfeclty secret:
 
 \begin{theorem}
-    For a secrecy scheme to be perfectly secret: $|\K| \geq |\M|$
+    For an encryption scheme to be perfectly secret, there must be more distinct keys than distinct messages: 
+    \[
+        \Xi \textrm{ is perfectly secret} \implies |\K| \geq |\M|
+    \]
 \end{theorem}
 \begin{proof}
-    Perfection will be disproved by breaking definition \ref{def:ps1}. Let $M \sim \unifdist(\M)$, and take $c \in \C : \Pr[C = c] > 0$. Consider $D = \{\Dec(k, c) : k \in \K\}$ as the set of all images of the decryption routine with all keys in $\K$. The offending assumption is that $|\K| < |\M|$. Then, by how $D$ is defined:
 
+    % Proof of footnote: if $c$ has zero probability, then $S$ is empty. This means that no matter which key-message pair is chosen, $c$ will never come out. However $c \in \C$, and the latter makes part of \Dec{}'s domain, and if \Dec{} is still regarded to be a function, then $c$ \textbf{must} evaluate to some message, given any key whatsoever. That alone is a contradiction, because it indirectly violates correctness of $\Xi$. Therefore, there cannot be a ciphertext with zero probability.
+
+    Let $M$ be a nonexclusive random variable over the messages, then fix a ciphertext $c$ that has some positive probability to be the result of $M$'s encryption.\footnote{Actually, it can be proven that there cannot be ciphertexts with zero probability.} This means that there are some key-message pairs that result in such ciphertext by means of encryption:
     \[
-        |D| \leq |\K| < |\M| \implies \exists m \in \M \setminus D
+        \exists (k, m) \in \K \times \M \quad \Enc(k, m) = c
+    \]
+    Let $S$ be the set collecting all possible message ``sources'' that do encrypt into $c$:
+    \[
+        S = \{m \in \M : \exists k \in \K \quad \Enc(k, m) = c\}
     \]
 
-    Fix this message $m$, and remember that by $M$'s definition, $\Pr[M = m] = |\M|^{-1}$. Since $m \notin D$, there can be no key in $\K$ such that $\Dec(k, c) = m$. By observing that $C$ strictly distributes over $D$, where $m$ is not present, $\Pr[M = m \knowing C = c] = 0$. Putting everything together:
+    By using $\Xi$'s correctness, this definition can be twisted into using \Dec:
     \[
-        0 = \Pr[M = m \knowing C = c] \neq \Pr[M = m] = |\M|^{-1}
+        S = \{\Dec(k, c) \in \M : k \in \K\}
     \]
-    This clearly violates the first definition of perfect secrecy.
+
+    This reveals in a clearer way that there cannot be more sources than keys,\footnote{Remember that \Enc{} and \Dec{} are still considered as mathematical functions, despite them actually being machines} therefore $|S| \leq |\K|$. By also assuming that $|\K| < |\M|$, it follows that $|S| < |\M|$ too; of consequence is that there are some messages that cannot be possibly encrypted into $c$:
+    \[
+        x \in \M \setminus S \implies \forall k \in \K \quad \Pr[\Enc(k, x) = c] = 0
+    \]
+
+    Let $x$ be a message in $\M \setminus S$. Since $M$ is nonexclusive:
+    \[
+        \Pr[M = x] > 0
+    \]
+    However, $x$ cannot be encrypted into $c$ by definition, which also means:
+    \[
+        \Pr[M = x \knowing \Enc(K, M) = c] = 0
+    \]
+    Therefore:
+    \[
+        0 = \Pr[M = x \knowing \Enc(K, M) = c] \neq \Pr[M = m] > 0
+    \]
+    which violates perfect secrecy.
 \end{proof}

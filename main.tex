@@ -110,19 +110,41 @@
 
     \chapter{Introduction}
 
-    Cryptography is the collection of techniques that are designed to enable secure communication between two parties in a setting where third parties intend to listen and/or modify the transmitted information. While encryption schemes are usually the first things that come to mind, it is worthwhile to carefully consider all the aspects that cryptography influences:
-
+    Newcomers beware: this course will employ a great deal of math, especially:
     \begin{itemize}
-        \item \emph{Confidentiality}: the two parties can safely assume that they are communicating privately; this can be further split into:
-              \begin{itemize}
-                  \item \emph{Secrecy}: the aspect of communication privacy;
-                  \item \emph{Authentication}: the aspect of party identity verification.
-              \end{itemize}
-
-        \item \emph{Integrity}: Some techniques employed here are also designed to ensure that the transmitted data is not  altered, a property of which desirability is paramount in safety-critical scenarios.
+        \item Probability;
+        \item Algebra, especially group theory;
+        \item Notions of complexity theory and asymptotic analysis;
+        \item Some unique mathematical constructs, such as \emph{cryptographic games}
     \end{itemize}
 
-    Modern cryptography systems are usually designed according to \emph{Kerckhoffs's principle}, which states that a secure system  shall only rely on the encryption keys, and not by the secrecy of the underlying algorithm; as Claude Shannon later summed up: \emph{``the enemy knows the scheme''}. The problem of sharing the key between two parties while retaining communication   confidentiality thus becomes central in developing a good scheme, and is the main focus of almost every scheme described here.
+    \subsubsection{Some terminology}
+
+    % Some people might have heard terms similar to ``cryptography'', like ``cryptology'', or ``cryptanalysis''. While they are often deemed interchangeable, there exists indeed a differentiation between the three:
+
+    % \begin{itemize}
+    %     \item \emph{Cryptography} denotes the study and betterment of encryption techniques;
+    %     \item \emph{Cryptanalysis} denotes the study of encrypted messages, and the ways of breaking the encryption to get to the message;
+    %     \item \emph{Cryptology} refers collectively to cryptography and cryptanalisis.
+    % \end{itemize}
+
+    % This course has the intended main purpose of fostering better encryption techniques, hence its name.
+    
+    While cryptography is almost always associated with the idea of keeping something secret, it is worthwhile to carefully consider other aspects that it influences:
+
+    \begin{itemize}
+        \item \emph{Confidentiality}: the two parties using a form of encrypted communication can safely assume that they are communicating privately; this can be further split into:
+              \begin{itemize}
+                  \item \emph{Secrecy}: the particular aspect of privacy;
+                  \item \emph{Authentication}: the particular aspect of identity verification.
+              \end{itemize}
+
+        \item \emph{Integrity}: this is about having a guarantee that data is not altered, a property which becomes essential especially in safety-critical scenarios.
+    \end{itemize}
+
+    \subsubsection{Principles}
+
+    Modern cryptography systems are usually designed according to \emph{Kerckhoffs's principle}, which states that a secure system  shall only rely on the encryption keys, and not by the secrecy of the underlying algorithm; as Claude Shannon later summed up: \emph{``the enemy knows the scheme''}. The problem of sharing the key between two parties while retaining communication confidentiality thus becomes central in developing a good scheme, and is the main focus of almost every scheme described during the course.
 
     \part{Mathematical foundations}
 
