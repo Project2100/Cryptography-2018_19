@@ -44,12 +44,10 @@ For the time being, assume that both \Enc{} and \Dec{} work as normal functions.
 
 A first definition that formalizes secrecy of an encryption scheme comes from Shannon:
 
-% TODO one-time?!?
-% TODO - Is CPA the reason why perfect many-time secrecy isn't even contemplated?
-\begin{definition}[\textsc{Perfect secrecy} --- Shannon's perfect secrecy]
-    Given an encryption scheme $\Xi: (\Enc, \Dec)$, let $M$ be a generic random variable over the message space $\M$, with the only requirement that all messages $m$ have positive probability (i.e. it is \emph{nonexclusive}), and $K$ be a uniform random variable over the key space $\K$:
+\begin{definition}[Perfect secrecy]
+    Given an encryption scheme $\Xi: (\Enc, \Dec)$, let $M$ be a generic random variable over the message space $\M$, and $K$ be a uniform random variable over the key space $\K$:
     \begin{align*}
-        M \in&\ \mathcal{R}and(\M) : \forall m \in \M \quad \Pr[M = m] > 0 \\
+        M \in&\ \mathcal{R}and(\M) \\
         K \in&\ \unifdist(\K)
     \end{align*}
     Then let $\Enc(K, M)$ be the resulting ciphertext from encrypting $M$ using $K$. The scheme $\Xi$ is deemed \emph{perfectly secret} iff such ciphertext is effectively useless in retrieving any information about the original message:
@@ -58,7 +56,6 @@ A first definition that formalizes secrecy of an encryption scheme comes from Sh
     \]
 \end{definition}
 
-%Perfect one-time secrecy is usually shortened to just \emph{perfect secrecy},\footnote{An explanation for this is in chapter 7} 
 This definition can be rephrased in different ways, bringing more details to light:
     
 \begin{proposition}
@@ -148,21 +145,19 @@ The One-time Pad, or \otp{} in short, is a simple encryption scheme that leverag
 
 At this point, some important observations are in order:
 \begin{enumerate}
-    \item The key and the message's lengths must always match ($|k| = |m|$);
     \item As the scheme's name suggests, keys are useful just for one encryption. In fact, if the same key is used for two different encryptions, an attacker may exploit the \textsc{xor}'s idempotency to extract valuable information from both ciphertexts:
     \[
         c_1 = k \oplus m_1 \wedge c_2 = k \oplus m_2 \implies c_1 \oplus c_2 = m_1 \oplus m_2
     \]
+    \item The key and the message's lengths must always match ($|k| = |m|$);
 
-    % This is actually an example of scheme malleability
+    % AP210226: Do not introduce malleability at this level; rather, cite OTP instead when malleability is actually introduced
+    %\footnote{This vulnerability of applying a function on a ciphertext, and expecting as a result the image of the original message by the same function, is called \emph{malleability}, and is explored further in the notes.}
+    %\footnote{An encryption algorithm is "malleable" if it is possible to transform a ciphertext into another ciphertext which decrypts to a related plaintext. That is, given an encryption $c$ of a plaintext $m$, it is possible to generate another valid ciphertext $c'$, for a known $Enc$, $Dec$, without necessarily knowing or learning $m$.}
     
 \end{enumerate}
 
-%\footnote{This vulnerability of applying a function on a ciphertext, and expecting as a result the image of the original message by the same function, is called \emph{malleability}, and is explored further in the notes.}
-
-%\footnote{An encryption algorithm is "malleable" if it is possible to transform a ciphertext into another ciphertext which decrypts to a related plaintext. That is, given an encryption $c$ of a plaintext $m$, it is possible to generate another valid ciphertext $c'$, for a known $Enc$, $Dec$, without necessarily knowing or learning $m$.}
-
-Combined with the fact that keys must be preemptively shared in a secret fashion, these caveats make for an impractical encryption scheme. The first point can actually be generalized for any scheme that is perfeclty secret:
+Combined with the fact that keys must be preemptively shared in a secret fashion, these caveats make for an impractical encryption scheme. The last point can actually be generalized for any scheme that is perfectly secret:
 
 \begin{theorem}
     For an encryption scheme to be perfectly secret, there must be more distinct keys than distinct messages: 
@@ -172,9 +167,7 @@ Combined with the fact that keys must be preemptively shared in a secret fashion
 \end{theorem}
 \begin{proof}
 
-    % Proof of footnote: if $c$ has zero probability, then $S$ is empty. This means that no matter which key-message pair is chosen, $c$ will never come out. However $c \in \C$, and the latter makes part of \Dec{}'s domain, and if \Dec{} is still regarded to be a function, then $c$ \textbf{must} evaluate to some message, given any key whatsoever. That alone is a contradiction, because it indirectly violates correctness of $\Xi$. Therefore, there cannot be a ciphertext with zero probability.
-
-    Let $M$ be a nonexclusive random variable over the messages, then fix a ciphertext $c$ that has some positive probability to be the result of $M$'s encryption.\footnote{Actually, it can be proven that there cannot be ciphertexts with zero probability.} This means that there are some key-message pairs that result in such ciphertext by means of encryption:
+    Let $M$ be a generic random variable over the messages, then fix a ciphertext $c$ that has some positive probability to be the result of $M$'s encryption. This means that there are some key-message pairs that result in such ciphertext by means of encryption:
     \[
         \exists (k, m) \in \K \times \M \quad \Enc(k, m) = c
     \]
