@@ -2,12 +2,11 @@
 
 \section{Authentic communication}
 
-
-A simple scenario exposing the problem of authentication is depicted in figure \ref{fig:authentication}. This time, the parties Alice and Bob want to ensure that they are effectively communicating to each other, or in other words, nobody else is \emph{impersonating} one of the two. The objects used here are:
+The most common scenario exposing the problem of authentication is depicted in figure \ref{fig:authentication}. This time, the parties Alice and Bob want to ensure that they are effectively communicating to each other; in other words, nobody else is \emph{impersonating} either party. The objects used here are:
 \begin{itemize}
     \item The data to be shared, or \emph{message} $m$;
     \item Some additional secret information, shared by the two parties, that is used to \emph{sign} the message: the \emph{authentication key} or just \emph{key} $k$;
-    \item The result of signing a message $m$ using the key $k$: the \emph{signature} or \emph{tag} $\phi$.
+    \item The result of signing a message $m$ using the key $k$: the \emph{signature} or \emph{tag} $t$.
 \end{itemize}
 
 \begin{figure}[ht]
@@ -19,13 +18,12 @@ A simple scenario exposing the problem of authentication is depicted in figure \
             (2.5, -1) node (e) [box, fill = white] {Eve}
         ;
 
-        \draw[-Stealth] (a) -- node [midway, above] {$(m, \phi)$} (b);
+        \draw[-Stealth] (a) -- node [midway, above] {$(m, t)$} (b);
         \draw[-Stealth] (0, -1) node [below] {$k$} -- (a);
         \draw[-Stealth] (5, -1) node [below] {$k$} -- (b);
         \draw[-Stealth] (-1, 0) node [left] {$m$} -- (a);
         \draw[-Stealth] (b) -- (6, 0) node [right] {$1$};
-        \draw[-Stealth] (2, -0.1) -- (3, -0.1)
-            (2.5, -0.1) -- (e);
+        \draw[-Stealth] (2, -0.1) -- (3, -0.1) (2.5, -0.1) -- (e);
 
     \end{tikzpicture}
 
@@ -33,127 +31,111 @@ A simple scenario exposing the problem of authentication is depicted in figure \
     \label{fig:authentication}
 \end{figure}
 
-Here is employed a \emph{cryptographic authentication scheme}, or just \emph{authentication scheme}, typically taking the form $\Psi = (\Tag, \Ver)$, where:
+The mechanism employed by both parties to enforce authentication is called a \emph{cryptographic authentication scheme}, or just \emph{authentication scheme}, typically taking the form $\Phi = (\Tag, \Ver)$, where:
 \begin{itemize}
-    \item $\Tag \in \K \times \M \to \Phi$ is the function that, given a message $m$ in $\M$ and a key $k$ in $\K$ generates the signature $\phi$
-    \item $\Ver \in \K \times \M \times \Phi \to \binary$ decides whether $\phi$ is the correct signature for the message $m$ using the key $k$. It is udeful to note that, in various schemes, the verifier simply consists in invoking the tagging function, and comparing the resulting signature with the given one:
-    \[
-        \Ver(k, m, \phi) = [\Tag(k, m) = \phi]
-    \]
+    \item $\Tag \in \K \times \M \to \T$ is the machine that, given a message $m$ in $\M$ and a key $k$ in $\K$ generates the signature $t$
+    \item $\Ver \in \K \times \M \times \T \to \binary$ is the machine that decides whether $t$ is the correct signature for the message $m$ using the key $k$.
 \end{itemize}
+
+It is worth observing that, under the assumption that such machines still behave as mathematical functions, a straightforward verifier with inputs $(k, m, t)$ consists in:
+\begin{enumerate}
+    \item Invoking the tagging function: $u = \Tag(k, m)$;
+    \item Comparing $u$ and $t$ for equality.
+\end{enumerate}
 
 Given such definitions, an authentication scheme works as intended if and only if:
 \[
     \forall m \in \M, \forall k \in \K \implies \Ver(k, m, \Tag(k, m)) = 1
 \]
 
-The security aspect to consider in these schemes is the signatures' \emph{unforgeability}: if Eve is able to obtain a signature $\phi$ of a message $m$ of her own choice, then she shall have no better means of \emph{forging} a valid couple $(m', \phi')$ such that $\Ver(k, m', \phi') = 1$ other than random guessing, or knowing the key, of course. The coming definitions will help to give this notion more formal ground:
+A security problem then arises when someone, having a signed message $(m_1, t_1)$ where the key $k$ used for tagging is unknown, is able to efficiently sign a different message $(m_2, t_2)$ such that verification under the same key yields a success. This acion is called a \emph{forgery}; and by looking at the original setting in figure \ref{fig:authentication}, if Eve is effectively able to forge vaild signatures, she can indeed impersonate either Alice or Bob at will. The desired property of an authentication scheme thus becomes to be resistant, if not immune, to such attacks; in one word, the scheme is \emph{unforgeable}.
 
-\begin{definition} \emph{($\varepsilon$-statistical one-time security)}:
-    An authentication scheme has $\varepsilon$-statistical one-time security iff, given a valid couple $(m_1, \phi_1)$, any adversary cannot \emph{forge} a fresh valid couple $(m_2, \phi_2)$ without knowing the signature key $k$:
+\begin{definition}[$\varepsilon$-statistical one-time unforgeability]
+    let $\Phi$ be an authentication scheme, and let $m_1$ and $m_2$ be two distinct messages, and $t_1 = \Tag(K, m_1)$ be the signature of $m_1$ under $\Phi$, with the key $K$ picked uniformly at random. $\Phi$ is deemed \emph{$\varepsilon$-statistical one-time unforgeable} iff knowing $m_1$ and $t_1$ does not give any advantage in finding a signature $t_2$ that is actually the signature of $m_2$ under the same scheme and the same key of $m_1$, without knowing such key:
     \[
-        \forall m_1 \neq m_2 \in \M \, \forall \phi_1, \phi_2 \in \Phi \quad \Pr[\Tag(K, m_2) = \phi_2 \knowing \Tag(K, m_1) = \phi_1] \leq \varepsilon
+        \forall m_1 \neq m_2 \in \M \, \forall t_1, t_2 \in \T \quad \Pr[\Tag(K, m_2) = t_2 \knowing \Tag(K, m_1) = t_1] \leq \varepsilon
     \]
 \end{definition}
 
-\subsubsection{Pairwise-independent hashing}
+\subsection{An introduction to hashing}
 
-%AP190903: The math stinks here...
+A great deal of authentication has been, and is still done by means of \emph{hashing}, which consists of feeding the message to a special machine that produces a scrambled, unique signature for it; such machines are then known as \emph{hash functions}.
+
+For starters recall that, given a set $A \to B$ that collects all possible functions from $A$ to $B$, a \emph{function family} is a subset of such class that share some specific properties. Having said that:
+
 \begin{definition}
-    Let $\mathcal{S}$ be a seeding space; define a family of \emph{hash functions} to be the following object\footnotemark:
+    A family of \emph{hash functions} $H$ is defined as a function family that is mapped 1-to-1 by an indexing set $\mathcal{S}$, where the indices are called \emph{seeds}:\footnote{This kind of notation consisting in putting an argument as a subscript to a generic, typically of higher-order function, is also called ``currying''.}
     \[
-        H \in \mathcal{S} \to (\M \to \Phi) : s \mapsto h_s
+        H \in \mathcal{S} \to (\M \to \T) : s \mapsto h_s
     \]
-
-    \footnotetext{This kind of notation consisting in putting an argument as a subscript to a generic,  typically of higher-order function, is also called ``currying''; it will be used extensively throughout the lessons.}
-
-    Let $S$ be a random variable in the seed space; the hash functions are deemed \emph{pairwise-independent}\footnotemark{} iff, for any two distinct messages $m$ and $m'$, the pair $(h_S(m), h_S(m'))$ distributes evenly in $\Phi^2$. In other words:
+    Furthermore, given a uniformly random seed $S$, the family as a whole distributes the tags uniformly:
     \[
-        \forall m, m' \in \M : m \neq m', \forall \phi, \phi' \in \Phi \implies \Pr[h_S(m) = \phi \wedge h_S(m') = \phi'] = \oneover{|\Phi|^2}
+        \forall m \in \M \, \forall t \in \T \qquad \Pr[h_S(m) = t] = \oneover{\T}
     \]
 \end{definition}
 
-\footnotetext{Care should be taken to not confuse \emph{pairwise} independency with \emph{mutual} independency: while the former acts only on pairs, the latter considers all possible subsets. The two notions are not necessarily equivalent.}
+Having formalized what a hash function family is, the notion of unforgeability can be modeled by the property of \emph{pairwise-independency}:
 
-As an example of such a family, consider the additive group of integers modulo $p$: $(\integer_p, +)$, where $p$ is a prime integer. Define the family:
+\begin{definition}
+    Let $H$ be a family of hash functions, and $S$ be a uniformly random seed; the hash functions are deemed \emph{pairwise-independent} iff, for any two distinct messages $m_1$ and $m_2$, the pair $(h_S(m_1), h_S(m_2))$ distributes uniformly in $\T^2$:
+    \[
+        \forall m_1 \neq m_2 \in \M \, \forall t_1, t_2 \in \T \qquad \Pr[h_S(m_1) = t_1 \wedge h_S(m_2) = t_2] = \oneover{|\T|^2}
+    \]
+\end{definition}
+
+As an example of such a family, consider the additive group of integers modulo $p$: $(\integer_p, +)$, where $p$ is a prime integer. Let the seed space $\mathcal{S}$ be the set of pairs $\integer_p^2$, and define the function family:
 \[
-    h_{(a, b)}(x) = ax + b \mod p
+    H \in \integer_p^2 \to (\integer_p \to \integer_p) : (a, b) \mapsto (x \mapsto \textrm{\textup{mod}}_p(ax + b))
 \]
 
-where $\mathcal{S} = \integer_p^2$, and $\M = \Phi = \integer_p$. 
-
-\begin{theorem}
+\begin{proposition}
     The functions in the family $H$ are pairwise-independent.
-\end{theorem}
+\end{proposition}
 
 \begin{proof}
-    Let $S = (a, b)$ be a random seed for $H$; for any distinct messages $m, m'$, and for any tags $\phi, \phi'$:
-
+    Let $S = (A, B)$ be a uniformly random seed for $H$. For any distinct messages $m_1$ and $m_2$, and for any tags $t_1$ and $t_2$:
     \begin{align*}
-        & \Pr[h_S(m) = \phi \wedge h_S(m') = \phi'] \\
-        =& \Pr[am + b = \phi \wedge am' + b = \phi'] \\
-        =& \Pr\left[
-        \begin{pmatrix}
-            m & 1 \\
-            m' & 1
-        \end{pmatrix}
-        \cdot
-        \begin{pmatrix}
-            a \\
-            b
-        \end{pmatrix}
-        =
-        \begin{pmatrix}
-            \phi \\
-            \phi'
-        \end{pmatrix}
-        \right] \\
-        =& \Pr\left[
-        \begin{pmatrix}
-            a \\
-            b
-        \end{pmatrix}
-        =
-        \begin{pmatrix}
-            m & 1 \\
-            m' & 1
-        \end{pmatrix}^{-1}
-        \cdot
-        \begin{pmatrix}
-            \phi \\
-            \phi'
-        \end{pmatrix}
-        \right] \\
-        =& \oneover{|\integer_p|^2}
+        &\ \Pr[h_S(m_1) = t_1 \wedge h_S(m_2) = t_2]        & \\
+        =&\ \Pr[A m_1 + B = t_1 \wedge A m_2 + B = t_2]     & \text{($H$ definition)}\\
+        =&\ \Pr\left[ \begin{pmatrix} m_1 & 1 \\ m_2 & 1 \end{pmatrix} \cdot \begin{pmatrix} A \\ B \end{pmatrix} = \begin{pmatrix} t_1 \\ t_2 \end{pmatrix} \right]                                        & \text{(Matrix form)} \\
+        =&\ \Pr\left[ \begin{pmatrix} A \\ B \end{pmatrix} = \begin{pmatrix} m_1 & 1 \\ m_2 & 1 \end{pmatrix}^{-1} \cdot \begin{pmatrix} t_1 \\ t_2 \end{pmatrix} \right]                                           & \\
+        =&\ \oneover{|\integer_p^2|} & \text{($(A, B)$ is uniform)}
     \end{align*}
-    which is exactly the definition of pairwise-independency.
+    which satisfies the definition of pairwise-independency.
 \end{proof}
 
+% TODO: Consider making an example in Zp, if possible
+It is very important to avoid confusing \emph{pairwise} independency with \emph{mutual} independency: while the former enforces independency only on pairs, the latter extends it to all possible subsets; the two notions are not necessarily equivalent.
+
+The property of pairwise-independency of hash function families can be directly exploited to provide an unforgeable authentication scheme:
+
 \begin{theorem}
-    Define an authentication scheme to be such that its tagging routine is a hash function family: $\Tag(k, m) = h_k(m)$. Let this function family be pairwise-independent. Then the authentication scheme is $\oneover{|\Phi|}$-statistical one-time secure. 
+    Define an authentication scheme $\Phi = (\Tag, \Ver)$ to be such that its tagging machine is a hash function family $H$:
+    \[
+        \Tag(k, m) = h_k(m)
+    \]
+    and let it be pairwise-independent. Then $\Phi$ is $\oneover{|\T|}$-statistical one-time unforgeable. 
 \end{theorem}
 
 \begin{proof}
-    For all our purposes, let $K \sim \unifdist(\K)$; then:
+    Let $K$ be a uniformly random key. For any distinct messages $m_1$ and $m_2$, and for any tags $t_1$ and $t_2$:
+    \begin{align*}
+         &\ \Pr[\Tag(K, m_2) = t_2 \knowing \Tag(K, m_1) = t_1]                     & \\
+        =&\ \Pr[h_K(m_2) = t_2 \knowing h_K(m_1) = t_1]                             & \text{($\Tag$ definition)} \\
+        =&\ \frac{\Pr[h_K(m_2) = t_2 \wedge h_K(m_1) = t_1]}{\Pr[h_K(m_1) = t_1]}   & \text{(Conditional prob. def.)} \\
+        =&\ |\T| \cdot \Pr[h_K(m_2) = t_2 \wedge h_K(m_1) = t_1]                    & \text{($H$ is a hash function)} \\ 
+        =&\ \frac{|\T|}{|\T|^2} = \oneover{|\T|}                                    & \text{($H$ is pairwise-independent)}
+    \end{align*}
 
-    \begin{align*}
-        \forall m \in \M, \phi \in \Phi &\implies \Pr[\Tag(K, m) = \phi] = \Pr[h_K(m) = \phi] = \oneover{|\Phi|} \\
-        \forall m \neq m' \in \M, \phi, \phi' \in \Phi &\implies \Pr[\Tag(K, m) = \phi \wedge \Tag(K, m') = \phi'] = \oneover{|\Phi|^2} \\
-    \end{align*}
-    Therefore:
-    \begin{align*}
-        & \Pr[\Tag(K, m') = \phi' \knowing \Tag(K, m) \evaluatesto \phi] \\
-        =& \frac{\Pr[\Tag(K, m') = \phi' \wedge \Tag(K, m) = \phi]}{\Pr[\Tag(K, m) = \phi]} \\
-        =& \frac{|\Phi|}{|\Phi|^2} = \oneover{|\Phi|}
-    \end{align*}
+    which satisfies the definition of $\oneover{|\T|}$-statistical one-time unforgeability.
 \end{proof}
 
+\todo{Need to link statistical unforgeability with key size beforehand}
+
 \begin{theorem}
-    Any $(2^{-\lambda})$-statistical $t$-time secure authentication scheme has a key of size $(t + 1) \lambda$ for any $\lambda > 0$.
+    For any positive $\lambda$, a $(2^{-\lambda})$-statistical $t$-time unforgeable authentication scheme has a key of size $(t + 1) \lambda$.
 \end{theorem}
 
 \begin{proof}
-    None given.
-
     Idea: For each ``time'', use one ``subkey''
 \end{proof}
