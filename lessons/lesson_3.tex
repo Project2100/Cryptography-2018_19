@@ -1,164 +1,197 @@
 \mychapter{3}{Lesson 3} %181003
 
-\newcommand{\ext}{\textup{\textsf{Ext}}}
+\newcommand{\Extm}{\textup{\textsf{Ext}}}
+\newcommand{\Extf}{\textrm{\textup{Ext}}}
 \newcommand{\statdist}{\ensuremath{\Delta_\textsc{s}}}
 \newcommand{\sdtu}{\ensuremath{\Delta_\textsc{u}}}
 
 \section{Randomness Extraction}
 
-In most of our discourse, the subject of uniformly random variables is much recurrent; this chapter/lesson delves deeper into the topic. For starters, we devise some attempts to extract uniform randomness from ``non-uniform'' randomness sources.
+As just seen in both examples of secret and auhentic communications, it is worth observing that they share a critical common mechanism in the form of a preemptively shared key that is picked uniformly at random form the key space. A problem then arises in actually trying to construct something, like a program, that generates ``true'', totally random keys in a timely fashion. The goal is indeed to efficiently extract uniform randomness form things that are not necessarily uniformly random, or worse yet, deterministic.
 
-Suppose to have a biased coin $B \sim \berdist(p) : p \neq \half$. How to craft a fair coin out of it? In his time, Von Neumann devised a simple algorithm, which is now known as the \emph{Von Neumann extractor}:
+Suppose to have an unknown coin $C$ that has some nontrivial probability $p$ to evaluate heads. There is a simple algorithm devised by John Von Neumannn that is capable of extracting a fair coin out of it, and it is known as the \emph{Von Neumann extractor}:
 
 \begin{enumerate}
-    \item Let $B \sim \berdist(p)$ be a random variable
-    \item \label{enum:VNEsample} Sample $b_1 \pickUAR B$
-    \item Sample $b_2 \pickUAR B$
-    \item If $b_1 = b_2$ go to step \ref{enum:VNEsample}
-    \item \label{enum:VNEreturn} Else:
-    \begin{itemize}
-        \item If $b_1 = 0 \wedge b_2 = 1$ output 1
-        \item If $b_1 = 1 \wedge b_2 = 0$ output 0
-    \end{itemize}
+    \item Let $C \sim \berdist(p)$ be a random variable
+    \item \label{enum:VNEsample} Sample $c_1 \pickUAR B$
+    \item Sample $c_2 \pickUAR B$
+    \item If $c_1 = c_2$ go to step \ref{enum:VNEsample}
+    \item \label{enum:VNEreturn} Else output $b_1$:
 \end{enumerate}
 
-Some considerations can be made: The probability of both single cases in step \ref{enum:VNEreturn} is $p(1 - p)$, therefore the probability to reach it is $2p(1 - p)$. Also, it is apparent that the number of possible failures in reaching step \ref{enum:VNEreturn} follow a geometric distribution in $p$, thus the probability of an increased number of failures decrease exponentially.
+At a high level, this is a loop that in theory could run infinitely; by analyzing it more carefully, the probability of breaking out the loop on an iteration is the same as when the two coin flips $c_1$ and $c_2$ evaluate to different values, which in total is $2p(1 - p)$. There is indeed some probability that a given iteration leads to a new one, but on a complete run's point of view, since all coin flips are independent, the number of iterations that occur before exiting follow a  geometric distribution in $p$, thus the probability of an increased number of failures decrease exponentially.\footnote{Nevertheless, such probability may still be very high when the original coin has a very heavy bias.}
 
-We now get back to our ultimate goal. Let $X$ be any random variable over a space $\Omega$, we wish to design an ``extraction'' algorithm \ext{} such that $U = \ext(X)$ distributes uniformly over $\Omega$. To help ourselves, we will deal with probability spaces of binary strings ($\binary^n$), and define a measure of ``how much'' a distribution is uniform over its space:
+This extractor gives some reasonable hope for constructing a more generic randomness extractor. Before going forward though, it may be best to have a way to measure how much a given random variable is close to a uniform one:
 
-\begin{definition} Let X be a random variable from a given probability distribution. Its \emph{min-entropy} is defined as follows:
-\[
-    H_{\infty}(X) = -\log_2(\max(\Pr[X = x]))
-\]
+\begin{definition}
+    Let $X$ be a random variable from a given probability distribution. A measure of its uniformity is its \emph{min-entropy}, defined as a negative logarithm of the highest probability among all of its outcomes:\footnote{This is a form of the more general definition of R\'enyi entropy}
+    \[
+        H_{\infty}(X) = -\log(\max_{x \in \Omega}(\Pr[X = x]))
+    \]
 \end{definition}
 
-Using this measure, we can already see an interesting case, which involves ``constant'' random variables:
-\begin{align*}
-    X \sim \mathcal{C}onst(\overline{x}) \implies & \Pr[X = \overline{x}] = 1                                       \\
-                                         \implies & \Pr[X \neq \overline{x}] = 0                                    \\
-                                         \implies & H_{\infty}(X) = -\log_2(\Pr[X = \overline{x}]) = -\log_2(1) = 0 \\
-\end{align*}
+To get a feel of this measure, it's worth starting from the trivial case of a ``constant'' random variable $X$ that certainly evaluates to an outcome $x$; by definition, the highest probability on the outcomes of $X$ is 1, therefore: 
+\[
+    H_{\infty}(X) = -\log(\Pr[X = \overline{x}]) = -\log(1) = 0
+\]
 
-And in fact, a constant variable is useless in creating a uniform distribution: it always gives the same outcome, making everything deterministic. Therefore, such variables must be excluded in our search for a ``universal extractor''.
-On the other hand, looking at a uniform distribution:
-\begin{align*}
-    X \sim \unifdist(\Omega) \implies & \forall x \Pr[X = x] = \oneover{|\Omega|}   \\
-                             \implies & H_{\infty}(X) = -\log_2(\oneover{|\Omega|})
-\end{align*}
+Unsurprisingly, a constant variable is useless in creating a uniform distribution: it always gives the same outcome, it is effectively deterministic. On the other hand, let $Y$ be a uniform random variable over some finite outcome space $\Omega$; in this case, all probabilities are the same, thus:
+\[
+    \forall y \in \Omega \qquad H_{\infty}(Y) = -\log(\Pr[Y = y]) = -\log(|\Omega|^{-1}) = \log(|\Omega|)
+\]
 
-Knowing that $\Omega$ is be our usual domain choice of binary strings of a given length $\binary^n$, the min-entropy becomes exactly $n$\footnote{This also sheds some light in how the string length is a frequent topic in the cryptography realm, as it usually expresses a cryptosystem's strength: the greater its min-entropy, the harder it is to find the right key from scratch for a ciphertext.}.
-Using this measure, we can actually seek how much min-entropy we require in the original distribution $X$ in order for the extractor to return a uniform distribution. Ideally, we would like a value as close to 0 as possible, because a min-entropy of zero leads to constant variables, which have been excluded beforehand. Alas, it turns out that:
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \datavisualization[
+                scientific axes,
+                visualize as smooth line/.list = {first, second},
+                x axis = {label = {$\Pr[C = 1]$}},
+                y axis = {label = {$H_\infty(C)$}},
+                data/format = function]
+            data[set = first] {
+                var x : interval[0 : 1/2];
+                func y = - ln(1 - \value x);
+            }
+            data[set = second] {
+                var x : interval[1/2 : 1];
+                func y = - ln(\value x);
+            }
+        ;
+    \end{tikzpicture}
+    \caption{The min-entropy of a coin $C$ as a function of how likely it evaluates to heads}
+    \label{fig:coinminentropy}
+\end{figure}
+
+Figure \ref{fig:coinminentropy} shows how the min-entropy of a coin $C$ variates by tuning its probability of evaluating to heads; it is apparent that the min-entropy reaches the highest point when the coin is fair (i.e. uniform), and goes to zero when it effectively behaves like a constant random variable.
+
+%This point can be further expanded:
+%\begin{proposition}
+%     The min-entropy of any random variable $X$ is upper bounded by a specific function of its outcome space:
+%     \[
+%         \forall X \in \mathcal{R}and_\Omega \qquad H_\infty(X) \leq -\log(|\Omega|^{-1})
+%     \]
+%\end{proposition}
+%\begin{proof}
+%\end{proof}
+
+Having some grasp on how the measure of min-entropy works, the problem of extracting uniform randomness from non-uniform sources can then be reformulated as the problem of maximizing min-entropy of a given random variable that, in the general case, is not maximal.
+
+In order to have a simplified exposition, the following paragraphs will deal with binary strings of some fixed length $n$ as outcomes, and the definition of min-entropy will be adapted to employ a base-2 logarithm. In this framework, the min-entrpoy of a uniform random variable $U$ over the string space $\binary^n$ becomes the string length itself:\footnote{This also explains how the string length is a recurrent topic in cryptography discussions, as it indirectly expresses a cryptosystem's strength: the greater its min-entropy, the harder it is to find the right key for a ciphertext from scratch.}
+\[
+    H_\infty(X) = \log_2(|\binary^n|) = \log_2(2^n) = n
+\]
+
+Despite such efforts for constructing a universal extractor, a general counterexample can always be found:
+
+\todo{ Lots of unsolved questions here:
+\begin{itemize}
+    \item Is it possible to put a bound on the min-entropy instead of an equality, and gain some added value out of this claim?
+    \item Both the statement and the proof have some hideous caveats that may stem from confusing the extractor as a machine with the extractor as a function, and ultimately lead to a statement that blindly treats two RVs $X$ and $Y$ as "equivalent"
+\end{itemize}
+... actually, is a statement about min-entropy even needed?
+}
+
 \begin{claim}
-    There is no such universal \ext{} algorithm that returns a uniform distribution from random variables $X$ with min-entropy $H_{\infty}(X) \leq n - 1$
+    There is no universal algorithm $\Extm$ that, given a random variable $X$ with relatively high min-entropy:
+    \[
+        H_\infty(X) \leq n - 1
+    \]
+    returns a uniform random variable $U$:
+    \[
+        \Extm \in \binary \to \binary : \forall X \in \mathcal{R}and_{\binary} : H_\infty(X) = n - 1 \qquad \Extm(X) \sim U
+    \]
 \end{claim}
 
 \begin{proof}
-    % Notes: In our domain, the extraction problem to a unifdist reduces to an extraction of a fair coin; from there, creating a unifdist consists in doing as many coin flips as the strings' length in the domain of choice (remember we're still in the domain of binary strings, each coin flip is essentially one bit).
+    Assume there exists such a universal extractor $\Extm$, and let $C$ be a coin with min-entropy $n - 1$. The general gist of $\Extm$ is that it uses $C$ multiple times, each time $i$ obtaining an outcome $q_i$, in order to generate the random output. Let $q$ be the generic sequence of outcomes that $\Extm$ receives; in this perspectve, it is possible to reformulate the extractor as a function $\Extf$, where its domain $Q$ is composed of the sequences $q$ for which $\Extm$ does stop and gives an output:\footnote{Not to be confused with the \emph{recognized language} of $\Extm$, as $Q$ also includes the sequences for which the extractor yieds 0}
+    \[
+        Q \subseteq \binary^* \qquad \Extf \in Q \to \binary : q \in Q \Longleftrightarrow \Extm \textrm{ stops}
+    \]
 
-    % Furthermore, extraction of a fair coin reduces to the extraction of a generic bernoulli variable: from there we can simply use the Von Neumann extractor to get a fair coin
+    From there, $Q$ can be seen as bipartitioned by the set $Q_1$ that collects the sequences that evaluate to 1,\footnote{And that can be called the language recognized by $\Extf$} and $Q_0$ that collects the sequences evaluating to 0.
 
-    % WHAT'S HAPPENING DOWN HERE?!?!?!
+    \todo{And here's the supposed plot hole: $Y$ and $X$ cannot be in such a direct relationship, as $Y$ destroys the independencies of each toss of $X$}
 
-    %Let \ext{} be a candidate extractor which outputs a fair coin from any given random variable $X$ in a fixed-length binary string space. The resulting coin effectively splits $X$'s domain in two parts $X_0$ and $X_1$, in an attempt to balance the probability that $X$ is in either part. Now, pick the biggest one $X_b$
+    Let $Y$ be a random variable in $\binary^*$ such that it distributes uniformly over the greatest block between $Q_1$ and $Q_0$. Then the min-entropy of $Y$ is $\log(|Q_1|)$; however, since all the inputs in $Q_1$ are mapped to 1 by the extractor function:
+    \[
+        \forall q \notin Q_1 \qquad \Pr[Y = q] = 0 \implies \Pr[\Extf(Y) = 1] = 1
+    \]
 
-    %ILLUMINATION: fix ext , run with any X, ext bipartitions the domain, define Y to be unif over an arbitrary part b. Ext(Y) will be forced to output the constant RV on b. contradiction
-
-    %AP190904: Don't like this model, appears to not reflect exactly the matter at hand; algorithms =/= functions
-
-    % Let \ext{} be a candidate extractor, assume that $X$ is any random variable for which $\ext(X)$ is a fair coin. Going deeper into the model, we can figure the extraction result to fairly bipartition the "language" that is formed by repeated saplings from X, as in: "\Omega*". For example, the Von Neumann extractor recognizes the language (00|11)*(01)(0|1)* and doesn't recognize (00|11)*(10)(0|1)*.
-    % 
-
-    \todo{Help with the proof, things don't look good}
-
-    %Let \ext{} be a candidate extractor, assume that $X$ is any random variable for which $\ext(X)$ is a fair coin. We are %in a situation where 
-    %
-    %Let \ext{} be a candidate extractor, Let b be any binary value s.t. $|Ext^-1(b)|$ is maximal ($Ext^-1: \binary \to \binary^n$)\\
-    %$\implies |Ext^-1(b)|\geq 2^{n-1}=\frac{2^2}{2}$
-    %
-    %\begin{figure}[ht]
-    %    \centering
-    %    \begin{tikzpicture}[>=latex]
-    %        
-    %        \node (a1) {};
-    %        \node[below=0.3cm of a1] (a2) {};
-    %        \node[below=0.3cm of a2] (a3) {};
-    %
-    %        \node[below=0.6cm of a3] (a4) {};
-    %        \node[below=0.3cm of a4] (a5) {};
-    %        \node[below=0.3cm of a5] (a6) {};
-    %
-    %        \node[below=0.3cm of a3] (l) {};
-    %        \node[right=1.4cm of l] (l1) {};
-    %        \node[left=1.4cm of l] (l2) {};
-    %        \draw[-,black] (l2) -- (l1);
-    %
-    %        \node[right=4cm of a2] (b1) {$x=0$};
-    %        \node[right=4cm of a5] (b3) {$x=1$};
-    %
-    %        \node[ellipse,line width = 1pt, draw=black,minimum size=3cm,fit={(a1) (a6)}] {};
-    %
-    %        \node[below=1cm of a6,font=\color{black}\Large] {$\binary^n$};
-    %
-    %        \draw[-,black] (a3) to[out=-10,in=190] (b1.190);
-    %        \draw[-,black] (a2) -- (b1.180);
-    %        \draw[-,black] (a1) to[out=10,in=170] (b1.170);
-    %
-    %        \draw[-,black] (a6) to[out=-10,in=190] (b3.190);
-    %        \draw[-,black] (a5) -- (b3.180);
-    %        \draw[-,black] (a4) to[out=10,in=170] (b3.170);
-    %    \end{tikzpicture}
-    %\end{figure}
-    %
-    %Define $X$ to be uniform over $Ext^-1(b)$ so $H_{\infty}(x)=n-1$ but $Ext(X)=b$ CONSTANT.
-    %
-    %\dots
-
+    which contradicts the property of the original $\Extm$ to be a universal extractor.
 \end{proof}
 
-So this approach is doomed unless we factor in a preemptive small amount of true randomness in the algorithm. This is what a \emph{seeded extractor} does:
-\[
-    \ext: \underbrace{\binary^d}_{seed(public)}\times \underbrace{\binary^n}_{input} \to \underbrace{\binary^l}_{output}
-\]
+% This is probably the original version, but that is really unrelated to some thing as the Von Neumann Extractor:
+%
+% Let Ext be a universal extractor from 2^n to 2, and X be a nontrivial RV in 2^n; then Ext(X) sim unifdist by definition.
+% Since ext is a machine (determinitstic!), it can be equivalent to a math function, and in this setting, its domain can be split parts Q0 and Q1 according to Ext. Now let Y be a RV that uniformly distributes over the greatest of Q0 and Q1. Then, the minentroy of Y is > n-1, however Ext(Y) will always return the same value, i.e. it has become constant. Contradiction; thus ext cannot be universal
 
-Before giving a formal definition of such an extractor, we require another notion of measure related to probability distributions:
+So there can be no construct that transforms any unknown distribution into the uniform one. This can be changed if, along with the unknown randomness, a smaller amount of uniform randomness is introduced to produce the desired uniform distribution. Before formalizing such idea, another notion of measure related to probability distributions can help:
 
-\begin{definition} \emph{Statistical Distance}:
-    Let $X$ and $Y$ be two random variables on the same probability space. Their \emph{statistical distance} is defined as follows:
+\begin{definition}[Statistical distance]
+    Let $X$ and $Y$ be two random variables on the same probability space. Then, for each outcome, take half the absolute difference of probabilities between the two, and sum all of them up. The result is called the \emph{statistical distance} between $X$ and $Y$:
     \[
         \statdist(X, Y) = \half\sum_{x \in \Omega}|\Pr[X = x] - \Pr[Y = x]|
     \]
-
 \end{definition}
 
-From a more visual perspective, this distance amounts to half the area delimited by the two distributions, if drawn one over another on the outcome space.
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \datavisualization[
+                scientific axes = clean,
+                visualize as scatter/.list = {first, second},
+                style sheet = cross marks,
+                first = {label in legend = {text = $X$}},
+                second = {label in legend = {text = $Y$}},
+                x axis = {label = {$\omega$}},
+                y axis = {label = {$\Pr$}, include value = {0, 1}}]
+            data[set = first] {
+                x, y
+                0, 0.25
+                1, 0.15
+                2, 0.35
+                3, 0.05
+                4, 0.2
+            }
+            data[set = second] {
+                x, y
+                0, 0.05
+                1, 0.2
+                2, 0.1
+                3, 0.3
+                4, 0.35
+            }
+        ;
+    \end{tikzpicture}
+    \caption{Two random distributions denoted espectively by random variables $X$ and $Y$}
+    \label{fig:statdist}
+\end{figure}
 
-\todo{Image of the statistical distance}
+Figure \ref{fig:statdist} shows a visual interpretation of such measure with two arbitrary random variables, where their statistical distance is half the sum of the distances of the points on each column.
 
 In most scenarios, given a random variable $X$, it is valuable to know how much it is distant to a uniform random variable $U$ over the same space $\Omega$. To this purpose, the notation $\statdist(X, U)$ will be shortened to $\sdtu(X)$, making any definition of uniform variables implicit.
 
-\begin{definition}
-    Let $\ext \in \binary^d \times \binary^n \to \binary^l$ be a seeded extractor, and $S \sim \unifdist(\binary^d)$. Then it is a ($k$, $\varepsilon$)-extractor iff:
+This measure contributes in building a slightly more sophisticated definition of a randomness extractor:
+
+\begin{definition}[Seeded extractor]
+    Let $\Extm$ be a machine having two binary inputs of length $d$ and $n$, and binary output length $l$:\footnote{Spoiler: The first input, of length $d$, is also called a \emph{seed}}
     \[
-        \forall X : H_{\infty}(X) \geq k \implies \statdist((S, \ext(S, X)), (S, \unifdist(\binary^l))) \leq \varepsilon
+        \Extm: \binary^d \times \binary^n \to \binary^l
+    \]
+    and let $S$ and be a uniform random variable in the irst input $\binary^d$. Then $\Extm$ is called a ($k$, $\varepsilon$)-extractor iff, for any random variable $X$ with min-entropy at least $k$, the output distribution of $\Extm(S, X)$ is statistically close to a uniform distribution within a bound of $\varepsilon$:
+    \[
+        \forall X : H_{\infty}(X) \geq k \implies \statdist((S, \Extm(S, X)), (S, \unifdist(\binary^l))) \leq \varepsilon
     \]
 \end{definition}
 
-Do note that $S$ takes part in both sides of the statistical distance: this is to be interpreted that the seed is known at the time of extraction.
+% AP210312: Consider putting the conversion to SDTU here
 
-\todo{Need to rethink this definition further}
+\subsubsection{Universal hash functions}
 
-\subsection{Universal hash functions}
+The hash function families introduced earlier turn out to be a straightforward tool in constructing seeded extractors; they work even under weaker assumptions. For this, consider the probability notion of \emph{collision}:
 
-Getting back to our hash function families, we see that they too use an argument as a random seed, and attempt to be as uniform as possible; thus they behave in most ways as seeded extractors. Let's further develop the idea:
-
-\begin{definition}
-    Let $S$ be a uniform seed. A hash function family $H$ is deemed \emph{universal} iff:
-    \[
-        \forall a \neq b \in \Omega \implies \Pr[h_S(a) = h_S(b)] = \oneover{\binary^l}
-    \]
-\end{definition}
-
-\begin{definition}
+\begin{definition}[Collision probability]
     Let $X$ and $Y$ be two \iid{} random variables; a \emph{collision} is the event of both variables evaluating to the same outcome. Such event probabilities are denoted as:
     \[
         Col(X) = Col(Y) = \Pr[X = Y]
@@ -171,6 +204,13 @@ A different formulation of collision probability can be reached by simple manipu
                =& \sum_{x \in \Omega} \Pr[X = x] \Pr[Y = x]   & \text{(Independency)}      \\
                =& \sum_{x \in \Omega} \Pr[X = x]^2                                         \\
 \end{align*}
+
+\begin{definition}
+    Let $S$ be a uniform seed. A hash function family $H$ is deemed \emph{universal} iff:
+    \[
+        \forall a \neq b \in \Omega \implies \Pr[h_S(a) = h_S(b)] = \oneover{\binary^l}
+    \]
+\end{definition}
 
 \begin{lemma}[Collision bound] \label{lem:colbound}
     Let $X$ be a random variable such that its collision probability is upper bounded by the following function of some positive value $\varepsilon$ arbitrarily close to $0$:
@@ -227,11 +267,11 @@ A different formulation of collision probability can be reached by simple manipu
 This lemma has been proven by Russell Impagliazzo, Leonid Levin and Michael Luby:
 
 \begin{lemma}[Leftover hash]
-    Let $h_s$ be a pairwise-independent hash function with uniform seed $S$, and $\ext \in \binary^d \times \binary^n \to \binary^l$ be a seeded randomness extractor. Then if $\ext(S, x) = h_S(x)$, and $x$ is governed by a random variable $X$ with min-entropy $H_{\infty}(X) \geq k$, where:
+    Let $h_s$ be a pairwise-independent hash function with uniform seed $S$, and $\Extm \in \binary^d \times \binary^n \to \binary^l$ be a seeded randomness extractor. Then if $\Extm(S, x) = h_S(x)$, and $x$ is governed by a random variable $X$ with min-entropy $H_{\infty}(X) \geq k$, where:
     \[
        k = l - 2 \log_2 \varepsilon - 2
     \]
-    then $\ext$ is a ($k$, $\varepsilon$)-seeded randomness extractor.
+    then $\Extm$ is a ($k$, $\varepsilon$)-seeded randomness extractor.
 \end{lemma}
 
 \begin{proof}
